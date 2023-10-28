@@ -10,4 +10,9 @@ public class UserLoginDto
         Username = username;
         Password = password;
     }
+
+    public UserLoginDto(string username)
+    {
+        Username = username;
+    }
 }
