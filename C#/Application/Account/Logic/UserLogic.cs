@@ -1,4 +1,6 @@
 ﻿using System.Net.Security;
+using Domain.Account.DTOs;
+using Domain.Account.Models;
 
 namespace Application.Account.LogicInterfaces;
 
@@ -12,25 +14,35 @@ public class UserLogic : IUserLogic
     }
 
 
-    public async Task<string> Register(string userCreationDto)
+    public async Task<User> Register(UserCreationDto dto)
     {
         /*
         User? user = await userDao.GetByUsernameAsync(userCreationDto.Username);
         if(user != null)
             throw new Exception("Username is already taken!");    
         */
-        ValidateRegister(userCreationDto);
-        /*
-        User userToCreate = new User(userCreationDto.Whatever);
-        User created = await userDao.CreateAsync(userToCreate);
-        return created; 
-         */
+        ValidateRegister(dto);
+        
+        User userToCreate = new User(dto.Username, dto.Password)
+        {
+            Email = dto.Email,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            Password = dto.Password,
+            Address = dto.Address,
+            City = dto.City,
+            PostalCode = dto.PostalCode,
+            Country = dto.City,
+            IsSeller = dto.IsSeller
+        };
+        //User created = await userDao.CreateAsync(userToCreate);
+        //return created;
         throw new NotImplementedException();
     }
 
-    public Task Login(string userLoginDto)
+    public Task Login(UserLoginDto dto)
     {
-        ValidateLogin(userLoginDto);
+        ValidateLogin(dto);
         /*
         User? user = await userDao.GetByUsernameAsync(userLoginDto.Username);
         await userDao.Login(user);
@@ -38,32 +50,30 @@ public class UserLogic : IUserLogic
         throw new NotImplementedException();
     }
 
-    private static void ValidateRegister(string userCreationDto)
+    private static void ValidateRegister(UserCreationDto dto)
     {
-        /*
-        if(string.IsNullOrEmpty(Email))
+        
+        if(string.IsNullOrEmpty(dto.Email))
             throw new Exception("Email cannot be empty!");
-        if(string.IsNullOrEmpty(FirstName))
-            throw new Exception("First Name cannot be empty!")
-        if(string.IsNullOrEmpty(LastName))
-            throw new Exception("Last Name cannot be empty!")
-        if(string.IsNullOrEmpty(Password))
-            throw new Exception("Password cannot be empty!")
-        if(Password.Length < 8)
+        if (string.IsNullOrEmpty(dto.FirstName))
+            throw new Exception("First Name cannot be empty!");
+        if (string.IsNullOrEmpty(dto.LastName))
+            throw new Exception("Last Name cannot be empty!");
+        if (string.IsNullOrEmpty(dto.Password))
+            throw new Exception("Password cannot be empty!");
+        if(dto.Password.Length < 8)
             throw new Exception("Password must contain at least 8 characters!");
-        if(string.IsNullOrEmpty(Address))
+        if(string.IsNullOrEmpty(dto.Address))
             throw new Exception("Address cannot be empty!");
-        if(string.IsNullOrEmpty(City))
-            throw new Exception("City cannot be empty!"));
-        if(PostalCode < 0 || > 9999999999)
+        if(string.IsNullOrEmpty(dto.City))
+            throw new Exception("City cannot be empty!");
+        if(dto.PostalCode < 0 || dto.PostalCode > 9999999)
             throw new Exception("Postal code is invalid!");
-        if(IsSeller)
-            if(ConfirmationForm == null)
-                throw new Exception("No Confirmation Form uploaded!");                         
-         */
+        if(string.IsNullOrEmpty(dto.Country))
+            throw new Exception("Country cannot be empty");
     }
 
-    private static async void ValidateLogin(string userLoginDto)
+    private static async void ValidateLogin(UserLoginDto dto)
     {
         /*
         User? user = await userDao.GetByUsernameAsync(userLoginDto.Username);
