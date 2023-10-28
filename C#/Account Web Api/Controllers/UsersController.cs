@@ -1,4 +1,5 @@
 ﻿using Application.Account.LogicInterfaces;
+using Domain.Account.DTOs;
 using Microsoft.AspNetCore.Http.HttpResults;    
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPatch("Login")]
-    public async Task<ActionResult> Login(string userLoginDto)
+    public async Task<ActionResult> Login(UserLoginDto userLoginDto)
     {
         try
         {
