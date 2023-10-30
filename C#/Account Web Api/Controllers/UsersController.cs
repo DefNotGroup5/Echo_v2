@@ -1,5 +1,6 @@
 ﻿using Application.Account.LogicInterfaces;
 using Domain.Account.DTOs;
+using Domain.Account.Models;
 using Microsoft.AspNetCore.Http.HttpResults;    
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,27 @@ public class UsersController : ControllerBase
         _userLogic = userLogic;
     }
 
+
+    [HttpPost]
+    public async Task<ActionResult<User>> Register(UserCreationDto userCreationDto)
+    {
+        try
+        {
+            User user = await _userLogic.Register(userCreationDto);
+            return Created($"/user/{user.Email}", user);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    
+    
+    
+    
     [HttpPatch("Login")]
     public async Task<ActionResult> Login(UserLoginDto userLoginDto)
     {
