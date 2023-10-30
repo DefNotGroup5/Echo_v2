@@ -1,4 +1,5 @@
 ﻿using System.Net.Security;
+using Application.Account.DaoInterfaces;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
 
@@ -6,21 +7,20 @@ namespace Application.Account.LogicInterfaces;
 
 public class UserLogic : IUserLogic
 {
-    private readonly string _accountDao;
+    private readonly IUserDao _userDao;
 
-    public UserLogic(string accountDao)
+    public UserLogic(IUserDao userDao)
     {
-        _accountDao = accountDao;
+        _userDao = userDao;
     }
-
-
+    
     public async Task<User> Register(UserCreationDto dto)
     {
-        /*
-        User? user = await userDao.GetByUsernameAsync(userCreationDto.Username);
+        
+        User? user = await _userDao.GetByUsernameAsync(dto.Username);
         if(user != null)
             throw new Exception("Username is already taken!");    
-        */
+        
         ValidateRegister(dto);
         
         User userToCreate = new User(dto.Username, dto.Password)
@@ -35,24 +35,29 @@ public class UserLogic : IUserLogic
             Country = dto.City,
             IsSeller = dto.IsSeller
         };
-        //User created = await userDao.CreateAsync(userToCreate);
-        //return created;
-        throw new NotImplementedException();
+        User created = await _userDao.CreateAsync(userToCreate);
+        return created;
     }
 
-    public Task Login(UserLoginDto dto)
+    public async Task Login(UserLoginDto dto)
     {
         ValidateLogin(dto);
-        /*
-        User? user = await userDao.GetByUsernameAsync(userLoginDto.Username);
-        await userDao.Login(user);
-         */
-        throw new NotImplementedException();
+        
+        User? user = await _userDao.GetByUsernameAsync(dto.Username);
+        if (user != null) await _userDao.Login(user);
     }
 
-    private static void ValidateRegister(UserCreationDto dto)
+    public async Task Logout(string username)
     {
-        
+        User? existing = await _userDao.GetByUsernameAsync(username);
+        if (existing == null)
+            throw new Exception("A user with this username does not exist!");
+        await _userDao.Logout(existing);
+    }
+
+
+    private void ValidateRegister(UserCreationDto dto)
+    {
         if(string.IsNullOrEmpty(dto.Email))
             throw new Exception("Email cannot be empty!");
         if (string.IsNullOrEmpty(dto.FirstName))
@@ -73,14 +78,12 @@ public class UserLogic : IUserLogic
             throw new Exception("Country cannot be empty");
     }
 
-    private static async void ValidateLogin(UserLoginDto dto)
+    private async void ValidateLogin(UserLoginDto dto)
     {
-        /*
-        User? user = await userDao.GetByUsernameAsync(userLoginDto.Username);
+        User? user = await _userDao.GetByUsernameAsync(dto.Username);
         if(user == null)
             throw new Exception("Username or password is incorrect!");
-        if(!user.Password.Equals(userLoginDto.Password)
-            throw new Exception("Username or Password is incorrect!");     
-        */
+        if(!user.Password.Equals(dto.Password))
+            throw new Exception("Username or Password is incorrect!");
     }
 }
