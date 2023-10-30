@@ -7,5 +7,5 @@ public interface IUserLogic
 {
     Task<User> Register(UserCreationDto userCreationDto);
     Task Login(UserLoginDto userLoginDto);
-    Task Logout(string username);
+    Task Logout(UserLoginDto dto);
 }

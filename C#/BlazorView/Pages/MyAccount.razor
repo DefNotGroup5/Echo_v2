@@ -4,9 +4,6 @@
 @inject IUserService userService 
 @using System.ComponentModel.DataAnnotations
 @using HTTPClients.ClientInterfaces
-//add the dependencies/injections here later
-
-//class can have a sentence that says: hey, don't have an account? SignIN here. Or maybe be just a button
 <div class="card">
     <h3>My Account</h3>
     <div class="form-group field">
@@ -35,7 +32,7 @@
      </div>
     <div class="form-group field">
         <label>Password </label>
-        <input type="text" @bind="password" @bind:event="oninput"/>
+        <input type="password" @bind="password" @bind:event="oninput"/>
         @if (!string.IsNullOrEmpty(result))
         {
             <label style="@messageColor">@result</label>
@@ -90,8 +87,7 @@
                     <li class="dropdown-item">
                         <div id = "seller">
                             <p class="text-md">Seller</p>
-                            <label type="button" @bind="isSeller" @bind:event="onclick" @isSeller.Equals(true)> </label>
-
+                            <label type="button" @bind="isSeller" @bind:event="onclick" @isSeller.Equals(true)> </label>    
                         </div>
                     </li>
                 </ul>
@@ -116,6 +112,18 @@
     private bool isSeller = false;
     private string result = "";
     private string messageColor = "";
+    
+    /*
+     <select @bind="completedStatusFilter">
+                    <option value="all">All</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+     */
+    
+    //add bitton register
+    //add link to login
+    //potato
 
     private async Task Create()
     {
@@ -123,7 +131,7 @@
 
         try
         {
-            await userService.CreateAsync(new UserCreationDto(email, email, firstName, lastName, password, address, city, postcode, country, isSeller:isSeller));
+            await userService.CreateAsync(new UserCreationDto(email, firstName, lastName, password, address, city, postcode, country, isSeller:isSeller));
            // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
             firstName = "";
             lastName = "";
