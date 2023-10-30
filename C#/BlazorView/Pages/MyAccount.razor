@@ -8,7 +8,7 @@
     <h3>My Account</h3>
         @if (_isLogin)
         {
-            <!-- Login Form -->
+            //Login form
             <div class="form-group field">
                 <label>Email </label>
                 <input type="email" @bind="email" @bind:event="oninput"/>
@@ -30,6 +30,7 @@
         }
         else
         {
+            //register form
     <div class="form-group field">
         <label>First Name </label>
         <input type="text" @bind="firstName" @bind:event="oninput"/>
