@@ -1,0 +1,150 @@
+@page "/LogInAccount"
+@using Domain.Account.DTOs
+@using HTTPClients.ClientInterfaces
+@inject IUserService userService 
+@using System.ComponentModel.DataAnnotations
+@using HTTPClients.ClientInterfaces
+//add the dependencies/injections here later
+
+//class can have a sentence that says: hey, don't have an account? SignIN here. Or maybe be just a button
+<div class="card">
+    <h3>My Account</h3>
+    <div class="form-group field">
+        <label>First Name </label>
+        <input type="text" @bind="firstName" @bind:event="oninput"/>
+        @if (!string.IsNullOrEmpty(result))
+        {
+            <label style="@messageColor">@result</label>
+        }
+    </div>
+    <div class="form-group field">
+        <label>Last Name </label>
+        <input type="text" @bind="lastName" @bind:event="oninput"/>
+        @if (!string.IsNullOrEmpty(result))
+        {
+            <label style="@messageColor">@result</label>
+        }
+    </div>
+     <div class="form-group field">
+            <label>Email </label>
+            <input type="email" @bind="email" @bind:event="oninput"/>
+            @if (!string.IsNullOrEmpty(result))
+            {
+                <label style="@messageColor">@result</label>
+            }
+     </div>
+    <div class="form-group field">
+        <label>Password </label>
+        <input type="text" @bind="password" @bind:event="oninput"/>
+        @if (!string.IsNullOrEmpty(result))
+        {
+            <label style="@messageColor">@result</label>
+        }
+    </div>
+    <div class="form-group field">
+        <label>Address </label>
+        <input type="text" @bind="address" @bind:event="oninput"/>
+        @if (!string.IsNullOrEmpty(result))
+        {
+            <label style="@messageColor">@result</label>
+        }
+    </div>
+    <div class="form-group field">
+        <label>City </label>
+        <input type="text" @bind="city" @bind:event="oninput"/>
+        @if (!string.IsNullOrEmpty(result))
+        {
+            <label style="@messageColor">@result</label>
+        }
+    </div>
+     <div class="form-group field">
+                <label>Postcode </label>
+                <input type="text" @bind="postcode" @bind:event="oninput"/>
+                @if (!string.IsNullOrEmpty(result))
+                {
+                    <label style="@messageColor">@result</label>
+                }
+     </div>
+    <div class="form-group field">
+        <label>Country </label>
+        <input type="text" @bind="country" @bind:event="oninput"/>
+        @if (!string.IsNullOrEmpty(result))
+        {
+            <label style="@messageColor">@result</label>
+        }
+    </div>
+    
+    <div class="form-group field">
+            <div class="dropdown" id="dropDown">
+                <button class="button-bg" type="button">
+                    <i data-feather="user"></i>
+                    <span>What type of user are you?</span>
+                </button>
+                <ul class="dropdown-list">
+                    <li class="dropdown-item">
+                        <div id = "customer">
+                            <p class="text-md">Costumer</p>
+                            <label type="button" @bind="isSeller" @bind:event="onclick" @isSeller.Equals(false)> </label>
+                        </div>
+                    </li>
+                    <li class="dropdown-item">
+                        <div id = "seller">
+                            <p class="text-md">Seller</p>
+                            <label type="button" @bind="isSeller" @bind:event="onclick" @isSeller.Equals(true)> </label>
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+</div>
+
+
+
+
+@code {
+
+    private string firstName = "";
+    private string lastName = "";
+    private string password = "";
+    //I'll keep the email as string for now, but I'll figure out appropriate type
+    private string email = "";
+    private string address = "";
+    private string city = "";
+    private int postcode = 0;
+    private string country = "";
+    private bool isSeller = false;
+    private string result = "";
+    private string messageColor = "";
+
+    private async Task Create()
+    {
+        result = "";
+
+        try
+        {
+            await userService.CreateAsync(new UserCreationDto(email, email, firstName, lastName, password, address, city, postcode, country, isSeller:isSeller));
+           // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
+            firstName = "";
+            lastName = "";
+            password = "";
+            email = "";
+            address = "";
+            city = "";
+            postcode = 0;
+            country = "";
+            isSeller = false;
+            result = "Success!";
+            messageColor = "green";
+        }
+        catch (Exception e)
+        {
+            await Console.Error.WriteAsync("Something went wrong");
+            Console.WriteLine(e);
+            result = e.Message;
+            messageColor = "red";
+        }
+    }
+
+  }
+}
