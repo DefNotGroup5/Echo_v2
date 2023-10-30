@@ -1,0 +1,17 @@
+{
+  "Users": [
+    {
+      "Id": 1,
+      "Email": "string",
+      "FirstName": "string",
+      "LastName": "string",
+      "Password": "string1234",
+      "Address": "string",
+      "City": "string",
+      "PostalCode": 1234,
+      "Country": "string",
+      "IsSeller": false,
+      "IsLoggedIn": false
+    }
+  ]
+}

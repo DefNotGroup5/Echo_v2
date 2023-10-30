@@ -2,17 +2,17 @@ namespace Domain.Account.DTOs;
 
 public class UserLoginDto
 {
-    public string Username { get; set; }
+    public string Email { get; set; }
     public string Password { get; set; }
 
-    public UserLoginDto(string username, string password)
+    public UserLoginDto(string email, string password)
     {
-        Username = username;
+        Email = email;
         Password = password;
     }
 
-    public UserLoginDto(string username)
-    {
-        Username = username;
-    }
+    // public UserLoginDto(string email)
+    // {
+    //     Email = email;
+    // }
 }

@@ -29,10 +29,10 @@ public class UserFileDao : IUserDao
         return Task.FromResult(user);
     }
 
-    public Task<User?> GetByUsernameAsync(string username)
+    public Task<User?> GetByEmailAsync(string email)
     {
         User? existing =
-            _context.Users?.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            _context.Users?.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
         return Task.FromResult(existing);
     }
 

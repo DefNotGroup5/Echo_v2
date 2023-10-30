@@ -3,7 +3,6 @@ namespace Domain.Account.Models;
 public class User
 {
     public int Id { get; set; }
-    public string Username { get; set; }
     public string Email { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
@@ -15,9 +14,9 @@ public class User
     public bool IsSeller { get; set; }
     public bool IsLoggedIn { get; set; }
 
-    public User(string username, string password)
+    public User(string email, string password)
     {
-        Username = username;
+        Email = email;
         Password = password;
         IsLoggedIn = false;
     }

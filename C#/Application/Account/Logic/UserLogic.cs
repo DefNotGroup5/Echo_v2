@@ -17,15 +17,14 @@ public class UserLogic : IUserLogic
     public async Task<User> Register(UserCreationDto dto)
     {
         
-        User? user = await _userDao.GetByUsernameAsync(dto.Username);
+        User? user = await _userDao.GetByEmailAsync(dto.Email);
         if(user != null)
             throw new Exception("Username is already taken!");    
         
         ValidateRegister(dto);
         
-        User userToCreate = new User(dto.Username, dto.Password)
+        User userToCreate = new User(dto.Email, dto.Password)
         {
-            Email = dto.Email,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Password = dto.Password,
@@ -43,13 +42,13 @@ public class UserLogic : IUserLogic
     {
         ValidateLogin(dto);
         
-        User? user = await _userDao.GetByUsernameAsync(dto.Username);
+        User? user = await _userDao.GetByEmailAsync(dto.Email);
         if (user != null) await _userDao.Login(user);
     }
 
-    public async Task Logout(string username)
+    public async Task Logout(UserLoginDto dto)
     {
-        User? existing = await _userDao.GetByUsernameAsync(username);
+        User? existing = await _userDao.GetByEmailAsync(dto.Email);
         if (existing == null)
             throw new Exception("A user with this username does not exist!");
         await _userDao.Logout(existing);
@@ -80,7 +79,7 @@ public class UserLogic : IUserLogic
 
     private async void ValidateLogin(UserLoginDto dto)
     {
-        User? user = await _userDao.GetByUsernameAsync(dto.Username);
+        User? user = await _userDao.GetByEmailAsync(dto.Email);
         if(user == null)
             throw new Exception("Username or password is incorrect!");
         if(!user.Password.Equals(dto.Password))

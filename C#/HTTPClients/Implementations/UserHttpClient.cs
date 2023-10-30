@@ -16,7 +16,7 @@ public class UserHttpClient : IUserService
     
     public UserHttpClient(HttpClient client)
     {
-        this._client = client;
+        _client = client;
     }
     
     public async Task<User> CreateAsync(UserCreationDto dto)
@@ -35,39 +35,40 @@ public class UserHttpClient : IUserService
         return user;
     }
     
-    public async Task<IEnumerable<User>> GetUsersAsync(string? usernameContains = null)
-    {
-        string uri = "/Users";
-        if (!string.IsNullOrEmpty(usernameContains))
-        {
-            uri += $"?username={usernameContains}";
-        }
-        HttpResponseMessage response = await _client.GetAsync(uri);
-        string result = await response.Content.ReadAsStringAsync();
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception(result);
-        }
-
-        IEnumerable<User> users = JsonSerializer.Deserialize<IEnumerable<User>>(result, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        })!;
-        return users;
-    }
+     //public async Task<IEnumerable<User>> GetUsersAsync(string? usernameContains = null)
+     //{
+    //     string uri = "/Users";
+    //     if (!string.IsNullOrEmpty(usernameContains))
+    //     {
+    //         uri += $"?username={usernameContains}";
+    //     }
+    //     HttpResponseMessage response = await _client.GetAsync(uri);
+    //     string result = await response.Content.ReadAsStringAsync();
+    //     if (!response.IsSuccessStatusCode)
+    //     {
+    //         throw new Exception(result);
+    //     }
+    //
+    //     IEnumerable<User> users = JsonSerializer.Deserialize<IEnumerable<User>>(result, new JsonSerializerOptions
+    //     {
+    //         PropertyNameCaseInsensitive = true
+    //     })!;
+    //     return users;
+    //throw new NotImplementedException();
+     //}
     
-    public async Task LoginAsync(string username, string password)
+    public async Task LoginAsync(string email, string password)
     {
-        UserLoginDto userLoginDto = new(username,password)
+        UserLoginDto userLoginDto = new(email,password)
         {
-            Username = username,
+            Email = email,
             Password = password
         };
 
         string userAsJson = JsonSerializer.Serialize(userLoginDto);
         StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
 
-        HttpResponseMessage response = await _client.PostAsync("https://localhost:7130/auth/login", content);
+        HttpResponseMessage response = await _client.PostAsync("/Users/Login", content);
         string responseContent = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -82,29 +83,34 @@ public class UserHttpClient : IUserService
 
         OnAuthStateChanged.Invoke(principal);
     }
-    
-    public async Task LogoutAsync()
-    {
-        ClaimsPrincipal principal = CreateClaimsPrincipal();
-        Claim? usernameClaim = principal.FindFirst(ClaimTypes.Name);
-        
-        string username = usernameClaim?.Value ?? "";
-        
-        UserLoginDto dto = new UserLoginDto(username);
-        string dtoAsJson = JsonSerializer.Serialize(dto);
-        StringContent body = new StringContent(dtoAsJson, Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await _client.PatchAsync("/Users/Logout", body);
 
-        if (!response.IsSuccessStatusCode)
-        {
-            string result = await response.Content.ReadAsStringAsync();
-            throw new Exception(result);
-        }
-    
-        Jwt = null;
-        principal = new ClaimsPrincipal(); // Create an empty ClaimsPrincipal
-        OnAuthStateChanged.Invoke(principal);
+    public Task LogoutAsync()
+    {
+        throw new NotImplementedException();
     }
+
+    // public async Task LogoutAsync()
+    // {
+    //     ClaimsPrincipal principal = CreateClaimsPrincipal();
+    //     Claim? usernameClaim = principal.FindFirst(ClaimTypes.Name);
+    //     
+    //     string username = usernameClaim?.Value ?? "";
+    //     
+    //     UserLoginDto dto = new UserLoginDto(username);
+    //     string dtoAsJson = JsonSerializer.Serialize(dto);
+    //     StringContent body = new StringContent(dtoAsJson, Encoding.UTF8, "application/json");
+    //     HttpResponseMessage response = await _client.PatchAsync("/Users/Logout", body);
+    //
+    //     if (!response.IsSuccessStatusCode)
+    //     {
+    //         string result = await response.Content.ReadAsStringAsync();
+    //         throw new Exception(result);
+    //     }
+    //
+    //     Jwt = null;
+    //     principal = new ClaimsPrincipal(); // Create an empty ClaimsPrincipal
+    //     OnAuthStateChanged.Invoke(principal);
+    // }
     
     public Task<ClaimsPrincipal> GetAuthAsync()
     {
@@ -149,17 +155,17 @@ public class UserHttpClient : IUserService
         return principal;
     }
     
-    public async Task RegisterAsync(User user)
-    {
-        string userAsJson = JsonSerializer.Serialize(user);
-        StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await _client.PostAsync("https://localhost:7130/auth/register", content);
-        string responseContent = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception(responseContent);
-        }
-    }
+    // public async Task RegisterAsync(User user)
+    // {
+    //     string userAsJson = JsonSerializer.Serialize(user);
+    //     StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
+    //     HttpResponseMessage response = await _client.PostAsync("https://localhost:7130/auth/register", content);
+    //     string responseContent = await response.Content.ReadAsStringAsync();
+    //
+    //     if (!response.IsSuccessStatusCode)
+    //     {
+    //         throw new Exception(responseContent);
+    //     }
+    // }
     
 }
