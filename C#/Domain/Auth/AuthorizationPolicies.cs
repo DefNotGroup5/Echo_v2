@@ -1,19 +1,26 @@
 using Microsoft.Extensions.DependencyInjection;
 
+namespace Domain.Auth;
 
-namespace Domain.Auth
-
-{    
-    public class AuthorizationPolicies
+public class AuthorizationPolicies
+{
+    public static void AddPolicies(IServiceCollection services)
     {
-        public static void AddPolicies(IServiceCollection services)
+        services.AddAuthorizationCore(options =>
         {
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("MustBeLoggedIn", policy =>
-                    policy.RequireAuthenticatedUser()
-                        .RequireClaim("IsLoggedIn", "true"));
-            });
-        }
+            options.AddPolicy("MustBeLoggedIn", policy =>
+                policy.RequireAuthenticatedUser()
+                    .RequireAssertion(context =>
+                    {
+                        var isLoggedInClaim = context.User.FindFirst("IsLoggedIn");
+                        if (isLoggedInClaim != null && bool.TryParse(isLoggedInClaim.Value, out var isLoggedIn))
+                        {
+                            return isLoggedIn;
+                        }
+
+                        return false;
+                    }));
+        });
+
     }
 }
