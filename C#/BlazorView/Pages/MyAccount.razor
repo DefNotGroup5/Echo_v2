@@ -4,11 +4,33 @@
 @inject IUserService userService 
 @using System.ComponentModel.DataAnnotations
 @using HTTPClients.ClientInterfaces
-//add the dependencies/injections here later
-
-//class can have a sentence that says: hey, don't have an account? SignIN here. Or maybe be just a button
 <div class="card">
     <h3>My Account</h3>
+        @if (_isLogin)
+        {
+            //Login form
+            <div class="form-group field">
+                <label>Email </label>
+                <input type="email" @bind="email" @bind:event="oninput"/>
+                @if (!string.IsNullOrEmpty(result))
+                {
+                    <label style="@messageColor">@result</label>
+                }
+            </div>
+            <div class="form-group field">
+                <label>Password </label>
+                <input type="password" @bind="password" @bind:event="oninput"/>
+                @if (!string.IsNullOrEmpty(result))
+                {
+                    <label style="@messageColor">@result</label>
+                }
+            </div>
+            <button @onclick="LoginAsync">Login</button>
+            <button @onclick="SwitchToRegister">Switch to Register</button>
+        }
+        else
+        {
+            //register form
     <div class="form-group field">
         <label>First Name </label>
         <input type="text" @bind="firstName" @bind:event="oninput"/>
@@ -35,7 +57,7 @@
      </div>
     <div class="form-group field">
         <label>Password </label>
-        <input type="text" @bind="password" @bind:event="oninput"/>
+        <input type="password" @bind="password" @bind:event="oninput"/>
         @if (!string.IsNullOrEmpty(result))
         {
             <label style="@messageColor">@result</label>
@@ -65,38 +87,24 @@
                     <label style="@messageColor">@result</label>
                 }
      </div>
-    <div class="form-group field">
-        <label>Country </label>
-        <input type="text" @bind="country" @bind:event="oninput"/>
-        @if (!string.IsNullOrEmpty(result))
-        {
-            <label style="@messageColor">@result</label>
+     <div class="form-group field">
+                <label>Country </label>
+                <input type="text" @bind="country" @bind:event="oninput"/>
+                @if (!string.IsNullOrEmpty(result))
+                {
+                    <label style="@messageColor">@result</label>
+                }
+     </div>
+            <div class="form-group field">
+                <label>What type of user are you?</label>
+                <select @bind="isSeller">
+                    <option value="false">Customer</option>
+                    <option value="true">Seller</option>
+                </select>
+            </div> 
+            <button @onclick="Create">Register</button>
+            <button @onclick="SwitchToLogin">Switch to Login</button>
         }
-    </div>
-    
-    <div class="form-group field">
-            <div class="dropdown" id="dropDown">
-                <button class="button-bg" type="button">
-                    <i data-feather="user"></i>
-                    <span>What type of user are you?</span>
-                </button>
-                <ul class="dropdown-list">
-                    <li class="dropdown-item">
-                        <div id = "customer">
-                            <p class="text-md">Costumer</p>
-                            <label type="button" @bind="isSeller" @bind:event="onclick" @isSeller.Equals(false)> </label>
-                        </div>
-                    </li>
-                    <li class="dropdown-item">
-                        <div id = "seller">
-                            <p class="text-md">Seller</p>
-                            <label type="button" @bind="isSeller" @bind:event="onclick" @isSeller.Equals(true)> </label>
-
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
 </div>
 
 
@@ -116,6 +124,38 @@
     private bool isSeller = false;
     private string result = "";
     private string messageColor = "";
+    private bool _isLogin = true;
+
+    private void SwitchToRegister()
+    {
+        _isLogin = false;
+        ClearFields();
+    }
+
+    private void SwitchToLogin()
+    {
+        _isLogin = true;
+        ClearFields();
+    }
+
+    private void ClearFields()
+    {
+        email = "";
+        password = "";
+        result = "";
+        messageColor = "";
+    }
+    /*
+     <select @bind="completedStatusFilter">
+                    <option value="all">All</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+     */
+    
+    //add bitton register
+    //add link to login
+    //potato
 
     private async Task Create()
     {
@@ -123,7 +163,7 @@
 
         try
         {
-            await userService.CreateAsync(new UserCreationDto(email, email, firstName, lastName, password, address, city, postcode, country, isSeller:isSeller));
+            await userService.CreateAsync(new UserCreationDto(email, firstName, lastName, password, address, city, postcode, country, isSeller:isSeller));
            // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
             firstName = "";
             lastName = "";
@@ -136,6 +176,28 @@
             isSeller = false;
             result = "Success!";
             messageColor = "green";
+        }
+        catch (Exception e)
+        {
+            await Console.Error.WriteAsync("Something went wrong");
+            Console.WriteLine(e);
+            result = e.Message;
+            messageColor = "red";
+        }
+    }
+    
+    private async Task LoginAsync()
+    {
+        result = "";
+
+        try
+        {
+            await userService.LoginAsync(email, password);
+    // Clear the fields on successful login
+            email = "";
+            password = "";
+            result = "User Successfully Logged In";
+    // Add the necessary navigation logic if required
         }
         catch (Exception e)
         {
