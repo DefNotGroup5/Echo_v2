@@ -1,6 +1,32 @@
 {
   "Users": [
     {
+      "Id": 2,
+      "Email": "wergegeg",
+      "FirstName": "rgweg",
+      "LastName": "weg",
+      "Password": "ewgwrgerger",
+      "Address": "wegwergwse",
+      "City": "rgwerrgwer",
+      "PostalCode": 123141,
+      "Country": "rgwerrgwer",
+      "IsSeller": false,
+      "IsLoggedIn": false
+    },
+    {
+      "Id": 3,
+      "Email": "wefqefq",
+      "FirstName": "fwafq",
+      "LastName": "wefqfq",
+      "Password": "efqwefwqef",
+      "Address": "fqewfqefqw",
+      "City": "efqwefqwef",
+      "PostalCode": 123145,
+      "Country": "efqwefqwef",
+      "IsSeller": false,
+      "IsLoggedIn": false
+    },
+    {
       "Id": 1,
       "Email": "string",
       "FirstName": "string",
