@@ -24,7 +24,7 @@ public class UsersController : ControllerBase
         try
         {
             User user = await _userLogic.Register(userCreationDto);
-            return Created($"/user/{user.Id}", user);
+            return Created($"/Users/{user.Id}", user);
 
         }
         catch (Exception e)

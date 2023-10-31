@@ -68,7 +68,7 @@ public class UserHttpClient : IUserService
         string userAsJson = JsonSerializer.Serialize(userLoginDto);
         StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
 
-        HttpResponseMessage response = await _client.PostAsync("/Users/Login", content);
+        HttpResponseMessage response = await _client.PatchAsync("/Users/Login", content);
         string responseContent = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -79,9 +79,9 @@ public class UserHttpClient : IUserService
         string token = responseContent;
         Jwt = token;
 
-        ClaimsPrincipal principal = CreateClaimsPrincipal();
+        //ClaimsPrincipal principal = CreateClaimsPrincipal();
 
-        OnAuthStateChanged.Invoke(principal);
+        //OnAuthStateChanged.Invoke(principal);
     }
 
     public Task LogoutAsync()
