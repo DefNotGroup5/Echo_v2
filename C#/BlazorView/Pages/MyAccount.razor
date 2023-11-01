@@ -1,7 +1,7 @@
 @page "/LogInAccount"
 @using Domain.Account.DTOs
 @using HTTPClients.ClientInterfaces
-@inject IUserService userService 
+@inject IUserService UserService 
 @using System.ComponentModel.DataAnnotations
 @using HTTPClients.ClientInterfaces
 <div class="card">
@@ -11,7 +11,7 @@
             //Login form
             <div class="form-group field">
                 <label>Email </label>
-                <input type="email" @bind="email" @bind:event="oninput"/>
+                <input type="email" @bind="_email" @bind:event="oninput"/>
                 @if (!string.IsNullOrEmpty(result))
                 {
                     <label style="@messageColor">@result</label>
@@ -19,7 +19,7 @@
             </div>
             <div class="form-group field">
                 <label>Password </label>
-                <input type="password" @bind="password" @bind:event="oninput"/>
+                <input type="password" @bind="_password" @bind:event="oninput"/>
                 @if (!string.IsNullOrEmpty(result))
                 {
                     <label style="@messageColor">@result</label>
@@ -33,7 +33,7 @@
             //register form
     <div class="form-group field">
         <label>First Name </label>
-        <input type="text" @bind="firstName" @bind:event="oninput"/>
+        <input type="text" @bind="_firstName" @bind:event="oninput"/>
         @if (!string.IsNullOrEmpty(result))
         {
             <label style="@messageColor">@result</label>
@@ -41,7 +41,7 @@
     </div>
     <div class="form-group field">
         <label>Last Name </label>
-        <input type="text" @bind="lastName" @bind:event="oninput"/>
+        <input type="text" @bind="_lastName" @bind:event="oninput"/>
         @if (!string.IsNullOrEmpty(result))
         {
             <label style="@messageColor">@result</label>
@@ -49,7 +49,7 @@
     </div>
      <div class="form-group field">
             <label>Email </label>
-            <input type="email" @bind="email" @bind:event="oninput"/>
+            <input type="email" @bind="_email" @bind:event="oninput"/>
             @if (!string.IsNullOrEmpty(result))
             {
                 <label style="@messageColor">@result</label>
@@ -57,7 +57,7 @@
      </div>
     <div class="form-group field">
         <label>Password </label>
-        <input type="password" @bind="password" @bind:event="oninput"/>
+        <input type="password" @bind="_password" @bind:event="oninput"/>
         @if (!string.IsNullOrEmpty(result))
         {
             <label style="@messageColor">@result</label>
@@ -65,7 +65,7 @@
     </div>
     <div class="form-group field">
         <label>Address </label>
-        <input type="text" @bind="address" @bind:event="oninput"/>
+        <input type="text" @bind="_address" @bind:event="oninput"/>
         @if (!string.IsNullOrEmpty(result))
         {
             <label style="@messageColor">@result</label>
@@ -97,7 +97,7 @@
      </div>
             <div class="form-group field">
                 <label>What type of user are you?</label>
-                <select @bind="isSeller">
+                <select @bind="type">
                     <option value="false">Customer</option>
                     <option value="true">Seller</option>
                 </select>
@@ -112,12 +112,12 @@
 
 @code {
 
-    private string firstName = "";
-    private string lastName = "";
-    private string password = "";
+    private string _firstName = "";
+    private string _lastName = "";
+    private string _password = "";
     //I'll keep the email as string for now, but I'll figure out appropriate type
-    private string email = "";
-    private string address = "";
+    private string _email = "";
+    private string _address = "";
     private string city = "";
     private int postcode = 0;
     private string country = "";
@@ -125,6 +125,9 @@
     private string result = "";
     private string messageColor = "";
     private bool _isLogin = true;
+    private string type;
+    
+    
 
     private void SwitchToRegister()
     {
@@ -140,8 +143,8 @@
 
     private void ClearFields()
     {
-        email = "";
-        password = "";
+        _email = "";
+        _password = "";
         result = "";
         messageColor = "";
     }
@@ -163,13 +166,21 @@
 
         try
         {
-            await userService.CreateAsync(new UserCreationDto(email, firstName, lastName, password, address, city, postcode, country, isSeller:isSeller));
+            if (type != null && type.Equals("false"))
+            {
+                isSeller = false;
+            }
+            if (type != null && type.Equals("true"))
+            {
+                isSeller = true;
+            }
+            await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, city, postcode, country, isSeller:isSeller));
            // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
-            firstName = "";
-            lastName = "";
-            password = "";
-            email = "";
-            address = "";
+            _firstName = "";
+            _lastName = "";
+            _password = "";
+            _email = "";
+            _address = "";
             city = "";
             postcode = 0;
             country = "";
@@ -192,10 +203,10 @@
 
         try
         {
-            await userService.LoginAsync(email, password);
+            await UserService.LoginAsync(_email, _password);
     // Clear the fields on successful login
-            email = "";
-            password = "";
+            _email = "";
+            _password = "";
             result = "User Successfully Logged In";
     // Add the necessary navigation logic if required
         }
