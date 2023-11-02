@@ -37,6 +37,7 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
 
             userRepository.save(user);
             AddResponse response = AddResponse.newBuilder().setResult("User Added!").build();
+            System.out.println("User added");
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }

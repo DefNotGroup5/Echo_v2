@@ -1,0 +1,46 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "GrpcClientServices";
+
+service UsersService {
+  rpc Update (UpdateRequest) returns (UpdateResponse);
+  rpc Add (AddRequest) returns (AddResponse);
+}
+
+message AddRequest {
+  int32 id = 1;
+  string email = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string password = 5;
+  string address = 6;
+  string city = 7;
+  int32 postalCode = 8;
+  string country = 9;
+  bool isSeller = 10;
+  bool isLoggedIn = 11;
+}
+
+message AddResponse {
+  string result = 1;
+}
+
+message UpdateRequest {
+  int32 id = 1;
+  string email = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string password = 5;
+  string address = 6;
+  string city = 7;
+  int32 postalCode = 8;
+  string country = 9;
+  bool isSeller = 10;
+  bool isLoggedIn = 11;
+}
+
+message UpdateResponse {
+  string result = 1;
+}
