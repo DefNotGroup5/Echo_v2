@@ -29,14 +29,13 @@ public class UserEntity {
   private String country;
   @Column
   private boolean isSeller;
-  @Column
-  private boolean isLoggedIn;
+
 
   public UserEntity() {}
 
   public UserEntity(int id, String email, String firstName, String lastName,
       String password, String address, String city, int postalCode,
-      String country, boolean isSeller, boolean isLoggedIn)
+      String country, boolean isSeller)
   {
     this.id = id;
     this.email = email;
@@ -48,7 +47,6 @@ public class UserEntity {
     this.postalCode = postalCode;
     this.country = country;
     this.isSeller = isSeller;
-    this.isLoggedIn = isLoggedIn;
   }
 
   public int getId()
@@ -151,13 +149,4 @@ public class UserEntity {
     isSeller = seller;
   }
 
-  public boolean isLoggedIn()
-  {
-    return isLoggedIn;
-  }
-
-  public void setLoggedIn(boolean loggedIn)
-  {
-    isLoggedIn = loggedIn;
-  }
 }
