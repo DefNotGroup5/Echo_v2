@@ -1,8 +1,13 @@
-﻿using Application.Account.LogicInterfaces;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Application.Account.LogicInterfaces;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
 using Microsoft.AspNetCore.Http.HttpResults;    
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace Account_Web_Api.Controllers;
 
@@ -11,11 +16,55 @@ namespace Account_Web_Api.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserLogic _userLogic;
+    private readonly IConfiguration _config;
 
-    public UsersController(IUserLogic userLogic)
+    public UsersController(IConfiguration config, IUserLogic userLogic)
     {
+        _config = config;
         _userLogic = userLogic;
     }
+    private List<Claim> GenerateClaims(User user)
+    {
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, _config["Jwt:Subject"] ?? string.Empty),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+            new Claim(ClaimTypes.Name, user.FirstName),
+            new Claim(ClaimTypes.Surname, user.LastName),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.StreetAddress, user.Address),
+            new Claim("City", user.City),
+            new Claim(ClaimTypes.Country, user.Country),
+            new Claim(ClaimTypes.PostalCode, user.PostalCode.ToString()),
+            new Claim("Email", user.Email),
+            new Claim("IsSeller", user.IsSeller.ToString()),
+        };
+        return claims.ToList();
+    }
+    
+    private string GenerateJwt(User user)
+    {
+        List<Claim> claims = GenerateClaims(user);
+    
+        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+        SigningCredentials signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
+    
+        JwtHeader header = new JwtHeader(signIn);
+    
+        JwtPayload payload = new JwtPayload(
+            _config["Jwt:Issuer"],
+            _config["Jwt:Audience"],
+            claims, 
+            null,
+            DateTime.UtcNow.AddMinutes(60));
+    
+        JwtSecurityToken token = new JwtSecurityToken(header, payload);
+    
+        string serializedToken = new JwtSecurityTokenHandler().WriteToken(token);
+        return serializedToken;
+    }
+    
 
 
     [HttpPost]
@@ -23,7 +72,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-            User user = await _userLogic.Register(userCreationDto);
+            User? user = await _userLogic.Register(userCreationDto);
             return Created($"/Users/{user.Id}", user);
 
         }
@@ -43,7 +92,12 @@ public class UsersController : ControllerBase
     {
         try
         {
-            await _userLogic.Login(userLoginDto);
+            User? user = await _userLogic.Login(userLoginDto);
+            if (user != null)
+            {
+                string token = GenerateJwt(user);
+            }
+
             return Ok();
         }
         catch (Exception e)
