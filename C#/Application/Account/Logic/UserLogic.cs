@@ -1,23 +1,22 @@
-﻿using System.Net.Security;
-using Application.Account.DaoInterfaces;
+﻿using Application.Account.DaoInterfaces;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
+using GrpcClientServices.Services;
 
 namespace Application.Account.LogicInterfaces;
 
 public class UserLogic : IUserLogic
 {
-    private readonly IUserDao _userDao;
+    private readonly UsersService _usersService;
 
-    public UserLogic(IUserDao userDao)
+    public UserLogic(UsersService usersService)
     {
-        _userDao = userDao;
+        _usersService = usersService;
     }
-    
-    public async Task<User> Register(UserCreationDto dto)
+
+    public async Task<User?> Register(UserCreationDto dto)
     {
-        
-        User? user = await _userDao.GetByEmailAsync(dto.Email);
+        User? user = await _usersService.GetByEmailAsync(dto.Email);
         if(user != null)
             throw new Exception("Username is already taken!");    
         
@@ -34,24 +33,16 @@ public class UserLogic : IUserLogic
             Country = dto.City,
             IsSeller = dto.IsSeller
         };
-        User created = await _userDao.CreateAsync(userToCreate);
+        await _usersService.AddAsync(userToCreate);
+        User? created = await _usersService.GetByEmailAsync(dto.Email);
         return created;
     }
 
-    public async Task Login(UserLoginDto dto)
+    public async Task<User?> Login(UserLoginDto dto)
     {
         ValidateLogin(dto);
-        
-        User? user = await _userDao.GetByEmailAsync(dto.Email);
-        if (user != null) await _userDao.Login(user);
-    }
-
-    public async Task Logout(UserLoginDto dto)
-    {
-        User? existing = await _userDao.GetByEmailAsync(dto.Email);
-        if (existing == null)
-            throw new Exception("A user with this username does not exist!");
-        await _userDao.Logout(existing);
+        User? user = await _usersService.GetByEmailAsync(dto.Email);
+        return user;
     }
 
 
@@ -79,7 +70,7 @@ public class UserLogic : IUserLogic
 
     private async void ValidateLogin(UserLoginDto dto)
     {
-        User? user = await _userDao.GetByEmailAsync(dto.Email);
+        User? user = await _usersService.GetByEmailAsync(dto.Email);
         if(user == null)
             throw new Exception("Username or password is incorrect!");
         if(!user.Password.Equals(dto.Password))

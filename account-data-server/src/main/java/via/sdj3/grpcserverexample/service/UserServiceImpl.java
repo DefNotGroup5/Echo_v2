@@ -22,21 +22,11 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     public void add(AddRequest request, StreamObserver<AddResponse> responseObserver) {
         try
         {
-            UserEntity user = new UserEntity();
-            user.setId(request.getId());
-            user.setEmail(request.getEmail());
-            user.setFirstName(request.getFirstName());
-            user.setLastName(request.getLastName());
-            user.setPassword(request.getPassword());
-            user.setAddress(request.getAddress());
-            user.setCity(request.getCity());
-            user.setPostalCode(request.getPostalCode());
-            user.setCountry(request.getCountry());
-            user.setSeller(request.getIsSeller());
-            user.setLoggedIn(request.getIsLoggedIn());
-
-            userRepository.save(user);
+            GrpcUser user = request.getUser();
+            UserEntity userToBeAdded = generateUserEntity(request.getUser());
+            userRepository.save(userToBeAdded);
             AddResponse response = AddResponse.newBuilder().setResult("User Added!").build();
+            System.out.println("User added");
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }
@@ -51,23 +41,12 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     public void update(UpdateRequest request, StreamObserver<UpdateResponse> responseObserver) {
         try
         {
-            UserEntity old = userRepository.getReferenceById(request.getId());
-            UserEntity user = old;
-            user.setId(request.getId());
-            user.setEmail(request.getEmail());
-            user.setFirstName(request.getFirstName());
-            user.setLastName(request.getLastName());
-            user.setPassword(request.getPassword());
-            user.setAddress(request.getAddress());
-            user.setCity(request.getCity());
-            user.setPostalCode(request.getPostalCode());
-            user.setCountry(request.getCountry());
-            user.setSeller(request.getIsSeller());
-            user.setLoggedIn(request.getIsLoggedIn());
-
-            userRepository.save(user);
-            userRepository.findAll().remove(old);
-
+            GrpcUser user = request.getUser();
+            UserEntity oldUser = userRepository.findById(user.getId())
+                    .orElseThrow(() -> new StatusRuntimeException(Status.NOT_FOUND.withDescription("User not found")));
+            UserEntity updatedUser = generateUserEntity(request.getUser());
+            userRepository.save(updatedUser);
+            userRepository.findAll().remove(oldUser);
             UpdateResponse response = UpdateResponse.newBuilder().setResult("User updated!").build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
@@ -77,5 +56,64 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
             Status status = Status.INTERNAL.withDescription("Error updating user");
             responseObserver.onError(new StatusRuntimeException(status));
         }
+    }
+
+    @Override
+    public void getByEmail(GetByEmailRequest request, StreamObserver<GetByEmailResponse> responseObserver) {
+        try
+        {
+            UserEntity existingUser = null;
+            //user = userRepository.getByEmail(request.getEmail());
+            GetByEmailResponse response = GetByEmailResponse.newBuilder().setUser(generateGrpcUser(existingUser)).build();
+           responseObserver.onNext(response);
+           responseObserver.onCompleted();
+        }
+        catch (Exception e)
+        {
+            Status status = Status.INTERNAL.withDescription("Error getting by email!");
+            responseObserver.onError(new StatusRuntimeException(status));
+        }
+    }
+
+    @Override
+    public void getById(GetByIdRequest request, StreamObserver<GetByIdResponse> responseObserver) {
+        try
+        {
+            UserEntity existingUser = userRepository.getReferenceById(request.getId());
+            GetByIdResponse response = GetByIdResponse.newBuilder().setUser(generateGrpcUser(existingUser)).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }
+        catch (Exception e)
+        {
+            Status status = Status.INTERNAL.withDescription("Error getting by ID!");
+            responseObserver.onError(new StatusRuntimeException(status));
+        }
+    }
+
+    private UserEntity generateUserEntity(GrpcUser user)
+    {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(user.getId());
+        userEntity.setFirstName(user.getFirstName());
+        userEntity.setLastName(user.getLastName());
+        userEntity.setAddress(user.getAddress());
+        userEntity.setEmail(user.getEmail());
+        userEntity.setSeller(user.getIsSeller());
+        userEntity.setCity(user.getCity());
+        userEntity.setCountry(user.getCountry());
+        userEntity.setPostalCode(user.getPostalCode());
+        userEntity.setPassword(user.getPassword());
+        return userEntity;
+    }
+
+    private GrpcUser generateGrpcUser(UserEntity userEntity)
+    {
+        GrpcUser user = GrpcUser.newBuilder()
+                .setId(userEntity.getId()).setFirstName(userEntity.getFirstName()).setLastName(userEntity.getLastName())
+                .setAddress(userEntity.getAddress()).setEmail(userEntity.getEmail()).setIsSeller(userEntity.isSeller())
+                .setCity(userEntity.getCity()).setCountry(userEntity.getCountry())
+                .setPostalCode(userEntity.getPostalCode()).setPassword(userEntity.getPassword()).build();
+        return user;
     }
 }
