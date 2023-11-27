@@ -165,7 +165,6 @@ public class UserHttpClient : IUserService
     //     if (!response.IsSuccessStatusCode)
     //     {
     //         throw new Exception(responseContent);
-    //     }
-    // }
+    //     }}
     
 }
