@@ -9,6 +9,8 @@ import via.sdj3.grpcserverexample.entities.UserEntity;
 import via.sdj3.grpcserverexample.repository.UserRepository;
 import via.sdj3.protobuf.*;
 
+import java.util.Optional;
+
 @GrpcService
 public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     private UserRepository userRepository;
@@ -62,9 +64,8 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     public void getByEmail(GetByEmailRequest request, StreamObserver<GetByEmailResponse> responseObserver) {
         try
         {
-            UserEntity existingUser = null;
-            //user = userRepository.getByEmail(request.getEmail());
-            GetByEmailResponse response = GetByEmailResponse.newBuilder().setUser(generateGrpcUser(existingUser)).build();
+            Optional<UserEntity> existingUser = userRepository.getByEmail(request.getEmail());
+            GetByEmailResponse response = GetByEmailResponse.newBuilder().setUser(generateGrpcUser(existingUser.get())).build();
            responseObserver.onNext(response);
            responseObserver.onCompleted();
         }
