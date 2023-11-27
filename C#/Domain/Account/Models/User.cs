@@ -12,12 +12,10 @@ public class User
     public long PostalCode { get; set; }
     public string Country { get; set; }
     public bool IsSeller { get; set; }
-    public bool IsLoggedIn { get; set; }
 
     public User(string email, string password)
     {
         Email = email;
         Password = password;
-        IsLoggedIn = false;
     }
 }
