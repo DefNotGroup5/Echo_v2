@@ -68,6 +68,7 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
             GetByEmailResponse response = GetByEmailResponse.newBuilder().setUser(generateGrpcUser(existingUser.get())).build();
            responseObserver.onNext(response);
            responseObserver.onCompleted();
+            System.out.println("Ya");
         }
         catch (Exception e)
         {

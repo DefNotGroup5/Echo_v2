@@ -45,7 +45,6 @@ public class UserLogic : IUserLogic
         return user;
     }
 
-
     private void ValidateRegister(UserCreationDto dto)
     {
         if(string.IsNullOrEmpty(dto.Email))

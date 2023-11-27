@@ -81,23 +81,19 @@ public class UsersController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
-    
-    
-    
-    
+
     [HttpPatch("Login")]
     public async Task<ActionResult> Login(UserLoginDto userLoginDto)
     {
         try
         {
             User? user = await _userLogic.Login(userLoginDto);
+            string token = "";
             if (user != null)
             {
-                string token = GenerateJwt(user);
+                token = GenerateJwt(user);
             }
-
-            return Ok();
+            return Ok(token);
         }
         catch (Exception e)
         {

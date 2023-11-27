@@ -203,7 +203,8 @@
 
         try
         {
-            await UserService.LoginAsync(_email, _password);
+            UserLoginDto dto = new UserLoginDto(_email, _password);
+            await UserService.LoginAsync(dto);
     // Clear the fields on successful login
             _email = "";
             _password = "";
