@@ -27,6 +27,8 @@ public class UserEntity {
   private int postalCode;
   @Column
   private String country;
+  @Column
+  private boolean isSeller;
 
   public UserEntity() {}
 
