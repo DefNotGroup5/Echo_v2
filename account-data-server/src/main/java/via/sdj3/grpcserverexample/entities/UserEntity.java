@@ -30,7 +30,6 @@ public class UserEntity {
   @Column
   private boolean isSeller;
 
-
   public UserEntity() {}
 
   public UserEntity(int id, String email, String firstName, String lastName,

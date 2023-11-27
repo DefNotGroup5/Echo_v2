@@ -9,11 +9,9 @@ option java_outer_classname = "UsersProto";
 service UsersService {
   rpc Update (UpdateRequest) returns (UpdateResponse);
   rpc Add (AddRequest) returns (AddResponse);
-  rpc GetByEmail (GetByEmailRequest) returns (GetByEmailResponse);
-  rpc GetById (GetByIdRequest) returns (GetByIdResponse);
 }
 
-message GrpcUser {
+message AddRequest {
   int32 id = 1;
   string email = 2;
   string firstName = 3;
@@ -24,26 +22,7 @@ message GrpcUser {
   int32 postalCode = 8;
   string country = 9;
   bool isSeller = 10;
-}
-
-message GetByEmailRequest {
-  string email = 1;
-}
-
-message GetByEmailResponse {
-  GrpcUser user = 1;
-}
-
-message GetByIdRequest {
-  int32 id = 1;
-}
-
-message GetByIdResponse {
-  GrpcUser user = 1;
-}
-
-message AddRequest {
-  GrpcUser user = 1;
+  bool isLoggedIn = 11;
 }
 
 message AddResponse {
@@ -51,7 +30,17 @@ message AddResponse {
 }
 
 message UpdateRequest {
-  GrpcUser user = 1;
+  int32 id = 1;
+  string email = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string password = 5;
+  string address = 6;
+  string city = 7;
+  int32 postalCode = 8;
+  string country = 9;
+  bool isSeller = 10;
+  bool isLoggedIn = 11;
 }
 
 message UpdateResponse {
