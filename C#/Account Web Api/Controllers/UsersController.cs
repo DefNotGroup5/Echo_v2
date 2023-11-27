@@ -37,7 +37,6 @@ public class UsersController : ControllerBase
             new Claim("City", user.City),
             new Claim(ClaimTypes.Country, user.Country),
             new Claim(ClaimTypes.PostalCode, user.PostalCode.ToString()),
-            new Claim("Email", user.Email),
             new Claim("IsSeller", user.IsSeller.ToString()),
         };
         return claims.ToList();
