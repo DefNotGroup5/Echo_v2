@@ -33,7 +33,6 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
             user.setPostalCode(request.getPostalCode());
             user.setCountry(request.getCountry());
             user.setSeller(request.getIsSeller());
-            user.setLoggedIn(request.getIsLoggedIn());
 
             userRepository.save(user);
             AddResponse response = AddResponse.newBuilder().setResult("User Added!").build();
@@ -63,7 +62,7 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
             user.setPostalCode(request.getPostalCode());
             user.setCountry(request.getCountry());
             user.setSeller(request.getIsSeller());
-            user.setLoggedIn(request.getIsLoggedIn());
+
 
             userRepository.save(user);
             userRepository.findAll().remove(old);
