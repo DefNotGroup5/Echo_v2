@@ -26,8 +26,15 @@
                            <input type="text" @bind="@_userCreationDto.City" @bind:event="oninput" class="form-control" placeholder="City" />
                            <input type="text" @bind="@_userCreationDto.PostalCode" @bind:event="oninput" class="form-control" placeholder="Postal Code" />
                            <input type="text" @bind="@_userCreationDto.Country" @bind:event="oninput" class="form-control" placeholder="Country" />
-                           <input type="checkbox" @bind="@_userCreationDto.IsSeller" @bind:event="oninput" class="form-control" />
-                           <button type="submit" class="btn btn-primary">Register</button>
+                           <div class="form-group">
+                                   <label for="isSeller">Are you a seller?</label>
+                                   <select class="form-control" id="isSeller" @bind="_userCreationDto.IsSeller">
+                                       <option value="true">Yes</option>
+                                       <option value="false">No</option>
+                                   </select>
+                               </div>
+                           
+                               <button type="submit" class="btn btn-primary">Register</button>
                        </EditForm>
                 <div class="register-link">
                     <a href="loginPage">Already have an account? Login here</a>
