@@ -1,0 +1,110 @@
+@page "/register"
+@using Domain.Account.DTOs
+@using Application.Account.LogicInterfaces
+@using HTTPClients.ClientInterfaces
+@using Microsoft.AspNetCore.Components.Forms
+@inject IUserLogic UserLogic
+@inject IUserService UserService
+
+<link rel="stylesheet" href="Register.razor.css" />
+<div class="TV">
+    <div class="overlap-wrapper">
+        <div class="overlap-group">
+            <div class="background">
+                <div class="overlap-group">
+                    <div class="rectangle"></div>
+                    <img class="image" src="Images/background.png" />
+                </div>
+            </div>
+            <div class="login-box">
+                <EditForm Model="@_userCreationDto" OnValidSubmit="@RegisterAsync">
+                           <input type="email" @bind="@_userCreationDto.Email" @bind:event="oninput" class="form-control" placeholder="Email" />
+                           <input type="password" @bind="@_userCreationDto.Password" @bind:event="oninput" class="form-control" placeholder="Password" />
+                           <input type="text" @bind="@_userCreationDto.FirstName" @bind:event="oninput" class="form-control" placeholder="First Name" />
+                           <input type="text" @bind="@_userCreationDto.LastName" @bind:event="oninput" class="form-control" placeholder="Last Name" />
+                           <input type="text" @bind="@_userCreationDto.Address" @bind:event="oninput" class="form-control" placeholder="Address" />
+                           <input type="text" @bind="@_userCreationDto.City" @bind:event="oninput" class="form-control" placeholder="City" />
+                           <input type="text" @bind="@_userCreationDto.PostalCode" @bind:event="oninput" class="form-control" placeholder="Postal Code" />
+                           <input type="text" @bind="@_userCreationDto.Country" @bind:event="oninput" class="form-control" placeholder="Country" />
+                           <input type="checkbox" @bind="@_userCreationDto.IsSeller" @bind:event="oninput" class="form-control" />
+                           <button type="submit" class="btn btn-primary">Register</button>
+                       </EditForm>
+                <div class="register-link">
+                    <a href="loginPage">Already have an account? Login here</a>
+                </div>
+            </div>
+            <div class="rectangle-3"></div>
+            <div class="group">
+                <div class="rectangle-4"></div>
+                <div class="rectangle-5"></div>
+                <div class="rectangle-6"></div>
+                <div class="rectangle-7"></div>
+                <div class="overlap-3">
+                    <div class="text-wrapper-5">Login</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    
+    private string _firstName = "";
+    private string _lastName = "";
+    private string _password = "";
+    private string _email = "";
+    private string _address = "";
+    private string _city = "";
+    private int _postcode = 0;
+    private string _country = "";
+    private bool _isSeller = false;
+    private string result = "";
+    private string messageColor = "";
+    private string type;
+    private void ClearFields()
+    {
+        _email = "";
+        _password = "";
+        result = "";
+        messageColor = "";
+    }
+    
+    private UserCreationDto _userCreationDto = new UserCreationDto("", "", "", "", "", "", 0, "", false);
+
+    private async Task RegisterAsync()
+    {
+        result = "";
+
+        try
+        {
+            if (type is "false")
+            {
+                _isSeller = false;
+            }
+            if (type is "true")
+            {
+                _isSeller = true;
+            }
+            await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, _city, _postcode, _country, isSeller:_isSeller));
+    // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
+            _firstName = "";
+            _lastName = "";
+            _password = "";
+            _email = "";
+            _address = "";
+            _city = "";
+            _postcode = 0;
+            _country = "";
+            _isSeller = false;
+            result = "Success!";
+            messageColor = "green";
+        }
+        catch (Exception e)
+        {
+            await Console.Error.WriteAsync("Something went wrong");
+            Console.WriteLine(e);
+            result = e.Message;
+            messageColor = "red";
+        }
+    }
+}

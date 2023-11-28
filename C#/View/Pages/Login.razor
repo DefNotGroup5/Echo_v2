@@ -1,0 +1,78 @@
+@page "/login"
+@using Domain.Account.DTOs
+@using HTTPClients.ClientInterfaces
+@inject IUserService UserService 
+@inject NavigationManager navigationManager
+
+<link rel="stylesheet" href="Login.razor.css" />
+<div class="TV">
+    <div class="overlap-wrapper">
+        <div class="overlap-group">
+            <div class="background">
+                <div class="overlap-group">
+                    <div class="rectangle"></div>
+                    <img class="image" src="images/background.png" />
+                </div>
+            </div>
+            <div class="login-box">
+                <div class="overlap">
+                    <div class="text-wrapper">new user?</div>
+                    <div class="div">forgot password</div>
+                    <div class="rectangle-2"></div>
+                    <div class="text-wrapper-2">Login</div>
+                    <div class="div-wrapper">
+                        <div class="text-wrapper-3">email</div>
+                        <input type="email" @bind="_email" @bind:event="oninput" class="form-control" placeholder="Email" />
+                    </div>
+                    <div class="overlap-2">
+                        <div class="text-wrapper-4">password</div>
+                        <input type="password" @bind="_password" @bind:event="oninput" class="form-control" placeholder="Password" />
+                        <button @onclick="LoginAsync" class="btn btn-primary">Login</button>
+                    </div>
+                </div>
+            </div>
+            <div class="rectangle-3"></div>
+            <div class="group">
+                <div class="rectangle-4"></div>
+                <div class="rectangle-5"></div>
+                <div class="rectangle-6"></div>
+                <div class="rectangle-7"></div>
+                <div class="overlap-3"><div class="text-wrapper-5">Login</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _email = "";
+    private string _password = "";
+    private string _result = "";
+    
+    private void ClearFields()
+    {
+        _email = "";
+        _password = "";
+        _result = "";
+    }
+
+    private async Task LoginAsync()
+    {
+
+        try
+        {
+            UserLoginDto userLoginDto = new UserLoginDto(_email, _password);
+            await UserService.LoginAsync(userLoginDto);
+            _email = "";
+            _password = "";
+            ClearFields();
+            _result = "User Successfully Logged In";
+        }
+        catch (Exception e)
+        {
+            await Console.Error.WriteAsync("Something went wrong");
+            Console.WriteLine(e);
+            _result = e.Message;
+        }
+    }
+
+}
