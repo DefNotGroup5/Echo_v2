@@ -1,0 +1,46 @@
+﻿@page "/Login"
+
+<div class="wrapper">
+    <div class="login-wrapper">
+        <h1>Login</h1>
+        <input type="text" placeholder="email"/>
+        <input type="password" placeholder="password"/>
+        <div class="button-row">
+            <a>new user?</a>
+            <button>Login</button>
+            <a>forgot password</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _email = "";
+    private string _password = "";
+    private string _result = "";
+    
+    private void ClearFields()
+    {
+        _email = "";
+        _password = "";
+        _result = "";
+    }
+
+    private async Task LoginAsync()
+    {
+
+        try
+        {
+            _email = "";
+            _password = "";
+            ClearFields();
+            _result = "User Successfully Logged In";
+        }
+        catch (Exception e)
+        {
+            await Console.Error.WriteAsync("Something went wrong");
+            Console.WriteLine(e);
+            _result = e.Message;
+        }
+    }
+
+}

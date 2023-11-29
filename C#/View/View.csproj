@@ -12,11 +12,4 @@
       <ProjectReference Include="..\HTTPClients\HTTPClients.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Content Update="Pages\Login.razor.css">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-    </ItemGroup>
-
 </Project>
