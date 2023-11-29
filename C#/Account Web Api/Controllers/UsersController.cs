@@ -25,6 +25,7 @@ public class UsersController : ControllerBase
     }
     private List<Claim> GenerateClaims(User user)
     {
+        bool isSeller = user is Seller;
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, _config["Jwt:Subject"] ?? string.Empty),
@@ -37,7 +38,7 @@ public class UsersController : ControllerBase
             new Claim("City", user.City),
             new Claim(ClaimTypes.Country, user.Country),
             new Claim(ClaimTypes.PostalCode, user.PostalCode.ToString()),
-            new Claim("IsSeller", user.IsSeller.ToString()),
+            new Claim("IsSeller", isSeller.ToString()),
         };
         return claims.ToList();
     }
