@@ -21,19 +21,35 @@ public class UserLogic : IUserLogic
             throw new Exception("Username is already taken!");    
         
         ValidateRegister(dto);
-        
-        User userToCreate = new User(dto.Email, dto.Password)
+        User userToCreate = null;
+        if (dto.IsSeller)
         {
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Password = dto.Password,
-            Address = dto.Address,
-            City = dto.City,
-            PostalCode = dto.PostalCode,
-            Country = dto.City,
-            IsSeller = dto.IsSeller
-        };
-        await _usersService.AddAsync(userToCreate);
+            userToCreate = new Seller(dto.Email, dto.Password)
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Password = dto.Password,
+                Address = dto.Address,
+                City = dto.City,
+                PostalCode = dto.PostalCode,
+                Country = dto.City,
+            };
+        }
+        else
+        {
+            userToCreate = new Customer(dto.Email, dto.Password)
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Password = dto.Password,
+                Address = dto.Address,
+                City = dto.City,
+                PostalCode = dto.PostalCode,
+                Country = dto.City,
+            };
+        }
+
+        if (userToCreate != null) await _usersService.AddAsync(userToCreate);
         User? created = await _usersService.GetByEmailAsync(dto.Email);
         return created;
     }

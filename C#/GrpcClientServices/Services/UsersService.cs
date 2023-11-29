@@ -55,7 +55,7 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
             {
                 Email = email
             });
-            User user = GenerateUser(reply.User);
+            User? user = GenerateUser(reply.User);
             return user;
         }
         catch (Exception e)
@@ -75,7 +75,7 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
             {
                 Id = id
             });
-            User user = GenerateUser(reply.User);
+            User? user = GenerateUser(reply.User);
             return user;
         }
         catch (Exception e)
@@ -85,24 +85,42 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
         return null;
     }
 
-    private User GenerateUser(GrpcUser user)
+    private User? GenerateUser(GrpcUser user)
     {
-        User generatedUser = new User(user.Email, user.Password)
+        User? generatedUser = null;
+        if (user.IsSeller)
         {
-            Id = user.Id,
-            Address = user.Address,
-            City = user.City,
-            Country = user.Country,
-            FirstName = user.FirstName,
-            IsSeller = user.IsSeller,
-            LastName = user.LastName,
-            PostalCode = user.PostalCode
-        };
+            generatedUser = new Seller(user.Email, user.Password)
+            {
+                Id = user.Id,
+                Address = user.Address,
+                City = user.City,
+                Country = user.Country,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PostalCode = user.PostalCode
+            };
+        }
+        else
+        {
+            generatedUser = new Customer(user.Email, user.Password)
+            {
+                Id = user.Id,
+                Address = user.Address,
+                City = user.City,
+                Country = user.Country,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PostalCode = user.PostalCode
+            };
+        }
+        
         return generatedUser;
     }
 
     private GrpcUser GenerateGrpcUser(User user)
     {
+        bool isSeller = user is Seller;
         GrpcUser generatedGrpcUser = new GrpcUser()
         {
             Id = user.Id,
@@ -111,7 +129,7 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
             City = user.City,
             Country = user.Country,
             FirstName = user.FirstName,
-            IsSeller = user.IsSeller,
+            IsSeller = isSeller,
             LastName = user.LastName,
             Password = user.Password,
             PostalCode = (int)user.PostalCode
