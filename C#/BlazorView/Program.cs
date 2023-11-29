@@ -18,8 +18,6 @@ builder.Services.AddScoped(
 
 
 var app = builder.Build();
-
-builder.Services.AddScoped<IUserService, UserHttpClient>();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
