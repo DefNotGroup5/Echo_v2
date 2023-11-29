@@ -1,4 +1,5 @@
 ﻿@using HTTPClients.ClientInterfaces
+@using HTTPClients.Implementations
 @using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -6,40 +7,43 @@
 
 <nav class="navbar">
     <button class="nav-button" id="home-button">Home</button>
-        <div class="central-buttons">
+    <div class="central-buttons">
         <button class="nav-button">Something</button>
         <button class="nav-button">Something</button>
         <button class="nav-button">Something</button>
     </div>
-    <button class="login-button" @onclick="HandleLoginLogout">@_loginButtonText</button>
+    <AuthorizeView>
+        <Authorized>
+            <button class="login-button" @onclick="Logout">Logout</button>
+        </Authorized>
+        <NotAuthorized>
+            <button class="login-button" @onclick="Login">Login</button>
+        </NotAuthorized>
+    </AuthorizeView>
+    
 </nav>
 
 @code {
     private string _loginButtonText = "Login";
-
+    
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        _loginButtonText = user.Identity?.IsAuthenticated == true ? "Logout" : "Login";
+        
     }
 
     private void NavigateTo(string route)
     {
         NavigationManager.NavigateTo($"/{route}");
     }
-
-    private async Task HandleLoginLogout()
+    
+    private void Login()
     {
-        if (_loginButtonText == "Login")
-        {
-            NavigationManager.NavigateTo("/login");
-        }
-        else
-        {
-            await UserService.LogoutAsync();
-            NavigationManager.NavigateTo("/login", forceLoad: true);
-        }
+        NavigationManager.NavigateTo("/Login");
+    }
+
+    private async Task Logout()
+    {
+        await UserService.LogoutAsync();
+        NavigationManager.NavigateTo("/");
     }
 }
