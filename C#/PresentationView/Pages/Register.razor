@@ -40,7 +40,7 @@
     private bool _isSeller = false;
     private string _result = "";
     private bool _isLogin = true;
-    private string _type;
+    private string _type = "customer";
     
     private void SwitchToLogin()
     {
@@ -60,15 +60,15 @@
 
         try
         {
-            if (_type.Equals("false"))
+            if (_type.Equals("customer"))
             {
                 _isSeller = false;
             }
-            if (_type.Equals("true"))
+            if (_type.Equals("seller"))
             {
                 _isSeller = true;
             }
-            await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, _city, _postcode, _country, isSeller:_isSeller));
+            await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, _city, _postcode, _country, _isSeller));
     // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
             _firstName = "";
             _lastName = "";
@@ -80,6 +80,8 @@
             _country = "";
             _isSeller = false;
             _result = "Success!";
+            _type = "customer";
+            Console.WriteLine(_result);
         }
         catch (Exception e)
         {

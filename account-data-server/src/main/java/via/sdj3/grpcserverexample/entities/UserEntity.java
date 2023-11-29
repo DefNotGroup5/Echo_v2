@@ -1,14 +1,12 @@
 package via.sdj3.grpcserverexample.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table
 public class UserEntity {
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column
   private int id;
   @Column

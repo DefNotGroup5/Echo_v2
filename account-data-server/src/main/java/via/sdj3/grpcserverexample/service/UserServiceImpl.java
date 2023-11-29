@@ -24,7 +24,6 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     public void add(AddRequest request, StreamObserver<AddResponse> responseObserver) {
         try
         {
-            GrpcUser user = request.getUser();
             UserEntity userToBeAdded = generateUserEntity(request.getUser());
             userRepository.save(userToBeAdded);
             AddResponse response = AddResponse.newBuilder().setResult("User Added!").build();
@@ -47,6 +46,7 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
             UserEntity oldUser = userRepository.findById(user.getId())
                     .orElseThrow(() -> new StatusRuntimeException(Status.NOT_FOUND.withDescription("User not found")));
             UserEntity updatedUser = generateUserEntity(request.getUser());
+            updatedUser.setId(request.getUser().getId());
             userRepository.save(updatedUser);
             userRepository.findAll().remove(oldUser);
             UpdateResponse response = UpdateResponse.newBuilder().setResult("User updated!").build();
@@ -96,7 +96,6 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     private UserEntity generateUserEntity(GrpcUser user)
     {
         UserEntity userEntity = new UserEntity();
-        userEntity.setId(user.getId());
         userEntity.setFirstName(user.getFirstName());
         userEntity.setLastName(user.getLastName());
         userEntity.setAddress(user.getAddress());
@@ -111,8 +110,7 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
 
     private GrpcUser generateGrpcUser(UserEntity userEntity)
     {
-        GrpcUser user = GrpcUser.newBuilder()
-                .setId(userEntity.getId()).setFirstName(userEntity.getFirstName()).setLastName(userEntity.getLastName())
+        GrpcUser user = GrpcUser.newBuilder().setId(userEntity.getId()).setFirstName(userEntity.getFirstName()).setLastName(userEntity.getLastName())
                 .setAddress(userEntity.getAddress()).setEmail(userEntity.getEmail()).setIsSeller(userEntity.isSeller())
                 .setCity(userEntity.getCity()).setCountry(userEntity.getCountry())
                 .setPostalCode(userEntity.getPostalCode()).setPassword(userEntity.getPassword()).build();

@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @using HTTPClients.ClientInterfaces
 @using Domain.Account.DTOs
+@using HTTPClients.Implementations
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
 
@@ -46,6 +47,8 @@
             _email = "";
             _password = "";
             _result = "User Successfully Logged In";
+            Console.WriteLine(_result);
+            Console.WriteLine(UserHttpClient.Jwt);
     // Add the necessary navigation logic if required
         }
         catch (Exception e)
