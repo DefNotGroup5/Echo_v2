@@ -1,7 +1,10 @@
+using Domain.Auth;
 using HTTPClients.ClientInterfaces;
 using HTTPClients.Implementations;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
+using PresentationView.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -14,6 +17,10 @@ builder.Services.AddScoped(
             BaseAddress = new Uri("http://localhost:5105") 
         }
 );
+builder.Services.AddScoped<AuthenticationStateProvider, AuthProvider>();
+AuthorizationPolicies.AddPolicies(builder.Services);
+
+
 
 var app = builder.Build();
 
@@ -31,5 +38,4 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
 app.Run();
