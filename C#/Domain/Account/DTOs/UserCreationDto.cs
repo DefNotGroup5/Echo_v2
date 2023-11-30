@@ -15,7 +15,7 @@ public class UserCreationDto
     public bool IsAdmin { get; set; }
     
     public UserCreationDto(string email, string firstName, string lastName, string password, 
-        string address, string city, long postalCode, string country, bool isSeller)
+        string address, string city, long postalCode, string country, bool isSeller, bool isAdmin)
     {
         Id = 0;
         Email = email;
@@ -27,5 +27,6 @@ public class UserCreationDto
         PostalCode = postalCode;
         Country = country;
         IsSeller = isSeller;
+        IsAdmin = isAdmin;
     }
 }
