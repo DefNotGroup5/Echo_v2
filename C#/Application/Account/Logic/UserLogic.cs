@@ -18,7 +18,7 @@ public class UserLogic : IUserLogic
     {
         User? user = await _usersService.GetByEmailAsync(dto.Email);
         if(user != null)
-            throw new Exception("Username is already taken!");    
+            throw new Exception("Email is already taken!");    
         
         ValidateRegister(dto);
         User userToCreate = null;
@@ -49,7 +49,7 @@ public class UserLogic : IUserLogic
             };
         }
 
-        if (userToCreate != null) await _usersService.AddAsync(userToCreate);
+        await _usersService.AddAsync(userToCreate);
         User? created = await _usersService.GetByEmailAsync(dto.Email);
         return created;
     }
