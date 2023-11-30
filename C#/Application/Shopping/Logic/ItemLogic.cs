@@ -16,19 +16,38 @@ public class ItemLogic : IItemLogic
         _itemsService = itemsService;
     }
 
-    public Task<string?> CreateItem(string itemCreationDto)
+    public async Task<string?> CreateItem(string itemCreationDto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            ValidateCreationDto(itemCreationDto);
+            /*
+            Item itemToCreate = new Item()
+            Item item = await _itemsService.CreateAsync(itemToCreate);
+            */
+            return string.Empty;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
     }
 
-    public Task<string?> GetItemById(int id)
+    public async Task<string?> GetItemById(int id)
     {
-        throw new NotImplementedException();
+        /*
+        Item item = await _itemsService.GetByIdAsync(id); 
+         */
+        return null;
     }
 
-    public Task<string?> GetItems()
+    public async Task<ICollection<string?>> GetItems()
     {
-        throw new NotImplementedException();
+        /*
+        ICollection<Item> items = await _itemsService.GetItems();
+         */
+        return new List<string?>();
     }
 
     private async void ValidateCreationDto(string itemCreationDto)
@@ -43,6 +62,8 @@ public class ItemLogic : IItemLogic
             throw new Exception("Name cannot be empty!");
         if(itemCreationDto.Description == null || itemCreationDto.Description.Equals(""))
             throw new Exception("Description cannot be empty!");    
+        if(itemCreationDto.Description == null || itemCreationDto.Description.Equals(""))
+            throw new Exception("Description cannot be empty!");
         */
     }
 }

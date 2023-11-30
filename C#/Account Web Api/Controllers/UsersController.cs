@@ -73,8 +73,9 @@ public class UsersController : ControllerBase
         try
         {
             User? user = await _userLogic.Register(userCreationDto);
-            return Created($"/Users/{user.Id}", user);
-
+            if (user != null) 
+                return Created($"/Users/{user.Id}", user);
+            throw new Exception("Error registering User!");
         }
         catch (Exception e)
         {
