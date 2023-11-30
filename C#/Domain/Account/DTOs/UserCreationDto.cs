@@ -12,6 +12,7 @@ public class UserCreationDto
     public long PostalCode { get; set; }
     public string Country { get; set; }
     public bool IsSeller { get; set; }
+    public bool IsAdmin { get; set; }
     
     public UserCreationDto(string email, string firstName, string lastName, string password, 
         string address, string city, long postalCode, string country, bool isSeller)

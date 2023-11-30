@@ -13,6 +13,10 @@ service UsersService {
   rpc GetById (GetByIdRequest) returns (GetByIdResponse);
 }
 
+service AdminService {
+  rpc AuthorizeSeller(AuthorizeSellerRequest) returns (AuthorizeSellerResponse);
+}
+
 message GrpcUser {
   int32 id = 1;
   string email = 2;
@@ -24,6 +28,8 @@ message GrpcUser {
   int32 postalCode = 8;
   string country = 9;
   bool isSeller = 10;
+  bool isAdmin = 11;
+  bool isAuthorizedSeller = 12;
 }
 
 message GetByEmailRequest {
@@ -56,4 +62,13 @@ message UpdateRequest {
 
 message UpdateResponse {
   string result = 1;
+}
+
+message AuthorizeSellerRequest {
+    int32 id = 1;
+    bool isAuthorized = 2;
+}
+
+message AuthorizeSellerResponse {
+    string result = 1;
 }
