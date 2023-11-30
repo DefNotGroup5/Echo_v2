@@ -27,12 +27,15 @@ public class UserEntity {
   private String country;
   @Column
   private boolean isSeller;
+  @Column
+  private boolean isAdmin;
 
   public UserEntity() {}
 
+
   public UserEntity(int id, String email, String firstName, String lastName,
-      String password, String address, String city, int postalCode,
-      String country, boolean isSeller)
+                    String password, String address, String city, int postalCode,
+                    String country, boolean isSeller, boolean isAdmin)
   {
     this.id = id;
     this.email = email;
@@ -44,6 +47,7 @@ public class UserEntity {
     this.postalCode = postalCode;
     this.country = country;
     this.isSeller = isSeller;
+    this.isAdmin = isAdmin;
   }
 
   public int getId()
@@ -144,6 +148,14 @@ public class UserEntity {
   public void setSeller(boolean seller)
   {
     isSeller = seller;
+  }
+
+  public boolean isAdmin() {
+    return isAdmin;
+  }
+
+  public void setAdmin(boolean admin) {
+    isAdmin = admin;
   }
 
 }
