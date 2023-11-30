@@ -1,0 +1,49 @@
+﻿@using HTTPClients.ClientInterfaces
+@using HTTPClients.Implementations
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IUserService UserService
+
+<nav class="navbar">
+    <button class="nav-button" id="home-button">Home</button>
+    <div class="central-buttons">
+        <button class="nav-button">Something</button>
+        <button class="nav-button">Something</button>
+        <button class="nav-button">Something</button>
+    </div>
+    <AuthorizeView>
+        <Authorized>
+            <button class="login-button" @onclick="Logout">Logout</button>
+        </Authorized>
+        <NotAuthorized>
+            <button class="login-button" @onclick="Login">Login</button>
+        </NotAuthorized>
+    </AuthorizeView>
+    
+</nav>
+
+@code {
+    private string _loginButtonText = "Login";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+
+    private void NavigateTo(string route)
+    {
+        NavigationManager.NavigateTo($"/{route}");
+    }
+    
+    private void Login()
+    {
+        NavigationManager.NavigateTo("/Login");
+    }
+
+    private async Task Logout()
+    {
+        await UserService.LogoutAsync();
+        NavigationManager.NavigateTo("/");
+    }
+}

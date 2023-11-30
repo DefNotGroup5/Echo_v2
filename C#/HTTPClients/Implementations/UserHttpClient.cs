@@ -12,7 +12,7 @@ public class UserHttpClient : IUserService
 {
     private readonly HttpClient _client;
     public static string? Jwt { get; private set; } = "";
-    public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; } = null!;
+    public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; } = principal => { };
     
     public UserHttpClient(HttpClient client)
     {
@@ -35,42 +35,14 @@ public class UserHttpClient : IUserService
         return user;
     }
     
-     //public async Task<IEnumerable<User>> GetUsersAsync(string? usernameContains = null)
-     //{
-    //     string uri = "/Users";
-    //     if (!string.IsNullOrEmpty(usernameContains))
-    //     {
-    //         uri += $"?username={usernameContains}";
-    //     }
-    //     HttpResponseMessage response = await _client.GetAsync(uri);
-    //     string result = await response.Content.ReadAsStringAsync();
-    //     if (!response.IsSuccessStatusCode)
-    //     {
-    //         throw new Exception(result);
-    //     }
-    //
-    //     IEnumerable<User> users = JsonSerializer.Deserialize<IEnumerable<User>>(result, new JsonSerializerOptions
-    //     {
-    //         PropertyNameCaseInsensitive = true
-    //     })!;
-    //     return users;
-    //throw new NotImplementedException();
-     //}
-    
-    public async Task LoginAsync(string email, string password)
+    public async Task LoginAsync(UserLoginDto dto)
     {
-        UserLoginDto userLoginDto = new(email,password)
-        {
-            Email = email,
-            Password = password
-        };
-
-        string userAsJson = JsonSerializer.Serialize(userLoginDto);
+        string userAsJson = JsonSerializer.Serialize(dto);
         StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
 
         HttpResponseMessage response = await _client.PatchAsync("/Users/Login", content);
         string responseContent = await response.Content.ReadAsStringAsync();
-
+        
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(responseContent);
@@ -78,39 +50,18 @@ public class UserHttpClient : IUserService
 
         string token = responseContent;
         Jwt = token;
-
-        //ClaimsPrincipal principal = CreateClaimsPrincipal();
-
-        //OnAuthStateChanged.Invoke(principal);
+        ClaimsPrincipal principal = CreateClaimsPrincipal();
+        OnAuthStateChanged.Invoke(principal);
     }
 
     public Task LogoutAsync()
     {
-        throw new NotImplementedException();
+        Jwt = "";
+        ClaimsPrincipal emptyPrincipal = new ClaimsPrincipal();
+        OnAuthStateChanged?.Invoke(emptyPrincipal);
+        return Task.CompletedTask;
     }
-
-    // public async Task LogoutAsync()
-    // {
-    //     ClaimsPrincipal principal = CreateClaimsPrincipal();
-    //     Claim? usernameClaim = principal.FindFirst(ClaimTypes.Name);
-    //     
-    //     string username = usernameClaim?.Value ?? "";
-    //     
-    //     UserLoginDto dto = new UserLoginDto(username);
-    //     string dtoAsJson = JsonSerializer.Serialize(dto);
-    //     StringContent body = new StringContent(dtoAsJson, Encoding.UTF8, "application/json");
-    //     HttpResponseMessage response = await _client.PatchAsync("/Users/Logout", body);
-    //
-    //     if (!response.IsSuccessStatusCode)
-    //     {
-    //         string result = await response.Content.ReadAsStringAsync();
-    //         throw new Exception(result);
-    //     }
-    //
-    //     Jwt = null;
-    //     principal = new ClaimsPrincipal(); // Create an empty ClaimsPrincipal
-    //     OnAuthStateChanged.Invoke(principal);
-    // }
+    
     
     public Task<ClaimsPrincipal> GetAuthAsync()
     {
@@ -154,17 +105,4 @@ public class UserHttpClient : IUserService
         ClaimsPrincipal principal = new(identity);
         return principal;
     }
-    
-    // public async Task RegisterAsync(User user)
-    // {
-    //     string userAsJson = JsonSerializer.Serialize(user);
-    //     StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
-    //     HttpResponseMessage response = await _client.PostAsync("https://localhost:7130/auth/register", content);
-    //     string responseContent = await response.Content.ReadAsStringAsync();
-    //
-    //     if (!response.IsSuccessStatusCode)
-    //     {
-    //         throw new Exception(responseContent);
-    //     }}
-    
 }

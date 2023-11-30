@@ -8,7 +8,7 @@ public interface IUserService
 {
     public Task<User> CreateAsync(UserCreationDto dto);
     //Task<IEnumerable<User>> GetUsersAsync(string? usernameContains = null); //idk if we rly need this one rn
-    public Task LoginAsync(string username, string password);
+    public Task LoginAsync(UserLoginDto dto);
     public Task LogoutAsync();
     public Task<ClaimsPrincipal> GetAuthAsync();
 

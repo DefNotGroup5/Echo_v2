@@ -10,9 +10,4 @@ public class UserLoginDto
         Email = email;
         Password = password;
     }
-
-    // public UserLoginDto(string email)
-    // {
-    //     Email = email;
-    // }
 }

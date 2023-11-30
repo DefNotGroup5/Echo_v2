@@ -15,10 +15,9 @@ builder.Services.AddScoped(
             BaseAddress = new Uri("http://localhost:5105") 
         }
 );
-builder.Services.AddScoped<IUserService, UserHttpClient>();
+
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

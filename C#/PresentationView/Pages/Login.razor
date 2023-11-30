@@ -1,0 +1,63 @@
+﻿@page "/login"
+@using HTTPClients.ClientInterfaces
+@using Domain.Account.DTOs
+@using HTTPClients.Implementations
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+<div class="wrapper">
+    <div class="login-wrapper">
+        <h1>Login</h1>
+        <input type="text" placeholder="email" @bind="_email" @bind:event="oninput" />
+        <input type="password" placeholder="password" @bind="_password" @bind:event="oninput" />
+        <div class="button-row">
+            <a @onclick="SwitchToRegister">new user?</a>
+            <button @onclick="LoginAsync">Login</button>
+            <a>forgot password</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _email = "";
+    private string _password = "";
+    private string _result = "";
+    private bool _isLogin = true;
+
+    private void SwitchToRegister()
+    {
+        NavigationManager.NavigateTo("/register");
+    }
+    
+    private void ClearFields()
+    {
+        _email = "";
+        _password = "";
+        _result = "";
+    }
+    
+    private async Task LoginAsync()
+    {
+        _result = "";
+
+        try
+        {
+            UserLoginDto dto = new UserLoginDto(_email, _password);
+            await UserService.LoginAsync(dto);
+            _email = "";
+            _password = "";
+            _result = "User Successfully Logged In";
+            NavigationManager.NavigateTo("/");
+            Console.WriteLine(_result);
+            Console.WriteLine(UserHttpClient.Jwt);
+    // Add the necessary navigation logic if required
+        }
+        catch (Exception e)
+        {
+            await Console.Error.WriteAsync("Something went wrong");
+            Console.WriteLine(e);
+            _result = e.Message;
+        }
+    }
+
+}

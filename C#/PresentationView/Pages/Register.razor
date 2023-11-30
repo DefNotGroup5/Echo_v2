@@ -1,0 +1,93 @@
+@page "/register"
+@using Domain.Account.DTOs
+@using HTTPClients.ClientInterfaces
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+<div class="wrapper">
+    <div class="register-wrapper">
+        <h1>Register</h1>
+        <input type="text" placeholder="First Name" @bind="_firstName" @bind:event="oninput" />
+        <input type="text" placeholder="Last Name" @bind="_lastName" @bind:event="oninput" />
+        <input type="text" placeholder="Email" @bind="_email" @bind:event="oninput" />
+        <input type="password" placeholder="Password" @bind="_password" @bind:event="oninput" />
+        <input type="text" placeholder="Address" @bind="_address" @bind:event="oninput" />
+        <div class="city-post">
+            <input type="text" placeholder="City" @bind="_city" @bind:event="oninput" />
+            <input type="text" placeholder="Postal Code" @bind="_postcode" @bind:event="oninput" />
+        </div>
+        <input type="text" placeholder="Country" @bind="_country" @bind:event="oninput" />
+        <select name="user-types" id="user-types" @bind="_type">
+            <option value="customer">Customer</option>
+            <option value="seller">Seller</option>
+        </select>
+        <div class="button-row">
+            <a @onclick="SwitchToLogin">Already have an account?</a>
+            <button @onclick="Create">Register</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _firstName = "";
+    private string _lastName = "";
+    private string _password = "";
+    private string _email = "";
+    private string _address = "";
+    private string _city = "";
+    private int _postcode = 0;
+    private string _country = "";
+    private bool _isSeller = false;
+    private string _result = "";
+    private bool _isLogin = true;
+    private string _type = "customer";
+    
+    private void SwitchToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private void ClearFields()
+    {
+        _email = "";
+        _password = "";
+        _result = "";
+    }
+    
+    private async Task Create()
+    {
+        _result = "";
+
+        try
+        {
+            if (_type.Equals("customer"))
+            {
+                _isSeller = false;
+            }
+            if (_type.Equals("seller"))
+            {
+                _isSeller = true;
+            }
+            await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, _city, _postcode, _country, _isSeller));
+    // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
+            _firstName = "";
+            _lastName = "";
+            _password = "";
+            _email = "";
+            _address = "";
+            _city = "";
+            _postcode = 0;
+            _country = "";
+            _isSeller = false;
+            _result = "Success!";
+            _type = "customer";
+            Console.WriteLine(_result);
+        }
+        catch (Exception e)
+        {
+            await Console.Error.WriteAsync("Something went wrong");
+            Console.WriteLine(e);
+            _result = e.Message;
+        }
+    }
+}

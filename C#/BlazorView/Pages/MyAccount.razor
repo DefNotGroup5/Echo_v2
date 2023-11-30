@@ -115,7 +115,6 @@
     private string _firstName = "";
     private string _lastName = "";
     private string _password = "";
-    //I'll keep the email as string for now, but I'll figure out appropriate type
     private string _email = "";
     private string _address = "";
     private string city = "";
@@ -203,7 +202,8 @@
 
         try
         {
-            await UserService.LoginAsync(_email, _password);
+            UserLoginDto dto = new UserLoginDto(_email, _password);
+            await UserService.LoginAsync(dto);
     // Clear the fields on successful login
             _email = "";
             _password = "";

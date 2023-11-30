@@ -25,6 +25,7 @@ public class UsersController : ControllerBase
     }
     private List<Claim> GenerateClaims(User user)
     {
+        bool isSeller = user is Seller;
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, _config["Jwt:Subject"] ?? string.Empty),
@@ -37,7 +38,7 @@ public class UsersController : ControllerBase
             new Claim("City", user.City),
             new Claim(ClaimTypes.Country, user.Country),
             new Claim(ClaimTypes.PostalCode, user.PostalCode.ToString()),
-            new Claim("IsSeller", user.IsSeller.ToString()),
+            new Claim("IsSeller", isSeller.ToString()),
         };
         return claims.ToList();
     }
@@ -72,8 +73,9 @@ public class UsersController : ControllerBase
         try
         {
             User? user = await _userLogic.Register(userCreationDto);
-            return Created($"/Users/{user.Id}", user);
-
+            if (user != null) 
+                return Created($"/Users/{user.Id}", user);
+            throw new Exception("Error registering User!");
         }
         catch (Exception e)
         {
@@ -81,23 +83,19 @@ public class UsersController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
-    
-    
-    
-    
+
     [HttpPatch("Login")]
     public async Task<ActionResult> Login(UserLoginDto userLoginDto)
     {
         try
         {
             User? user = await _userLogic.Login(userLoginDto);
+            string token = "";
             if (user != null)
             {
-                string token = GenerateJwt(user);
+                token = GenerateJwt(user);
             }
-
-            return Ok();
+            return Ok(token);
         }
         catch (Exception e)
         {
