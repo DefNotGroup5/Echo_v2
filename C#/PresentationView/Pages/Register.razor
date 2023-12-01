@@ -68,7 +68,7 @@
             {
                 _isSeller = true;
             }
-            await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, _city, _postcode, _country, _isSeller));
+            await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, _city, _postcode, _country, _isSeller, false));
     // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
             _firstName = "";
             _lastName = "";
