@@ -11,6 +11,7 @@ namespace GrpcClientServices.Services
             _channel = GrpcChannel.ForAddress("http://localhost:3030");
         }
 
+        
         public async Task<AuthorizeSellerResponse> AuthorizeSellerAsync(int userId, bool isAuthorized)
         {
             try
@@ -21,6 +22,21 @@ namespace GrpcClientServices.Services
                     Id = userId,
                     IsAuthorized = isAuthorized
                 });
+                return reply;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
+        
+        public async Task<ListUsersResponse> ListSellersAsync()
+        {
+            try
+            {
+                var client = new GrpcClientServices.AdminService.AdminServiceClient(_channel);
+                var reply = await client.ListSellersAsync(new Google.Protobuf.WellKnownTypes.Empty());
                 return reply;
             }
             catch (Exception e)
