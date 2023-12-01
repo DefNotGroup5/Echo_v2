@@ -13,6 +13,7 @@ service UsersService {
 
 service AdminService {
   rpc AuthorizeSeller(AuthorizeSellerRequest) returns (AuthorizeSellerResponse);
+  rpc ListSellers (google.protobuf.Empty) returns (ListUsersResponse);
 }
 
 message GrpcUser {
@@ -69,4 +70,8 @@ message AuthorizeSellerRequest {
 
 message AuthorizeSellerResponse {
     string result = 1;
+}
+
+message ListUsersResponse {
+  repeated GrpcUser users = 1;
 }

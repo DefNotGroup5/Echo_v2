@@ -29,6 +29,8 @@ public class UserEntity {
   private boolean isSeller;
   @Column
   private boolean isAdmin;
+  @Column
+  private boolean isAuthorizedSeller = false;
 
   public UserEntity() {}
 
@@ -158,4 +160,11 @@ public class UserEntity {
     isAdmin = admin;
   }
 
+  public boolean isAuthorizedSeller() {
+    return isAuthorizedSeller;
+   }
+
+  public void setAuthorizedSeller(boolean authorizedSeller) {
+    isAuthorizedSeller = authorizedSeller;
+   }  
 }
