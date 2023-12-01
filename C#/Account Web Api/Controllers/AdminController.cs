@@ -25,7 +25,7 @@ public class AdminController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message); // Log the exception
+            Console.WriteLine(e.Message);
             return StatusCode(500, "An error occurred while listing sellers.");
         }
     }
@@ -40,7 +40,7 @@ public class AdminController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message); // Log the exception
+            Console.WriteLine(e.Message);
             return StatusCode(500, "An error occurred while authorizing the seller.");
         }
     }
