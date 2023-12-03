@@ -3,13 +3,13 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
 option java_multiple_files = true;
-option java_package = "via.sdj3.protobuf";
+option java_package = "via.sdj3.protobuf.items";
 option java_outer_classname = "ItemProto";
 
 
 service ItemService {
-  rpc Add (AddRequest) returns (AddResponse);
-  rpc GetById (GetByIdRequest) returns (GetByIdResponse);
+  rpc AddItem (AddItemRequest) returns (AddItemResponse);
+  rpc GetItemById (GetItemByIdRequest) returns (GetItemByIdResponse);
 }
 
 message GrpcItem {
@@ -21,25 +21,25 @@ message GrpcItem {
   int32 quantity = 6;
   int32 stock = 7;
   string seller = 8;
-    }
+}
 
 
-message AddRequest {
+message AddItemRequest {
   GrpcItem grpcItem = 1;
 }
 
-message AddResponse {
+message AddItemResponse {
   string result = 1;
 }
 
 
 
-message GetByIdRequest {
+message GetItemByIdRequest {
   int32 id = 1;
 }
 
 
-message GetByIdResponse {
+message GetItemByIdResponse {
   GrpcItem item = 1;
 }
 
