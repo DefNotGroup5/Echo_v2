@@ -1,0 +1,53 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_multiple_files = true;
+option java_package = "via.sdj3.protobuf";
+option java_outer_classname = "ItemProto";
+
+
+service ItemService {
+  rpc Add (AddRequest) returns (AddResponse);
+  rpc GetById (GetByIdRequest) returns (GetByIdResponse);
+}
+
+message GrpcItem {
+  int32 id = 1;
+  string name = 2;
+  string imageUrl = 3;
+  string description = 4;
+  int32 price = 5;
+  int32 quantity = 6;
+  int32 stock = 7;
+  string seller = 8;
+    }
+
+
+message AddRequest {
+  GrpcItem grpcItem = 1;
+}
+
+message AddResponse {
+  string result = 1;
+}
+
+
+
+message GetByIdRequest {
+  int32 id = 1;
+}
+
+
+message GetByIdResponse {
+  GrpcItem item = 1;
+}
+
+
+
+
+
+
+
+
+
