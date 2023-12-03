@@ -11,6 +11,7 @@ public class User
     public string City { get; set; }
     public long PostalCode { get; set; }
     public string Country { get; set; }
+    public bool IsAdmin { get; set; }
 
     public User(string email, string password)
     {

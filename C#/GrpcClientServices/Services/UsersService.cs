@@ -115,6 +115,8 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
             };
         }
         
+        generatedUser.IsAdmin = user.IsAdmin;
+        
         return generatedUser;
     }
 
@@ -130,6 +132,7 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
             Country = user.Country,
             FirstName = user.FirstName,
             IsSeller = isSeller,
+            IsAdmin = user.IsAdmin,
             LastName = user.LastName,
             Password = user.Password,
             PostalCode = (int)user.PostalCode
