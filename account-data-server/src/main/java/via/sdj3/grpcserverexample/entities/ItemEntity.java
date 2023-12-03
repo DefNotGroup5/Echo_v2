@@ -10,7 +10,7 @@ public class ItemEntity {
     @Id
     @Column
     @GeneratedValue
-    private int id;
+    private int sellerId;
 
     @Column
     private String name;
@@ -30,28 +30,25 @@ public class ItemEntity {
     @Column
     private int stock_available;
 
-    @Column
-    private String seller;
 
     public ItemEntity(){ }
 
-    public ItemEntity(int id, String name, String image_url, String description, int price, int quantity, int stock_available, String seller){
-        this.id = id;
+    public ItemEntity(int sellerId, String name, String image_url, String description, int price, int quantity, int stock_available){
+        this.sellerId = sellerId;
         this.name = name;
         this.image_url = image_url;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
         this.stock_available = stock_available;
-        this.seller = seller;
     }
 
-    public int getId() {
-        return id;
+    public int getSellerId() {
+        return sellerId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setSellerId(int sellerId) {
+        this.sellerId = sellerId;
     }
 
     public String getName() {
@@ -102,11 +99,5 @@ public class ItemEntity {
         this.stock_available = stock_available;
     }
 
-    public String getSeller(){
-        return seller;
-    }
 
-    public void setSeller(String seller){
-        this.seller =seller;
-    }
 }

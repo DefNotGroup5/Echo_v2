@@ -7,9 +7,12 @@ option java_package = "via.sdj3.protobuf";
 option java_outer_classname = "ItemProto";
 
 
+service ItemService {
+  rpc Add (AddRequest) returns (AddResponse);
+  rpc GetById (GetByIdRequest) returns (GetByIdResponse);
+}
 
-
-message GrpcUser {
+message GrpcItem {
   int32 id = 1;
   string name = 2;
   string imageUrl = 3;
@@ -21,36 +24,30 @@ message GrpcUser {
     }
 
 
-message GetByEmailRequest {
-  string email = 1;
-}
-
-message GetByEmailResponse {
-  GrpcUser user = 1;
-}
-
-message GetByIdRequest {
-  int32 id = 1;
-}
-
-message GetByIdResponse {
-  GrpcUser user = 1;
-}
-
 message AddRequest {
-  GrpcUser user = 1;
+  GrpcItem grpcItem = 1;
 }
 
 message AddResponse {
   string result = 1;
 }
 
-message UpdateRequest {
-  GrpcUser user = 1;
+
+
+message GetByIdRequest {
+  int32 id = 1;
 }
 
-message UpdateResponse {
-  string result = 1;
+
+message GetByIdResponse {
+  GrpcItem item = 1;
 }
+
+
+
+
+
+
+
 
 

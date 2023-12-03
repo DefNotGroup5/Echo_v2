@@ -12,8 +12,8 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
     @Query("SELECT i FROM ItemEntity i WHERE i.name = :name")
     Optional<ItemEntity> getByName(String name);
 
-    @Query("SELECT i FROM ItemEntity i WHERE i.id = :id")
-    Optional<ItemEntity> getById(int id);
+    @Query("SELECT i FROM ItemEntity i WHERE i.sellerId = :sellerId")
+    Optional<ItemEntity> getById(int sellerId);
 
     @Query("SELECT i from ItemEntity i ORDER BY i.price DESC ")
     Optional<ItemEntity> getByLowestPriceToHighest (int price);
