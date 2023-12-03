@@ -1,0 +1,109 @@
+﻿@page "/listitem"
+@using Microsoft.AspNetCore.Components.Forms
+@using Supabase.Storage
+@inject Supabase.Client supabase
+@inject NavigationManager NavigationManager
+
+<div class="wrapper">
+    <div class="list-items-wrapper">
+        <h1>List an item</h1>
+        <div class="inputs-container">
+            <div class="input-box-container">
+                <div class="row">
+                    <input type="text" placeholder="Name" class="input-box input-box1" @bind="_name" @bind:event = "oninput"/>
+                    <input type="text" placeholder="Price" class="input-box input-box3" @bind="_price" @bind:event = "oninput" />
+                </div>
+                <div class="row">
+                    <input type="text" placeholder="Quantity" class="input-box input-box2" @bind="_quantity" @bind:event = "oninput" />
+                    <select type="text" placeholder="Availability" class="input-box input-box4" @bind="_availability">
+                    <option value="available">Available</option>
+                    <option value="not available">Not Available</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <input type="text" placeholder="Description" class="input-box input-box5" @bind="_description" @bind:event = "oninput" />
+                </div>
+            </div>
+            <div class="input-box-container">
+                <div class="input-box input-box6">
+                    <InputFile OnChange="OnFileSelected" />
+                    <button @onclick="UploadToSupabase"></button>
+                </div>
+            </div>
+        </div>
+        <button class="button" @onclick="Publish">Publish</button>
+    </div>
+</div>
+
+@code {
+    private string _name = "";
+    private string _price = "";
+    private int _quantity = 0;
+    private bool _isAvailable = false;
+    private string _availability = "not available";
+    private string _description = "";
+    private IBrowserFile? _file;
+
+    
+    private void Publish()
+    {
+        NavigationManager.NavigateTo("/...");
+        try
+        {
+            if (_availability.Equals("available"))
+            {
+                _isAvailable = true;
+            }
+            if (_availability.Equals("not available"))
+            {
+                _isAvailable = false;
+            }
+            
+            //needs logic when it publishes to be added to the list of existing items
+            //similar to create async in register.razor just for items
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        _file = e.GetMultipleFiles().FirstOrDefault();
+    }
+
+    private async Task UploadToSupabase()
+    {
+        try
+        {
+            if (_file != null)
+            {
+                var storage = supabase.Storage.From("Item_Photos");
+                var fileName = _file.Name;
+                var fileBytes = await ConvertFileToByteArray(_file);
+                var options = new FileOptions()
+                {
+                    ContentType = _file.ContentType
+                };
+                var response = await storage.Upload(fileBytes, fileName, options);
+                Console.WriteLine(response);
+                var publicUrl = await supabase.Storage.From("Item_Photos").CreateSignedUrl(fileName, 999999999);
+                Console.WriteLine(publicUrl);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+    private async Task<byte[]> ConvertFileToByteArray(IBrowserFile file)
+    {
+        using (var ms = new MemoryStream())
+        {
+            await file.OpenReadStream().CopyToAsync(ms);
+            return ms.ToArray();
+        }
+    }
+}
