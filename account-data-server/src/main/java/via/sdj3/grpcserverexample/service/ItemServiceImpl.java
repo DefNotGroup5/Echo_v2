@@ -8,7 +8,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import via.sdj3.grpcserverexample.entities.ItemEntity;
 import via.sdj3.grpcserverexample.entities.UserEntity;
 import via.sdj3.grpcserverexample.repository.ItemRepository;
-import via.sdj3.protobuf.*;
+//import via.sdj3.protobuf.*;
 
 import java.util.stream.Stream;
 
