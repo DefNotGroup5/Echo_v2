@@ -4,36 +4,55 @@
 @inject Supabase.Client supabase
 @inject NavigationManager NavigationManager
 
-<div class="wrapper">
-    <div class="list-items-wrapper">
-        <h1>List an item</h1>
-        <div class="inputs-container">
-            <div class="input-box-container">
-                <div class="row">
-                    <input type="text" placeholder="Name" class="input-box input-box1" @bind="_name" @bind:event = "oninput"/>
-                    <input type="text" placeholder="Price" class="input-box input-box3" @bind="_price" @bind:event = "oninput" />
+<AuthorizeView>
+    <Authorized>
+        <div class="wrapper">
+            <div class="list-items-wrapper">
+                <h1>List an item</h1>
+                <div class="inputs-container">
+                    <div class="input-box-container">
+                        <div class="row">
+                            <input type="text" placeholder="Name" class="input-box input-box1" @bind="_name" @bind:event="oninput" disabled="@(!nameEditable)"/>
+                            <input type="text" placeholder="Price" class="input-box input-box3" @bind="_price" @bind:event="oninput" disabled="@(!priceEditable)"/>
+                        </div>
+                        <div class="row">
+                            <input type="text" placeholder="Quantity" class="input-box input-box2" @bind="_quantity" @bind:event="oninput" disabled="@(!quantityEditable)"/>
+                            <select type="text" placeholder="Availability" class="input-box input-box4" @bind="_availability" disabled="@(!availabilityEditable)">
+                                <option value="available">Available</option>
+                                <option value="not available">Not Available</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <input type="text" placeholder="Description" class="input-box input-box5" @bind="_description" @bind:event="oninput" disabled="@(!descriptionEditable)"/>
+                        </div>
+                    </div>
+                    <div class="input-box-container">
+                        <div class="input-box input-box6">
+                            <InputFile OnChange="OnFileSelected"/>
+                            <button @onclick="UploadToSupabase">Upload</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                    <input type="text" placeholder="Quantity" class="input-box input-box2" @bind="_quantity" @bind:event = "oninput" />
-                    <select type="text" placeholder="Availability" class="input-box input-box4" @bind="_availability">
-                    <option value="available">Available</option>
-                    <option value="not available">Not Available</option>
-                    </select>
-                </div>
-                <div class="row">
-                    <input type="text" placeholder="Description" class="input-box input-box5" @bind="_description" @bind:event = "oninput" />
-                </div>
-            </div>
-            <div class="input-box-container">
-                <div class="input-box input-box6">
-                    <InputFile OnChange="OnFileSelected" />
-                    <button @onclick="UploadToSupabase"></button>
-                </div>
+                @if (!confirmPublish)
+                {
+                    <button class="button" @onclick="ShowConfirmation">Publish</button>
+                }
+                else
+                {
+                    <div class="buttons">
+                        <div class="confirmation-text">
+                            <button class="buttons-style" disabled>Are you sure?</button>
+                        </div>
+                        <div class="confirmation-buttons">
+                            <button class="button" @onclick="PublishItem">Yes</button>
+                            <button class="buttons-style" @onclick="CancelPublish">No</button>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
-        <button class="button" @onclick="Publish">Publish</button>
-    </div>
-</div>
+    </Authorized>
+</AuthorizeView>
 
 @code {
     private string _name = "";
@@ -43,9 +62,34 @@
     private string _availability = "not available";
     private string _description = "";
     private IBrowserFile? _file;
+    private bool confirmPublish = false;
+    private bool nameEditable = true;
+    private bool priceEditable = true;
+    private bool quantityEditable = true;
+    private bool availabilityEditable = true;
+    private bool descriptionEditable = true;
+    private string _result = "";
 
-    
-    private void Publish()
+    private void ShowConfirmation()
+    {
+        confirmPublish = true;
+        nameEditable = false;
+        priceEditable = false;
+        quantityEditable = false;
+        availabilityEditable = false;
+        descriptionEditable = false;
+    }
+
+    private void CancelPublish()
+    {
+        confirmPublish = false;
+        nameEditable = true;
+        priceEditable = true;
+        quantityEditable = true;
+        availabilityEditable = true;
+        descriptionEditable = true;
+    }
+    private async Task PublishItem()
     {
         NavigationManager.NavigateTo("/...");
         try
@@ -59,12 +103,28 @@
                 _isAvailable = false;
             }
             
-            //needs logic when it publishes to be added to the list of existing items
-            //similar to create async in register.razor just for items
+            //await ItemService.CreateItemAsync(new ItemCreationDto(_name,_price,_quantity,_availability,_description))
+            
+            _name = "";
+            _price = "";
+            _quantity = 0;
+            _isAvailable = false;
+            _availability = "not available";
+            _description = "";
+            confirmPublish = false;
+            nameEditable = true;
+            priceEditable = true;
+            quantityEditable = true;
+            availabilityEditable = true;
+            descriptionEditable = true;
+            _result = "Success";
+            Console.WriteLine(_result);
+            
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
+            _result = e.Message;
         }
     }
 

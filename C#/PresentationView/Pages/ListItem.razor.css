@@ -38,6 +38,7 @@ h1 {
     font-weight: 100;
     line-height: normal;
     margin-bottom: 5%;
+    border: none;
 }
 .input-box {
     background: white;
@@ -88,8 +89,32 @@ h1 {
     border: none;
     border-radius: 73px;
     margin-left: auto;
-    margin-right: 5%;
+    margin-right: 2%;
 }
 .button:hover {
     background: #a66fff;
+}
+.buttons {
+    margin-left: auto;
+    margin-right: 5%;
+    margin-top: -2%;
+}
+.buttons-style {
+    background: #AA4465;
+    color: white;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: none;
+    border-radius: 73px;
+}
+.confirmation-text {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.confirmation-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
