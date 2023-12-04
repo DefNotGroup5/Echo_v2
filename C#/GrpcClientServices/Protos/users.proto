@@ -1,0 +1,77 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "GrpcClientServices";
+
+service UsersService {
+  rpc Update (UpdateRequest) returns (UpdateResponse);
+  rpc Add (AddRequest) returns (AddResponse);
+  rpc GetByEmail (GetByEmailRequest) returns (GetByEmailResponse);
+  rpc GetById (GetByIdRequest) returns (GetByIdResponse);
+}
+
+service AdminService {
+  rpc AuthorizeSeller(AuthorizeSellerRequest) returns (AuthorizeSellerResponse);
+  rpc ListSellers (google.protobuf.Empty) returns (ListUsersResponse);
+}
+
+message GrpcUser {
+  int32 id = 1;
+  string email = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string password = 5;
+  string address = 6;
+  string city = 7;
+  int32 postalCode = 8;
+  string country = 9;
+  bool isSeller = 10;
+  bool isAdmin = 11;
+  bool isAuthorizedSeller = 12;
+}
+
+message GetByEmailRequest {
+  string email = 1;
+}
+
+message GetByEmailResponse {
+  GrpcUser user = 1;
+}
+
+message GetByIdRequest {
+  int32 id = 1;
+}
+
+message GetByIdResponse {
+  GrpcUser user = 1;
+}
+
+message AddRequest {
+  GrpcUser user = 1;
+}
+
+message AddResponse {
+  string result = 1;
+}
+
+message UpdateRequest {
+  GrpcUser user = 1;
+}
+
+message UpdateResponse {
+  string result = 1;
+}
+
+message AuthorizeSellerRequest {
+    int32 id = 1;
+    bool isAuthorized = 2;
+}
+
+message AuthorizeSellerResponse {
+    string result = 1;
+}
+
+message ListUsersResponse {
+  repeated GrpcUser users = 1;
+}

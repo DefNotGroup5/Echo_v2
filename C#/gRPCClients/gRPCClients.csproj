@@ -7,12 +7,23 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="Account\Generated\" />
       <Folder Include="Shopping\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Application\Application.csproj" />
       <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Google.Protobuf" Version="3.25.0-rc2" />
+      <PackageReference Include="Grpc.Net.Client" Version="2.58.0" />
+      <PackageReference Include="Grpc.Tools" Version="2.59.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.2.23479.6" />
     </ItemGroup>
 
 </Project>

@@ -11,13 +11,11 @@ public class User
     public string City { get; set; }
     public long PostalCode { get; set; }
     public string Country { get; set; }
-    public bool IsSeller { get; set; }
-    public bool IsLoggedIn { get; set; }
+    public bool IsAdmin { get; set; }
 
     public User(string email, string password)
     {
         Email = email;
         Password = password;
-        IsLoggedIn = false;
     }
 }
