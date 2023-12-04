@@ -56,10 +56,8 @@ public class UserHttpClient : IUserService
         _shoppingCart = new ShoppingCart();
         string userAsJson = JsonSerializer.Serialize(dto);
         StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
-
         HttpResponseMessage response = await _client.PatchAsync("/Users/Login", content);
         string responseContent = await response.Content.ReadAsStringAsync();
-        
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(responseContent);
