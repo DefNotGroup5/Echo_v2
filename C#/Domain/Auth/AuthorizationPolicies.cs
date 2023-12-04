@@ -6,6 +6,6 @@ public class AuthorizationPolicies
 {
     public static void AddPolicies(IServiceCollection services)
     {
-
+        
     }
 }
