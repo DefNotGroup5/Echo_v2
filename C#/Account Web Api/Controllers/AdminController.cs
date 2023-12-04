@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Account.LogicInterfaces;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Account_Web_Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Policy = "IsAdmin")]
 public class AdminController : ControllerBase
 {
     private readonly IAdminLogic _adminLogic;
