@@ -11,6 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<IUserService, UserHttpClient>();
+builder.Services.AddScoped<IAdminService, AdminHttpClient>();
 builder.Services.AddScoped(
     sp => 
         new HttpClient { 
@@ -20,7 +21,11 @@ builder.Services.AddScoped(
 builder.Services.AddScoped<AuthenticationStateProvider, AuthProvider>();
 AuthorizationPolicies.AddPolicies(builder.Services);
 
-
+builder.Services.AddHttpClient<IAdminService, AdminHttpClient>(
+    client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5105");
+});
 
 var app = builder.Build();
 
