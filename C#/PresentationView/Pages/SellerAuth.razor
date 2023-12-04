@@ -1,0 +1,47 @@
+﻿@page "/seller/auth"
+@using HTTPClients.ClientInterfaces
+@using Domain.Account.Models
+
+@inject IAdminService AdminService
+@inject NavigationManager NavigationManager
+
+<div class="wrapper">
+    <div class="auth-wrapper">
+        <h1>Authorize Sellers</h1>
+        <input type="text" placeholder="search"/>
+        <div class="auth-list">
+            @foreach (var seller in _sellers)
+            {
+                <div class="auth-item">
+                    <div class="auth-item__name">@seller.FirstName @seller.LastName</div>
+                    <div class="auth-item__email">@seller.Email</div>
+                    <div class="auth-item__button">
+                        <button class="btn btn-primary" @onclick="() => DeleteSeller(seller.Id)">Delete</button>
+                    </div>
+                    <input type="checkbox" class="auth-item__checkbox" @onselect="() => AuthorizeSeller(seller.Id)"/>              
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private IEnumerable<User> _sellers = new List<Seller>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _sellers = await AdminService.ListSellersAsync();
+    }
+
+    private async Task AuthorizeSeller(int id)
+    {
+        await AdminService.AuthorizeSellerAsync(id, true);
+        NavigationManager.NavigateTo("/seller/auth", true);
+    }
+
+    private async Task DeleteSeller(int id)
+    {
+        await AdminService.DeleteSellerAsync(id);
+        NavigationManager.NavigateTo("/seller/auth", true);
+    }
+}
