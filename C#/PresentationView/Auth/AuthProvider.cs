@@ -14,8 +14,6 @@ public class AuthProvider : AuthenticationStateProvider
         _userService.OnAuthStateChanged += AuthStateChanged;
     }
     
-    
-    
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         ClaimsPrincipal principal = await _userService.GetAuthAsync();

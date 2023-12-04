@@ -139,11 +139,10 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
 
     private GrpcUser generateGrpcUser(UserEntity userEntity)
     {
-        GrpcUser user = GrpcUser.newBuilder().setId(userEntity.getId()).setFirstName(userEntity.getFirstName()).setLastName(userEntity.getLastName())
+        return GrpcUser.newBuilder().setId(userEntity.getId()).setFirstName(userEntity.getFirstName()).setLastName(userEntity.getLastName())
                 .setAddress(userEntity.getAddress()).setEmail(userEntity.getEmail()).setIsSeller(userEntity.isSeller())
                 .setCity(userEntity.getCity()).setCountry(userEntity.getCountry())
                 .setPostalCode(userEntity.getPostalCode()).setPassword(userEntity.getPassword()).build();
-        return user;
     }
     
     
