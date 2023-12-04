@@ -1,0 +1,38 @@
+﻿@page "/items"
+@using HTTPClients.ClientInterfaces
+@using Domain.Account.Models
+@inject IUserService UserService
+<p>@ShoppingCartItemCount</p>
+<button @onclick="AddItem1">Add Item #1</button>
+<button>Add Item #2</button>
+<button>Add Item #3</button>
+
+@code {
+    private int ShoppingCartItemCount { get; set; }
+
+    protected override void OnInitialized()
+    {
+        UserService.OnShoppingCartChanged += UpdateShoppingCartItemCount;
+        UpdateShoppingCartItemCount(UserService.GetShoppingCart().Result);
+        Console.WriteLine("Component initialized!");
+    }
+    
+    private void UpdateShoppingCartItemCount(ShoppingCart? shoppingCart)
+    {
+        ShoppingCartItemCount = shoppingCart?.ItemsInCart.Count ?? 0;
+    }
+
+    private void AddItem1()
+    {
+        Item item = new Item()
+        {
+            Description = "Item #1",
+            ImageUrl = "linkToPic",
+            Name = "Potato",
+            Price = 24,
+            Stock = 23
+        };
+        
+        UserService.AddItemToShoppingCart(item);
+    }
+}
