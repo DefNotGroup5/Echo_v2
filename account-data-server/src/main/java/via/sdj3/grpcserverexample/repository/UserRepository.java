@@ -16,4 +16,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Query("SELECT u FROM UserEntity u WHERE u.country = :country")
     Optional<UserEntity> getByCountry(String country);
+    
+    List<UserEntity> findByIsSeller(boolean isSeller);
+
+    @Query("update UserEntity u set u.isAuthorizedSeller = :isAuthorized WHERE u.id = :id")
+    void setSellerAuthorization(int id, boolean isAuthorized);
 }

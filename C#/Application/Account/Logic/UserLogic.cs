@@ -16,49 +16,65 @@ public class UserLogic : IUserLogic
 
     public async Task<User?> Register(UserCreationDto dto)
     {
-        User? user = await _usersService.GetByEmailAsync(dto.Email);
-        if(user != null)
-            throw new Exception("Username is already taken!");    
+        try
+        {
+            User? user = await _usersService.GetByEmailAsync(dto.Email);
+            if(user != null)
+                throw new Exception("Email is already taken!");    
         
-        ValidateRegister(dto);
-        User userToCreate = null;
-        if (dto.IsSeller)
-        {
-            userToCreate = new Seller(dto.Email, dto.Password)
+            ValidateRegister(dto);
+            User userToCreate = null;
+            if (dto.IsSeller)
             {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Password = dto.Password,
-                Address = dto.Address,
-                City = dto.City,
-                PostalCode = dto.PostalCode,
-                Country = dto.City,
-            };
-        }
-        else
-        {
-            userToCreate = new Customer(dto.Email, dto.Password)
+                userToCreate = new Seller(dto.Email, dto.Password)
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Password = dto.Password,
+                    Address = dto.Address,
+                    City = dto.City,
+                    PostalCode = dto.PostalCode,
+                    Country = dto.City,
+                };
+            }
+            else
             {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Password = dto.Password,
-                Address = dto.Address,
-                City = dto.City,
-                PostalCode = dto.PostalCode,
-                Country = dto.City,
-            };
-        }
+                userToCreate = new Customer(dto.Email, dto.Password)
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Password = dto.Password,
+                    Address = dto.Address,
+                    City = dto.City,
+                    PostalCode = dto.PostalCode,
+                    Country = dto.City,
+                };
+            }
 
-        if (userToCreate != null) await _usersService.AddAsync(userToCreate);
-        User? created = await _usersService.GetByEmailAsync(dto.Email);
-        return created;
+            await _usersService.AddAsync(userToCreate);
+            User? created = await _usersService.GetByEmailAsync(dto.Email);
+            return created;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<User?> Login(UserLoginDto dto)
     {
-        ValidateLogin(dto);
-        User? user = await _usersService.GetByEmailAsync(dto.Email);
-        return user;
+        try
+        {
+            ValidateLogin(dto);
+            User? user = await _usersService.GetByEmailAsync(dto.Email);
+            return user;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     private void ValidateRegister(UserCreationDto dto)

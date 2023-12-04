@@ -3,7 +3,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
 option java_multiple_files = true;
-option java_package = "via.sdj3.protobuf";
+option java_package = "via.sdj3.protobuf.users";
 option java_outer_classname = "UsersProto";
 
 service UsersService {
@@ -11,6 +11,11 @@ service UsersService {
   rpc Add (AddRequest) returns (AddResponse);
   rpc GetByEmail (GetByEmailRequest) returns (GetByEmailResponse);
   rpc GetById (GetByIdRequest) returns (GetByIdResponse);
+}
+
+service AdminService {
+  rpc AuthorizeSeller(AuthorizeSellerRequest) returns (AuthorizeSellerResponse);
+  rpc ListSellers (google.protobuf.Empty) returns (ListUsersResponse);
 }
 
 message GrpcUser {
@@ -24,6 +29,8 @@ message GrpcUser {
   int32 postalCode = 8;
   string country = 9;
   bool isSeller = 10;
+  bool isAdmin = 11;
+  bool isAuthorizedSeller = 12;
 }
 
 message GetByEmailRequest {
@@ -56,4 +63,17 @@ message UpdateRequest {
 
 message UpdateResponse {
   string result = 1;
+}
+
+message AuthorizeSellerRequest {
+    int32 id = 1;
+    bool isAuthorized = 2;
+}
+
+message AuthorizeSellerResponse {
+    string result = 1;
+}
+
+message ListUsersResponse {
+  repeated GrpcUser users = 1;
 }

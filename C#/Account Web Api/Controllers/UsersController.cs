@@ -39,6 +39,8 @@ public class UsersController : ControllerBase
             new Claim(ClaimTypes.Country, user.Country),
             new Claim(ClaimTypes.PostalCode, user.PostalCode.ToString()),
             new Claim("IsSeller", isSeller.ToString()),
+            new Claim("IsSeller", isSeller.ToString()),
+            new Claim("IsAdmin", user.IsAdmin.ToString())
         };
         return claims.ToList();
     }
@@ -73,8 +75,9 @@ public class UsersController : ControllerBase
         try
         {
             User? user = await _userLogic.Register(userCreationDto);
-            return Created($"/Users/{user.Id}", user);
-
+            if (user != null) 
+                return Created($"/Users/{user.Id}", user);
+            throw new Exception("Error registering User!");
         }
         catch (Exception e)
         {
