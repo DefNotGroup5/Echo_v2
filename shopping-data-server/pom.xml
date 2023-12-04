@@ -12,6 +12,7 @@
     <groupId>via.sdj3</groupId>
     <artifactId>shopping-data-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>grpc-server-example</name>
     <description>gRPC Backend Service Example</description>
 
