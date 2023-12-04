@@ -1,4 +1,6 @@
 ﻿using Application.Shopping.LogicInterfaces;
+using Domain.Account.DTOs;
+using Domain.Account.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Shopping_Web_Api.Controllers;
@@ -15,13 +17,13 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> CreateAsync(string itemCreationDto)
+    public async Task<ActionResult<Item>> CreateAsync(ItemCreationDto dto)
     {
         try
         {
-            string? item = await _itemLogic.CreateItem(itemCreationDto);
+            Item? item = await _itemLogic.CreateItem(dto);
             if (item != null) 
-                return Created($"/Items/{item.Length}", item);
+                return Created($"/Items/{item.Id}", item);
             throw new Exception("Error creating an Item!");
         }
         catch (Exception e)
@@ -32,11 +34,11 @@ public class ItemsController : ControllerBase
     }
     
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ICollection<string>>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<ICollection<Item>>> GetByIdAsync([FromRoute] int id)
     {
         try
         {
-            string? item  = await _itemLogic.GetItemById(id);
+            Item? item  = await _itemLogic.GetItemById(id);
             return Ok(item);
         }
         catch (Exception e)
@@ -47,11 +49,11 @@ public class ItemsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ICollection<string>>> GetAsync()
+    public async Task<ActionResult<ICollection<Item>>> GetAsync()
     {
         try
         {
-            ICollection<string?> items = await _itemLogic.GetItems();
+            ICollection<Item?> items = await _itemLogic.GetItems();
             return Ok(items);
         }
         catch (Exception e)

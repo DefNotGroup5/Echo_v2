@@ -1,8 +1,11 @@
-﻿namespace Application.Shopping.LogicInterfaces;
+﻿using Domain.Account.DTOs;
+using Domain.Account.Models;
+
+namespace Application.Shopping.LogicInterfaces;
 
 public interface IItemLogic
 {
-    Task<string?> CreateItem(string itemCreationDto);
-    Task<string?> GetItemById(int id);
-    Task<ICollection<string?>> GetItems();
+    Task<Item?> CreateItem(ItemCreationDto dto);
+    Task<Item?> GetItemById(int id);
+    Task<ICollection<Item?>> GetItems();
 }

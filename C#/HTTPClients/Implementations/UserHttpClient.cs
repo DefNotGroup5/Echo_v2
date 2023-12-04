@@ -11,13 +11,29 @@ namespace HTTPClients.Implementations;
 public class UserHttpClient : IUserService
 {
     private readonly HttpClient _client;
+    private ShoppingCart? _shoppingCart;
     public static string? Jwt { get; private set; } = "";
     public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; } = principal => { };
-    
+    public event Action<ShoppingCart?>? OnShoppingCartChanged;
+    public Task<ShoppingCart?> GetShoppingCart()
+    {
+        return Task.FromResult(_shoppingCart);
+    }
+
     public UserHttpClient(HttpClient client)
     {
         _client = client;
+        _shoppingCart = new ShoppingCart();
     }
+
+    private void NotifyShoppingCartChanged()
+    {
+        OnShoppingCartChanged?.Invoke(_shoppingCart);
+        Console.WriteLine("Shopping cart changed event fired!");
+        Console.WriteLine(_shoppingCart.ItemsInCart.Count);
+    }
+    
+    
     
     public async Task<User> CreateAsync(UserCreationDto dto)
     {
@@ -37,6 +53,7 @@ public class UserHttpClient : IUserService
     
     public async Task LoginAsync(UserLoginDto dto)
     {
+        _shoppingCart = new ShoppingCart();
         string userAsJson = JsonSerializer.Serialize(dto);
         StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
 
@@ -52,17 +69,27 @@ public class UserHttpClient : IUserService
         Jwt = token;
         ClaimsPrincipal principal = CreateClaimsPrincipal();
         OnAuthStateChanged.Invoke(principal);
+        NotifyShoppingCartChanged();
     }
 
     public Task LogoutAsync()
     {
+        _shoppingCart = null;
         Jwt = "";
         ClaimsPrincipal emptyPrincipal = new ClaimsPrincipal();
         OnAuthStateChanged?.Invoke(emptyPrincipal);
         return Task.CompletedTask;
     }
     
-    
+    public Task AddItemToShoppingCart(Item item)
+    {
+        if (_shoppingCart == null) return Task.CompletedTask;
+        _shoppingCart?.ItemsInCart.Add(item);
+        NotifyShoppingCartChanged();
+        return Task.CompletedTask;
+    }
+
+
     public Task<ClaimsPrincipal> GetAuthAsync()
     {
         ClaimsPrincipal principal = CreateClaimsPrincipal();
