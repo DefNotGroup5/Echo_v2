@@ -59,7 +59,14 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
     {
         try
         {
-            
+            var grpcClient = new GrpcClientServices.Services.ItemService(_channel);
+            var reply = await grpcClient.GetByIdAsync(new GetByIdRequest 
+            {
+                Id = id
+            });
+            return item?.ToString();
+
+
         }
         catch (Exception e)
         {

@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Domain.Account.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +19,10 @@ public static class AuthorizationPolicies
                 policy.RequireAssertion(context =>
                     context.User.HasClaim(c => c.Type == "IsSeller" && c.Value == "True")));
             
+            options.AddPolicy("isItemNull", policy=>
+                
         });
     }
+    
+   
 }
