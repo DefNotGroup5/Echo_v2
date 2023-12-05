@@ -5,15 +5,11 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
+    
+    
     <ItemGroup>
-      <Folder Include="Account\Generated\" />
-      <Folder Include="Shopping\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Application\Application.csproj" />
-      <ProjectReference Include="..\Domain\Domain.csproj" />
+        <Protobuf Include="Protos\users.proto" GrpcServices="Client" />"
+        <Protobuf Include="Protos\item.proto" GrpcServices="Client" />"
     </ItemGroup>
 
     <ItemGroup>

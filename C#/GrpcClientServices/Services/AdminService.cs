@@ -12,12 +12,12 @@ namespace GrpcClientServices.Services
         }
 
         
-        public async Task<AuthorizeSellerResponse> AuthorizeSellerAsync(int userId, bool isAuthorized)
+        public async Task<AddRequest.AuthorizeSellerResponse> AuthorizeSellerAsync(int userId, bool isAuthorized)
         {
             try
             {
                 var client = new GrpcClientServices.AdminService.AdminServiceClient(_channel);
-                var reply = await client.AuthorizeSellerAsync(new AuthorizeSellerRequest()
+                var reply = await client.AuthorizeSellerAsync(new AddRequest.AuthorizeSellerRequest()
                 {
                     Id = userId,
                     IsAuthorized = isAuthorized
@@ -31,7 +31,7 @@ namespace GrpcClientServices.Services
             }
         }
         
-        public async Task<ListUsersResponse> ListSellersAsync()
+        public async Task<AddRequest.ListUsersResponse> ListSellersAsync()
         {
             try
             {
