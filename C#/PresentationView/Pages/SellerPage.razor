@@ -1,0 +1,34 @@
+﻿@page "/sellerpage"
+@inject NavigationManager NavigationManager
+
+<div class="wrapper">
+    <div class="new-items-wrapper">
+        <h1>List new items</h1>
+        <button @onclick="SwitchToNewItem">Open</button>
+    </div>
+    <div class="items-on-sale-wrapper">
+        <h1>View items for sale</h1>
+        <button @onclick="SwitchToItemsOnSale">Open</button>
+    </div>
+    <div class="orders-wrapper">
+        <h1>View orders</h1>
+        <button @onclick="SwitchToOrders">Open</button>
+    </div>
+</div>
+
+
+@code {
+    private void SwitchToNewItem()
+    {
+        NavigationManager.NavigateTo("/listitem");
+    }
+    private void SwitchToItemsOnSale()
+    {
+        NavigationManager.NavigateTo("/...");
+    }
+    private void SwitchToOrders()
+    {
+        NavigationManager.NavigateTo("/...");
+    }
+    
+}

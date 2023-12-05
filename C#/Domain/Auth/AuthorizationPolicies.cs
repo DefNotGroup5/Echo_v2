@@ -12,6 +12,11 @@ public static class AuthorizationPolicies
             options.AddPolicy("IsAdmin", policy =>
                 policy.RequireAssertion(context =>
                     context.User.HasClaim(c => c.Type == "IsAdmin" && c.Value == "True")));
+            
+            options.AddPolicy("IsSeller", policy =>
+                policy.RequireAssertion(context =>
+                    context.User.HasClaim(c => c.Type == "IsSeller" && c.Value == "True")));
+            
         });
     }
 }
