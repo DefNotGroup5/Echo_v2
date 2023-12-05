@@ -1,6 +1,5 @@
 package via.sdj3.grpcserverexample.entities;
 
-
 import jakarta.persistence.*;
 
 @Entity
@@ -11,6 +10,11 @@ public class ItemEntity {
     @Column
     @GeneratedValue
     private int sellerId;
+
+    @Id
+    @Column
+    @GeneratedValue
+    private int itemId;
 
     @Column
     private String name;
@@ -33,8 +37,9 @@ public class ItemEntity {
 
     public ItemEntity(){ }
 
-    public ItemEntity(int sellerId, String name, String image_url, String description, int price, int quantity, int stock_available){
+    public ItemEntity(int sellerId, int itemId, String name, String image_url, String description, int price, int quantity, int stock_available){
         this.sellerId = sellerId;
+        this.itemId = itemId;
         this.name = name;
         this.image_url = image_url;
         this.description = description;
@@ -51,6 +56,9 @@ public class ItemEntity {
         this.sellerId = sellerId;
     }
 
+    public int getItemId(){ return itemId;  }
+
+    public void setItemId(int itemId) { this.itemId = itemId; }
     public String getName() {
         return name;
     }
@@ -59,7 +67,7 @@ public class ItemEntity {
         this.name = name;
     }
 
-    public String getImage_url() {
+    public String getImageUrl() {
         return image_url;
     }
 
@@ -91,7 +99,7 @@ public class ItemEntity {
         this.quantity = quantity;
     }
 
-    public int getStock_available() {
+    public int getStock() {
         return stock_available;
     }
 
@@ -101,3 +109,4 @@ public class ItemEntity {
 
 
 }
+
