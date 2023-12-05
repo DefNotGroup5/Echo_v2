@@ -3,9 +3,8 @@ using Grpc.Net.Client;
 
 namespace GrpcClientServices.Services;
 
-public class ItemService : GrpcClientServices.
+public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
 {
-    
     private readonly GrpcChannel _channel;
     
     public ItemService()
@@ -13,21 +12,13 @@ public class ItemService : GrpcClientServices.
         _channel = GrpcChannel.ForAddress("http://localhost:3030");
     }
     
-    public Task<string?> CreateItem(string itemCreationDto)
+    public Task<string?> CreateItem(string itemCreationDto, Item item, User user)
     {
         try
         {
-            GrpcItem itemGrpc = new GrpcItem();
-            itemGrpc = GenerateGrpcItem()
-            var reply = await ClientCertificateOption.
-            
-            GrpcUser userToAdd = GenerateGrpcUser(user);
-            var client = new GrpcClientServices.UsersService.UsersServiceClient(_channel);
-            var reply = await client.AddAsync(new AddRequest()
-            {
-                User = userToAdd
-            });
-            Console.WriteLine(reply);
+            GrpcItem itemGrpc = GenerateGrpcItem(item);
+            Item newItem = GenerateItem(itemGrpc);
+            Console.WriteLine("A new Item was created");
         }
         catch (Exception e)
         {
@@ -35,6 +26,33 @@ public class ItemService : GrpcClientServices.
         }
 
         return null;
+    }
+
+    public async Task<ICollection<string?>> AddAsync(Item item)
+    {
+        ICollection<string> items = new List<string>();
+        
+        try
+        {
+            GrpcItem itemToAdd = GenerateGrpcItem(item);
+            var client = new GrpcClientServices.UsersService.UsersServiceClient(_channel);
+            var reply = await client.AddAsync(new AddRequest
+            { 
+               Item = itemToAdd
+            });
+
+            foreach (var replyItem in reply.Items)
+            {
+                items.Add(replyItem);
+            }
+            Console.WriteLine("Item was added");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+        return items;
     }
 
     public Task<string?> GetItemById(int id)
@@ -47,30 +65,18 @@ public class ItemService : GrpcClientServices.
         {
             Console.WriteLine(e.Message);
         }
-        return 
+
+        return null;
     }
     
     
-    public async Task<ICollection<string?>> AddAsync()
-    {
-        
-        try
-        {
-            
-            
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
-        
-    }
+   
     
-    private Item? GenerateItem(GrpcItem item, GrpcUser user)
+    private Item? GenerateItem(GrpcItem item)
     {
         Item? generatedItem = null;
-        if (user.IsSeller)
-        {
+        
+        
             generatedItem = new Item()
             {
                 Id = item.Id,
@@ -81,14 +87,13 @@ public class ItemService : GrpcClientServices.
                 Quantity = item.Quantity,
                 Stock = item.Stock,
             };
-        }
+        
         
         return generatedItem;
     }
 
-    private GrpcUser GenerateGrpcItem(Item item, User user)
+    private GrpcItem GenerateGrpcItem(Item item)
     {
-        bool isSeller = user is Seller;
         
         GrpcItem generatedGrpcItem = new GrpcItem()
         {
