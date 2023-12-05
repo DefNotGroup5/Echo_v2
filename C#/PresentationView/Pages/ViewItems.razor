@@ -1,38 +1,118 @@
 ﻿@page "/items"
 @using HTTPClients.ClientInterfaces
-@using Domain.Account.Models
-@inject IUserService UserService
-<p>@ShoppingCartItemCount</p>
-<button @onclick="AddItem1">Add Item #1</button>
-<button>Add Item #2</button>
-<button>Add Item #3</button>
+<div class="wrapper">
+    <div class="search-part">
+            <div class="filter">
+                <select>
+                    <option value="" disabled selected>Filter</option>
+                    <option>Random</option>
+                    <option>Price: Low-High</option>
+                    <option>Price: High-Low</option>
+                    <option>Rating: Low-High</option>
+                    <option>Rating: High-Low</option>
+                    <option>Popularity: Low-High</option>
+                    <option>Popularity: High-Low</option>
+                </select>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search">
+                <button>Search</button>
+            </div>
+        </div>
+        <div class="items">
+            <div class="row">
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+                <div class="item">
+                    <div class="image"></div>
+                    <h2>Item Name Maybe Two Lines</h2>
+                    <h3>399 DKK</h3>
+                </div>
+            </div>
+            
+        </div>
+</div>
+
 
 @code {
-    private int ShoppingCartItemCount { get; set; }
-
-    protected override void OnInitialized()
-    {
-        UserService.OnShoppingCartChanged += UpdateShoppingCartItemCount;
-        UpdateShoppingCartItemCount(UserService.GetShoppingCart().Result);
-        Console.WriteLine("Component initialized!");
-    }
     
-    private void UpdateShoppingCartItemCount(ShoppingCart? shoppingCart)
-    {
-        ShoppingCartItemCount = shoppingCart?.ItemsInCart.Count ?? 0;
-    }
-
-    private void AddItem1()
-    {
-        Item item = new Item()
-        {
-            Description = "Item #1",
-            ImageUrl = "linkToPic",
-            Name = "Potato",
-            Price = 24,
-            Stock = 23
-        };
-        
-        UserService.AddItemToShoppingCart(item);
-    }
 }
