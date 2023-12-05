@@ -101,6 +101,20 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
                 PostalCode = user.PostalCode
             };
         }
+        if (user.IsAdmin)
+        {
+            generatedUser = new Admin(user.Email, user.Password)
+            {
+                Id = user.Id,
+                Address = user.Address,
+                City = user.City,
+                Country = user.Country,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PostalCode = user.PostalCode,
+                IsAdmin = user.IsAdmin
+            };
+        }
         else
         {
             generatedUser = new Customer(user.Email, user.Password)
@@ -114,8 +128,6 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
                 PostalCode = user.PostalCode
             };
         }
-        
-        generatedUser.IsAdmin = user.IsAdmin;
         
         return generatedUser;
     }
