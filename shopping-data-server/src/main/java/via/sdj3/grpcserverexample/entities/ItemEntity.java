@@ -6,15 +6,18 @@ import jakarta.persistence.*;
 @Table
 public class ItemEntity {
 
-    @Id
+//    @Id
+//    @Column
+//    @GeneratedValue
+//    private int sellerId;
+//
+//    @Id
+//    @Column
+//    @GeneratedValue
+//    private int itemId;
+    @EmbeddedId
     @Column
-    @GeneratedValue
-    private int sellerId;
-
-    @Id
-    @Column
-    @GeneratedValue
-    private int itemId;
+    private ItemEntityId id;
 
     @Column
     private String name;
@@ -37,9 +40,33 @@ public class ItemEntity {
 
     public ItemEntity(){ }
 
-    public ItemEntity(int sellerId, int itemId, String name, String image_url, String description, int price, int quantity, int stock_available){
-        this.sellerId = sellerId;
-        this.itemId = itemId;
+//    public ItemEntity(int sellerId, int itemId, String name, String image_url, String description, int price, int quantity, int stock_available){
+//        this.sellerId = sellerId;
+//        this.itemId = itemId;
+//        this.name = name;
+//        this.image_url = image_url;
+//        this.description = description;
+//        this.price = price;
+//        this.quantity = quantity;
+//        this.stock_available = stock_available;
+//    }
+//
+//    public int getSellerId() {
+//        return sellerId;
+//    }
+//
+//    public void setSellerId(int sellerId) {
+//        this.sellerId = sellerId;
+//    }
+//
+//    public int getItemId(){ return itemId;  }
+//
+//    public void setItemId(int itemId) { this.itemId = itemId; }
+
+    public ItemEntity(ItemEntityId id, String name, String image_url,
+        String description, int price, int quantity, int stock_available)
+    {
+        this.id = id;
         this.name = name;
         this.image_url = image_url;
         this.description = description;
@@ -48,17 +75,16 @@ public class ItemEntity {
         this.stock_available = stock_available;
     }
 
-    public int getSellerId() {
-        return sellerId;
+    public ItemEntityId getId()
+    {
+        return id;
     }
 
-    public void setSellerId(int sellerId) {
-        this.sellerId = sellerId;
+    public void setId(ItemEntityId id)
+    {
+        this.id = id;
     }
 
-    public int getItemId(){ return itemId;  }
-
-    public void setItemId(int itemId) { this.itemId = itemId; }
     public String getName() {
         return name;
     }
