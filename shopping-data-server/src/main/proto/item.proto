@@ -13,7 +13,7 @@ service ItemService {
 }
 
 message GrpcItem {
-  int32 id = 1;
+  int32 itemId = 1;
   int32 sellerId = 2;
   string name = 3;
   string imageUrl = 4;
@@ -36,7 +36,8 @@ message AddItemResponse {
 
 
 message GetItemByIdRequest {
-  int32 id = 1;
+  int32 itemIid = 1;
+  int32 sellerId = 2;
 }
 
 
