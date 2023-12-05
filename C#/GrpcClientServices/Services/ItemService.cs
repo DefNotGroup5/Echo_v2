@@ -11,61 +11,39 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
     {
         _channel = GrpcChannel.ForAddress("http://localhost:3030");
     }
-    
-    public Task<string?> CreateItem(string itemCreationDto, Item item, User user)
-    {
-        try
-        {
-            GrpcItem itemGrpc = GenerateGrpcItem(item);
-            Item newItem = GenerateItem(itemGrpc);
-            Console.WriteLine("A new Item was created");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
 
-        return null;
-    }
-
-    public async Task<ICollection<string?>> AddAsync(Item item)
+    public async Task AddAsync(Item item)
     {
-        ICollection<string> items = new List<string>();
-        
         try
         {
             GrpcItem itemToAdd = GenerateGrpcItem(item);
-            var client = new GrpcClientServices.UsersService.UsersServiceClient(_channel);
-            var reply = await client.AddAsync(new AddRequest
+            var client = new GrpcClientServices.ItemService.ItemServiceClient(_channel);
+            var reply = await client.AddItemAsync(new AddItemRequest()
             { 
-               Item = itemToAdd
+               GrpcItem = itemToAdd
             });
-
-            foreach (var replyItem in reply.Items)
-            {
-                items.Add(replyItem);
-            }
-            Console.WriteLine("Item was added");
+            
+            Console.WriteLine(reply);
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
         }
-
-        return items;
+        
     }
 
-    public Task<string?> GetItemById(int id)
+    public async Task<Item?> GetItemById(int id, int sellerId)
     {
         try
         {
-            var grpcClient = new GrpcClientServices.Services.ItemService(_channel);
-            var reply = await grpcClient.GetByIdAsync(new GetByIdRequest 
+            var grpcClient = new GrpcClientServices.ItemService.ItemServiceClient(_channel);
+            var reply = await grpcClient.GetItemById(new GetItemByIdRequest 
             {
-                Id = id
+                ItemId = id, SellerId =sellerId
+                
             });
-            return item?.ToString();
-
+            Item? item = GenerateItem(reply.Item);
+            return item;
 
         }
         catch (Exception e)
@@ -75,7 +53,7 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
 
         return null;
     }
-    
+
     
    
     
@@ -86,7 +64,8 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
         
             generatedItem = new Item()
             {
-                Id = item.Id,
+                Id = item.ItemId,
+                SellerId = item.SellerId,
                 Name = item.Name,
                 ImageUrl = item.ImageUrl,
                 Description = item.Description,
@@ -104,7 +83,8 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
         
         GrpcItem generatedGrpcItem = new GrpcItem()
         {
-            Id = item.Id,
+            ItemId = item.Id, 
+            SellerId = item.SellerId,  
             Name = item.Name,
             ImageUrl = item.ImageUrl,
             Description = item.Description,
