@@ -25,6 +25,10 @@
             <a @onclick="SwitchToLogin">Already have an account?</a>
             <button @onclick="Create">Register</button>
         </div>
+        @if(!string.IsNullOrEmpty(_result))
+        {
+            <label>@_result</label>
+        }
     </div>
 </div>
 
@@ -46,13 +50,7 @@
     {
         NavigationManager.NavigateTo("/login");
     }
-
-    private void ClearFields()
-    {
-        _email = "";
-        _password = "";
-        _result = "";
-    }
+    
     
     private async Task Create()
     {
@@ -82,6 +80,7 @@
             _result = "Success!";
             _type = "customer";
             Console.WriteLine(_result);
+            NavigationManager.NavigateTo("/login");
         }
         catch (Exception e)
         {

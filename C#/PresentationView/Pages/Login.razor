@@ -8,13 +8,17 @@
 <div class="wrapper">
     <div class="login-wrapper">
         <h1>Login</h1>
-        <input type="text" placeholder="email" @bind="_email" @bind:event="oninput" />
-        <input type="password" placeholder="password" @bind="_password" @bind:event="oninput" />
+        <input type="text" placeholder="Email" @bind="_email" @bind:event="oninput" />
+        <input type="password" placeholder="Password" @bind="_password" @bind:event="oninput" />
         <div class="button-row">
-            <a @onclick="SwitchToRegister">new user?</a>
+            <a @onclick="SwitchToRegister">New user?</a>
             <button @onclick="LoginAsync">Login</button>
-            <a>forgot password</a>
+            <a>Forgot password?</a>
         </div>
+        @if(!string.IsNullOrEmpty(_result))
+        {
+            <label>@_result</label>
+        }
     </div>
 </div>
 
@@ -28,14 +32,7 @@
     {
         NavigationManager.NavigateTo("/register");
     }
-    
-    private void ClearFields()
-    {
-        _email = "";
-        _password = "";
-        _result = "";
-    }
-    
+
     private async Task LoginAsync()
     {
         _result = "";
