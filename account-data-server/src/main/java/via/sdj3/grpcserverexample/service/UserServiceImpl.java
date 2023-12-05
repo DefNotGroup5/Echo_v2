@@ -95,32 +95,6 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
             responseObserver.onError(new StatusRuntimeException(status));
         }
     }
-    
-     /*@Override
-        public void listSellers(Empty request, StreamObserver<ListUsersResponse> responseObserver) {
-            List<UserEntity> sellers = userRepository.findByIsSeller(true);
-            ListUsersResponse.Builder responseBuilder = ListUsersResponse.newBuilder();
-            for (UserEntity seller : sellers) {
-                GrpcUser grpcUser = GrpcUser.newBuilder()
-                    .setId(seller.getId())
-                    .setEmail(seller.getEmail())
-                    .setIsAuthorizedSeller(seller.isAuthorizedSeller())
-                    .build();
-                responseBuilder.addUsers(grpcUser);
-            }
-            responseObserver.onNext(responseBuilder.build());
-            responseObserver.onCompleted();
-        }
-     @Override
-         public void authorizeSeller(AuthorizeSellerRequest request, StreamObserver<AuthorizeSellerResponse> responseObserver) {
-             userRepository.setSellerAuthorization(request.getId(), request.getIsAuthorized());
-             AuthorizeSellerResponse response = AuthorizeSellerResponse.newBuilder()
-                 .setResult("Seller authorization updated.")
-                 .build();
-             responseObserver.onNext(response);
-             responseObserver.onCompleted();
-         }
-      */
 
     private UserEntity generateUserEntity(GrpcUser user)
     {
