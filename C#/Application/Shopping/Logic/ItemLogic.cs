@@ -17,57 +17,77 @@ public class ItemLogic : IItemLogic
         _itemsService = itemsService;
     }
 
-    public async Task<Item?> CreateItem(ItemCreationDto dto)
+    public async Task<Item?> CreateItemAsync(ItemCreationDto dto)
     {
         try
         {
-           ValidateCreationDto(dto);
-           Item itemToCreate = new Item()
+           string validation = await ValidateCreationDto(dto);
+           if (string.IsNullOrEmpty(validation))
            {
-               Description = dto.Description,
-               Name = dto.Name,
+               throw new Exception(validation);
+           }
+           Item itemToCreate = new Item(dto.Name, dto.ImageUrl, dto.Description)
+           {
                Price = dto.Price,
-               Stock = dto.Stock,
-               ImageUrl = dto.ImageUrl,
+               Quantity = dto.Quantity,
                SellerId = dto.SellerId
            };
-           int itemId = await _itemsService.AddItemAsync(itemToCreate);
-           return await GetItemById(itemId, dto.SellerId);
+           Item? item = await _itemsService.AddItemAsync(itemToCreate);
+           return item;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            throw;
         }
+        return null;
     }
-    public async Task<Item?> GetItemById(int id, int sellerId)
+    public async Task<Item?> GetItemByIdAsync(int id)
     {
-        Item? item = await _itemsService.GetItemById(id, sellerId);
+        Item? item = await _itemsService.GetItemByIdAsync(id);
         return item;
     }
 
-    public async Task<ICollection<Item?>> GetItems()
+    public async Task<ICollection<Item?>> GetItemsAsync()
     {
-        /*
-        ICollection<Item> items = await _itemsService.GetItems(); Need this method
-         */
-        return new List<Item?>();
+        
+        ICollection<Item?> items = await _itemsService.GetAllItemsAsync(); 
+        return items;
     }
 
-    private async void ValidateCreationDto(ItemCreationDto itemCreationDto)
+    private async Task<string> ValidateCreationDto(ItemCreationDto itemCreationDto)
     {
+        string validation = "";
         User? user = await _usersService.GetByIdAsync(itemCreationDto.SellerId);
         if (user == null)
-            throw new Exception("Error: User with such id does not exist!");
+        {
+            validation = "Error: User with such id does not exist!";
+            return validation;
+        }
         if(itemCreationDto.Price < 0)
-            throw new Exception("Price is an invalid number!");
-        if(itemCreationDto.Name == null || itemCreationDto.Name.Equals(""))
-            throw new Exception("Name cannot be empty!");
-        if(itemCreationDto.Description == null || itemCreationDto.Description.Equals(""))
-            throw new Exception("Description cannot be empty!");    
-        if(itemCreationDto.Stock < 0)
-            throw new Exception("Stock must be either 0 or a positive number!");
+        {
+            validation = "Price is an invalid number!";
+            return validation;
+        }
+        if(string.IsNullOrEmpty(itemCreationDto.Name))
+        {
+            validation = "Name cannot be empty!";
+            return validation;
+        }
+        if(string.IsNullOrEmpty(itemCreationDto.Description))
+        {
+            validation = "Description cannot be empty!";
+            return validation;
+        }
+        if(itemCreationDto.Quantity < 0)
+        {
+            validation = "Stock must be either 0 or a positive number!";
+            return validation;
+        }
         if (string.IsNullOrEmpty(itemCreationDto.ImageUrl))
-            throw new Exception("Image must be chosen!");
+        {
+            validation = "Image must be chosen!";
+            return validation;
+        }
+        return validation;
     }
 }

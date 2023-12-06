@@ -21,10 +21,9 @@ public class ItemsController : ControllerBase
     {
         try
         {
-            Item? item = await _itemLogic.CreateItem(dto);
-            if (item != null) 
-                return Created($"/Items/{item.Id}", item);
-            throw new Exception("Error creating an Item!");
+            Item? item = await _itemLogic.CreateItemAsync(dto);
+            if (item != null) return Created($"/Items/{item.Id}", item);
+            return StatusCode(500, "ERROR! Item was null!");
         }
         catch (Exception e)
         {
@@ -33,12 +32,12 @@ public class ItemsController : ControllerBase
         }
     }
     
-    [HttpGet("{id:int}/{sellerId:int}")]
-    public async Task<ActionResult<ICollection<Item>>> GetByIdAsync([FromRoute] int id,  [FromRoute] int sellerId)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<ICollection<Item>>> GetByIdAsync([FromRoute] int id)
     {
         try
         {
-            Item? item  = await _itemLogic.GetItemById(id, sellerId);
+            Item? item  = await _itemLogic.GetItemByIdAsync(id);
             return Ok(item);
         }
         catch (Exception e)
@@ -53,7 +52,7 @@ public class ItemsController : ControllerBase
     {
         try
         {
-            ICollection<Item?> items = await _itemLogic.GetItems();
+            ICollection<Item?> items = await _itemLogic.GetItemsAsync();
             return Ok(items);
         }
         catch (Exception e)

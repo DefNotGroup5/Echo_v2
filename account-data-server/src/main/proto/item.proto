@@ -10,6 +10,7 @@ option java_outer_classname = "ItemProto";
 service ItemService {
   rpc AddItem (AddItemRequest) returns (AddItemResponse);
   rpc GetItemById (GetItemByIdRequest) returns (GetItemByIdResponse);
+  rpc GetAllItems (GetAllItemsRequest) returns (GetAllItemsResponse);
 }
 
 message GrpcItem {
@@ -18,32 +19,37 @@ message GrpcItem {
   string name = 3;
   string imageUrl = 4;
   string description = 5;
-  int32 price = 6;
+  double price = 6;
   int32 quantity = 7;
-  int32 stock = 8;
-  string seller = 9;
+  string seller = 8;
 }
 
 
 message AddItemRequest {
-  GrpcItem grpcItem = 1;
+  GrpcItem item = 1;
 }
 
 message AddItemResponse {
-  string result = 1;
-  int32 itemId = 2;
+  GrpcItem item = 1;
 }
 
 
 
 message GetItemByIdRequest {
-  int32 itemId = 1;
-  int32 sellerId = 2;
+  int32 id = 1;
 }
 
 
 message GetItemByIdResponse {
   GrpcItem item = 1;
+}
+
+message GetAllItemsRequest {
+
+}
+
+message GetAllItemsResponse {
+  repeated GrpcItem items = 1;
 }
 
 

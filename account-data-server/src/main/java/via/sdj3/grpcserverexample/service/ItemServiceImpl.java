@@ -1,15 +1,15 @@
 package via.sdj3.grpcserverexample.service;
-
-
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import via.sdj3.grpcserverexample.entities.ItemEntity;
-import via.sdj3.grpcserverexample.entities.ItemEntityId;
+import via.sdj3.grpcserverexample.entities.UserEntity;
 import via.sdj3.grpcserverexample.repository.ItemRepository;
 import via.sdj3.protobuf.item.*;
+import via.sdj3.protobuf.users.GrpcUser;
 
+import java.util.List;
 import java.util.Optional;
 
 @GrpcService
@@ -27,10 +27,9 @@ public class ItemServiceImpl extends ItemServiceGrpc.ItemServiceImplBase {
     public void addItem(AddItemRequest request, StreamObserver<AddItemResponse> responseObserver) {
         try
         {
-            GrpcItem item = request.getGrpcItem(); //information from the request is put on an item object
-            ItemEntity itemToAdd = generateItemEntity(request.getGrpcItem()); //takes the grpc item object and transforms it into a ItemEntity object
-            itemRepository.save(itemToAdd); // saves the data to the database or repository
-            AddItemResponse response = AddItemResponse.newBuilder().setResult("THe item was added.").setItemId(itemToAdd.getId().getItemId()).build(); //makes a response to say the item was added
+            ItemEntity itemToAdd = generateItemEntity(request.getItem()); //takes the grpc item object and transforms it into a ItemEntity object
+            ItemEntity itemEntity = itemRepository.save(itemToAdd);
+            AddItemResponse response = AddItemResponse.newBuilder().setItem(generateGrpcItem(itemEntity)).build(); //makes a response to say the item was added
             System.out.println("The item was added.");
             responseObserver.onNext(response); //sends the response to the client
             responseObserver.onCompleted(); //operation complete
@@ -46,10 +45,9 @@ public class ItemServiceImpl extends ItemServiceGrpc.ItemServiceImplBase {
     {
         try
         {
-            ItemEntityId itemEntityId = new ItemEntityId(request.getItemId(), request.getSellerId());
-            Optional<ItemEntity> itemOptional  = itemRepository.getById(itemEntityId); //gets an item from the repository based on the id
-            if(itemOptional.isPresent()) {
-                ItemEntity item = itemOptional.get();
+            Optional<ItemEntity> existingItem = itemRepository.getItemById(request.getId()); //gets an item from the repository based on the id
+            if(existingItem.isPresent()) {
+                ItemEntity item = existingItem.get();
                 GetItemByIdResponse response = GetItemByIdResponse.newBuilder().setItem(generateGrpcItem(item)).build(); //converts the item entity retrieved into a grpc self generated response message
                 responseStreamObserver.onNext(response); //sends the response back to the client
                 responseStreamObserver.onCompleted(); //process complete
@@ -66,46 +64,51 @@ public class ItemServiceImpl extends ItemServiceGrpc.ItemServiceImplBase {
         }
     }
 
+    @Override
+    public void getAllItems(GetAllItemsRequest request, StreamObserver<GetAllItemsResponse> responseObserver) {
+        try
+        {
+            List<ItemEntity> items = itemRepository.findAll();
+            GetAllItemsResponse.Builder response = GetAllItemsResponse.newBuilder();
+            for (ItemEntity item : items) {
+                GrpcItem grpcItem = generateGrpcItem(item);
+                response.addItems(grpcItem);
+            }
+            System.out.println("The items were gathered.");
+            responseObserver.onNext(response.build()); //sends the response to the client
+            responseObserver.onCompleted(); //operation complete
+        }
+        catch (Exception e)
+        {
+            Status status = Status.INTERNAL.withDescription("Error adding item"); //message in case on error
+            responseObserver.onError(new StatusRuntimeException(status)); //sends it to the client
+        }
+    }
 
-//    private ItemEntity generateItemEntity(GrpcItem item)
-//    {
-//        ItemEntity itemEntity = new ItemEntity();
-//        itemEntity.setSellerId(item.getId());
-//        itemEntity.setName(item.getName());
-//        itemEntity.setImage_url(item.getImageUrl());
-//        itemEntity.setDescription(item.getDescription());
-//        itemEntity.setPrice(item.getPrice());
-//        itemEntity.setQuantity(item.getQuantity());
-//        itemEntity.setStock_available(item.getStock());
-//        return itemEntity;
-//    }
-private ItemEntity generateItemEntity(GrpcItem item)
+    private ItemEntity generateItemEntity(GrpcItem item)
 {
     ItemEntity itemEntity = new ItemEntity();
-    ItemEntityId itemId = new ItemEntityId(item.getSellerId(), 2); //Change constructor to accept only sellerId
-    itemEntity.setId(itemId);
+    itemEntity.setId(item.getItemId());
+    itemEntity.setSellerId(item.getSellerId());
     itemEntity.setName(item.getName());
     itemEntity.setImage_url(item.getImageUrl());
     itemEntity.setDescription(item.getDescription());
     itemEntity.setPrice(item.getPrice());
     itemEntity.setQuantity(item.getQuantity());
-    itemEntity.setStock_available(item.getStock());
     return itemEntity;
 }
 
     private GrpcItem generateGrpcItem(ItemEntity itemEntity)
     {
-        GrpcItem item = GrpcItem.newBuilder()
-            .setSellerId(itemEntity.getId().getSellerId())
-            .setItemId(itemEntity.getId().getItemId())
+        return GrpcItem.newBuilder()
+            .setSellerId(itemEntity.getSellerId())
+            .setItemId(itemEntity.getId())
             .setName(itemEntity.getName())
             .setImageUrl(itemEntity.getImageUrl())
             .setDescription(itemEntity.getDescription())
             .setPrice(itemEntity.getPrice())
             .setQuantity(itemEntity.getQuantity())
-            .setStock(itemEntity.getStock())
             .build();
-        return item;
     }
 
 }

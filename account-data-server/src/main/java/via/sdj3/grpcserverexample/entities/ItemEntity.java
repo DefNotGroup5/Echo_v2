@@ -23,19 +23,16 @@ public class ItemEntity {
     private String description;
 
     @Column
-    private int price;
+    private double price;
 
     @Column
     private int quantity;
-
-    @Column
-    private int stock_available;
 
     public ItemEntity(){ }
 
 
     public ItemEntity(int id, int sellerId, String name, String image_url,
-        String description, int price, int quantity, int stock_available)
+        String description, double price, int quantity)
     {
         this.sellerId = sellerId;
         this.id = id;
@@ -44,7 +41,6 @@ public class ItemEntity {
         this.description = description;
         this.price = price;
         this.quantity = quantity;
-        this.stock_available = stock_available;
     }
 
     public int getId()
@@ -81,11 +77,11 @@ public class ItemEntity {
         this.description = description;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -95,14 +91,6 @@ public class ItemEntity {
 
     public void setQuantity(int quantity){
         this.quantity = quantity;
-    }
-
-    public int getStock() {
-        return stock_available;
-    }
-
-    public void setStock_available(int stock_available) {
-        this.stock_available = stock_available;
     }
 
     public int getSellerId() {
@@ -117,8 +105,5 @@ public class ItemEntity {
         return image_url;
     }
 
-    public int getStock_available() {
-        return stock_available;
-    }
 }
 
