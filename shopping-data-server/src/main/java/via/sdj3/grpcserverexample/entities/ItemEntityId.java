@@ -1,13 +1,24 @@
 package via.sdj3.grpcserverexample.entities;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 
+@Embeddable
+@Table
 public class ItemEntityId implements Serializable
 {
+  @Column
   private int sellerId;
+  @Id
+  @GeneratedValue
+  @Column
   private int itemId;
 
   public ItemEntityId(){}
+  public ItemEntityId(int sellerId) {
+    this.sellerId = sellerId;
+  }
   public ItemEntityId(int sellerId, int itemId)
   {
     this.sellerId = sellerId;

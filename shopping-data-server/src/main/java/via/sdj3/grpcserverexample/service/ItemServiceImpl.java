@@ -10,7 +10,9 @@ import via.sdj3.grpcserverexample.entities.ItemEntityId;
 import via.sdj3.grpcserverexample.repository.ItemRepository;
 import via.sdj3.protobuf.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @GrpcService
 public class ItemServiceImpl extends ItemServiceGrpc.ItemServiceImplBase {
@@ -66,6 +68,26 @@ public class ItemServiceImpl extends ItemServiceGrpc.ItemServiceImplBase {
         }
     }
 
+    public void getAllItems(GetAllItemsByIdRequest request, StreamObserver<GetAllItemsByIdResponse> responseStreamObserver) {
+        try
+        {
+            ItemEntityId itemEntityId = new ItemEntityId(request.getItemIid(), request.getSellerId());
+            List<ItemEntity> itemList = itemRepository.getAllItemsById(itemEntityId);
+
+            // Convert the list of ItemEntity to a list of GrpcItem
+            List<GrpcItem> grpcItemList = itemList.stream()
+                .map(this::generateGrpcItem)
+                .collect(Collectors.toList());
+
+            // Build the response with the list of GrpcItem
+            GetAllItemsByIdResponse response = GetAllItemsByIdResponse.newBuilder().addAllItems(grpcItemList).build();
+
+            responseStreamObserver.onNext(response);
+            responseStreamObserver.onCompleted();
+        }catch (Exception e) {
+
+        }
+    }
 
 //    private ItemEntity generateItemEntity(GrpcItem item)
 //    {
