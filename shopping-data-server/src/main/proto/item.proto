@@ -6,10 +6,10 @@ option java_multiple_files = true;
 option java_package = "via.sdj3.protobuf";
 option java_outer_classname = "ItemProto";
 
-
 service ItemService {
   rpc AddItem (AddItemRequest) returns (AddItemResponse);
   rpc GetItemById (GetItemByIdRequest) returns (GetItemByIdResponse);
+  rpc GetAllItemsById (GetAllItemsByIdRequest) returns (GetAllItemsByIdResponse);
 }
 
 message GrpcItem {
@@ -24,7 +24,6 @@ message GrpcItem {
   string seller = 9;
 }
 
-
 message AddItemRequest {
   GrpcItem grpcItem = 1;
 }
@@ -33,16 +32,20 @@ message AddItemResponse {
   string result = 1;
 }
 
-
-
 message GetItemByIdRequest {
   int32 itemIid = 1;
   int32 sellerId = 2;
 }
 
-
 message GetItemByIdResponse {
   GrpcItem item = 1;
 }
 
+message GetAllItemsByIdRequest {
+  int32 itemIid = 1;
+  int32 sellerId = 2;
+}
 
+message GetAllItemsByIdResponse {
+  repeated GrpcItem items = 1;
+}
