@@ -41,4 +41,9 @@ public class AdminHttpClient : IAdminService
             throw new Exception("Failed to authorize seller");
         }
     }
+
+    public Task DeleteSellerAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
 }
