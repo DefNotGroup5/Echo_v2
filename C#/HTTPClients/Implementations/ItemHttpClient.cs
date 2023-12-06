@@ -1,4 +1,7 @@
 ﻿using System.Net.Http.Json;
+using System.Text.Json;
+using Domain.Account.DTOs;
+using Domain.Account.Models;
 using HTTPClients.ClientInterfaces;
 
 namespace HTTPClients.Implementations;
@@ -12,7 +15,7 @@ public class ItemHttpClient : IItemService
         _client = client;
     }
 
-    public async Task<string?> CreateAsync(string itemCreationDto)
+    public async Task<string?> CreateAsync(ItemCreationDto itemCreationDto)
     {
         HttpResponseMessage response = await _client.PostAsJsonAsync("/Items", itemCreationDto);
         string result = await response.Content.ReadAsStringAsync();
@@ -20,12 +23,11 @@ public class ItemHttpClient : IItemService
         {
             throw new Exception(result);
         }
-        /*
+        
         Item item = JsonSerializer.Deserialize<Item>(result, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         })!;
-        */
         return null;
     }
 

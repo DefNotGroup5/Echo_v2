@@ -26,11 +26,13 @@ public class UsersController : ControllerBase
     private List<Claim> GenerateClaims(User user)
     {
         bool isSeller = user is Seller;
+        bool isAdmin = user is Admin;
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, _config["Jwt:Subject"] ?? string.Empty),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+            new Claim("Id", user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.FirstName),
             new Claim(ClaimTypes.Surname, user.LastName),
             new Claim(ClaimTypes.Email, user.Email),
@@ -39,8 +41,7 @@ public class UsersController : ControllerBase
             new Claim(ClaimTypes.Country, user.Country),
             new Claim(ClaimTypes.PostalCode, user.PostalCode.ToString()),
             new Claim("IsSeller", isSeller.ToString()),
-            new Claim("IsSeller", isSeller.ToString()),
-            new Claim("IsAdmin", user.IsAdmin.ToString())
+            new Claim("IsAdmin", isAdmin.ToString())
         };
         return claims.ToList();
     }

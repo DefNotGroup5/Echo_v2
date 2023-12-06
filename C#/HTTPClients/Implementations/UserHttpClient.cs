@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
+using Domain.Shopping.Models;
 using HTTPClients.ClientInterfaces;
 
 namespace HTTPClients.Implementations;

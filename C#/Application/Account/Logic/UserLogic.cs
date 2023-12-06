@@ -1,5 +1,4 @@
-﻿using Application.Account.DaoInterfaces;
-using Domain.Account.DTOs;
+﻿using Domain.Account.DTOs;
 using Domain.Account.Models;
 using GrpcClientServices.Services;
 
@@ -87,25 +86,55 @@ public class UserLogic : IUserLogic
         string validated = "";
         User? user = await _usersService.GetByEmailAsync(dto.Email);
         if (user != null)
+        {
             validated = "User with such email already exists!";
+            return validated;
+        }
         if(string.IsNullOrEmpty(dto.Email))
+        {
             validated = "Email cannot be empty!";
+            return validated;
+        }
         if (string.IsNullOrEmpty(dto.FirstName))
+        {
             validated = "First Name cannot be empty!";
+            return validated;
+        }
         if (string.IsNullOrEmpty(dto.LastName))
+        {
             validated = "Last Name cannot be empty!";
+            return validated;
+        }
         if (string.IsNullOrEmpty(dto.Password))
+        {
             validated = "Password cannot be empty!";
+            return validated;
+        }
         if(dto.Password.Length < 8)
+        {
             validated = "Password must contain at least 8 characters!";
+            return validated;
+        }
         if(string.IsNullOrEmpty(dto.Address))
+        {
             validated = "Address cannot be empty!";
+            return validated;
+        }
         if(string.IsNullOrEmpty(dto.City))
+        {
             validated = "City cannot be empty!";
+            return validated;
+        }
         if(dto.PostalCode < 0 || dto.PostalCode > 9999999)
+        {
             validated = "Postal code is invalid!";
+            return validated;
+        }
         if(string.IsNullOrEmpty(dto.Country))
+        {
             validated = "Country cannot be empty";
+            return validated;
+        }
         return validated;
     }
 

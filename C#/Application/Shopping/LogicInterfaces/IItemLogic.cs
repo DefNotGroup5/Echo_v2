@@ -5,7 +5,7 @@ namespace Application.Shopping.LogicInterfaces;
 
 public interface IItemLogic
 {
-    Task<Item?> CreateItem(ItemCreationDto dto);
-    Task<Item?> GetItemById(int id);
-    Task<ICollection<Item?>> GetItems();
+    Task<Item?> CreateItemAsync(ItemCreationDto dto);
+    Task<Item?> GetItemByIdAsync(int id);
+    Task<ICollection<Item?>> GetItemsAsync();
 }

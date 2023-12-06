@@ -8,71 +8,86 @@ namespace Application.Shopping.Logic;
 public class ItemLogic : IItemLogic
 {
 
-    private readonly string _itemsService;
+    private readonly ItemService _itemsService;
     private readonly UsersService _usersService;
 
-    public ItemLogic(string itemsService, UsersService usersService)
+    public ItemLogic(ItemService itemsService, UsersService usersService)
     {
         _usersService = usersService;
         _itemsService = itemsService;
     }
 
-    public async Task<Item?> CreateItem(ItemCreationDto dto)
+    public async Task<Item?> CreateItemAsync(ItemCreationDto dto)
     {
-        //Item needs ID
         try
         {
-           ValidateCreationDto(dto);
-           Item itemToCreate = new Item()
+           string validation = await ValidateCreationDto(dto);
+           if (string.IsNullOrEmpty(validation))
            {
-               Description = dto.Description,
-               Name = dto.Name,
+               throw new Exception(validation);
+           }
+           Item itemToCreate = new Item(dto.Name, dto.ImageUrl, dto.Description)
+           {
                Price = dto.Price,
-               Stock = dto.Stock,
-               ImageUrl = dto.ImageUrl
+               Quantity = dto.Quantity,
+               SellerId = dto.SellerId
            };
-           //Item item = await _itemsService.CreateAsync(itemToCreate);
-            
-            return new Item();
+           Item? item = await _itemsService.AddItemAsync(itemToCreate);
+           return item;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            throw;
         }
-    }
-
-    public async Task<Item?> GetItemById(int id)
-    {
-        /*
-        Item item = await _itemsService.GetByIdAsync(id); Need this method
-         */
         return null;
     }
-
-    public async Task<ICollection<Item?>> GetItems()
+    public async Task<Item?> GetItemByIdAsync(int id)
     {
-        /*
-        ICollection<Item> items = await _itemsService.GetItems(); Need this method
-         */
-        return new List<Item?>();
+        Item? item = await _itemsService.GetItemByIdAsync(id);
+        return item;
     }
 
-    private async void ValidateCreationDto(ItemCreationDto itemCreationDto)
+    public async Task<ICollection<Item?>> GetItemsAsync()
     {
-        //I need Seller ID
-        User? user = await _usersService.GetByIdAsync(23);
+        
+        ICollection<Item?> items = await _itemsService.GetAllItemsAsync(); 
+        return items;
+    }
+
+    private async Task<string> ValidateCreationDto(ItemCreationDto itemCreationDto)
+    {
+        string validation = "";
+        User? user = await _usersService.GetByIdAsync(itemCreationDto.SellerId);
         if (user == null)
-            throw new Exception("Error: User with such id does not exist!");
+        {
+            validation = "Error: User with such id does not exist!";
+            return validation;
+        }
         if(itemCreationDto.Price < 0)
-            throw new Exception("Price is an invalid number!");
-        if(itemCreationDto.Name == null || itemCreationDto.Name.Equals(""))
-            throw new Exception("Name cannot be empty!");
-        if(itemCreationDto.Description == null || itemCreationDto.Description.Equals(""))
-            throw new Exception("Description cannot be empty!");    
-        if(itemCreationDto.Stock < 0)
-            throw new Exception("Stock must be either 0 or a positive number!");
+        {
+            validation = "Price is an invalid number!";
+            return validation;
+        }
+        if(string.IsNullOrEmpty(itemCreationDto.Name))
+        {
+            validation = "Name cannot be empty!";
+            return validation;
+        }
+        if(string.IsNullOrEmpty(itemCreationDto.Description))
+        {
+            validation = "Description cannot be empty!";
+            return validation;
+        }
+        if(itemCreationDto.Quantity < 0)
+        {
+            validation = "Stock must be either 0 or a positive number!";
+            return validation;
+        }
         if (string.IsNullOrEmpty(itemCreationDto.ImageUrl))
-            throw new Exception("Image must be chosen!");
+        {
+            validation = "Image must be chosen!";
+            return validation;
+        }
+        return validation;
     }
 }

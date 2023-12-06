@@ -14,7 +14,7 @@ import via.sdj3.protobuf.users.UsersServiceGrpc;
 import java.util.List;
 import java.util.Optional;
 
-@GrpcService
+@GrpcService //Important
 public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     private UserRepository userRepository;
 
@@ -27,17 +27,18 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     public void add(AddRequest request, StreamObserver<AddResponse> responseObserver) {
         try
         {
-            UserEntity userToBeAdded = generateUserEntity(request.getUser());
-            userRepository.save(userToBeAdded);
-            AddResponse response = AddResponse.newBuilder().setResult("User Added!").build();
-            System.out.println("User added");
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
+            System.out.println(request.getUser().getAddress());
+            UserEntity userToBeAdded = generateUserEntity(request.getUser()); //Generate User Entity from GrpcUser from request from client
+            userRepository.save(userToBeAdded); //Save to repository
+            AddResponse response = AddResponse.newBuilder().setResult("User Added!").build(); //Create response (weird syntax, don't ask)
+            System.out.println("User added"); //Logging
+            responseObserver.onNext(response); //On next available spot, execute
+            responseObserver.onCompleted(); //Complete
         }
         catch (Exception e)
         {
-            Status status = Status.INTERNAL.withDescription("Error adding user");
-            responseObserver.onError(new StatusRuntimeException(status));
+            Status status = Status.INTERNAL.withDescription("Error adding user"); //Create an error status
+            responseObserver.onError(new StatusRuntimeException(status)); //Return error status to client
         }
     }
 
@@ -45,6 +46,7 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     public void update(UpdateRequest request, StreamObserver<UpdateResponse> responseObserver) {
         try
         {
+
             GrpcUser user = request.getUser();
             UserEntity oldUser = userRepository.findById(user.getId())
                     .orElseThrow(() -> new StatusRuntimeException(Status.NOT_FOUND.withDescription("User not found")));
@@ -96,7 +98,7 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
         }
     }
 
-    private UserEntity generateUserEntity(GrpcUser user)
+    public static UserEntity generateUserEntity(GrpcUser user) //Helping Method for generating UserEntity from GrpcUser
     {
         UserEntity userEntity = new UserEntity();
         userEntity.setFirstName(user.getFirstName());
@@ -111,7 +113,7 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
         return userEntity;
     }
 
-    private GrpcUser generateGrpcUser(UserEntity userEntity)
+    public static GrpcUser generateGrpcUser(UserEntity userEntity) //The other way
     {
         return GrpcUser.newBuilder().setId(userEntity.getId()).setFirstName(userEntity.getFirstName()).setLastName(userEntity.getLastName())
                 .setAddress(userEntity.getAddress()).setEmail(userEntity.getEmail()).setIsSeller(userEntity.isSeller())

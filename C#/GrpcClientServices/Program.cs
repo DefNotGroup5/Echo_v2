@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
 
 var app = builder.Build();
-app.MapGrpcService<UsersService>();
 
 // Configure the HTTP request pipeline.
 app.MapGet("/",

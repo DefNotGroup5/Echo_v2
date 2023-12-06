@@ -21,10 +21,9 @@ public class ItemsController : ControllerBase
     {
         try
         {
-            Item? item = await _itemLogic.CreateItem(dto);
-            if (item != null) 
-                return Created($"/Items/{item.Id}", item);
-            throw new Exception("Error creating an Item!");
+            Item? item = await _itemLogic.CreateItemAsync(dto);
+            if (item != null) return Created($"/Items/{item.Id}", item);
+            return StatusCode(500, "ERROR! Item was null!");
         }
         catch (Exception e)
         {
@@ -38,7 +37,7 @@ public class ItemsController : ControllerBase
     {
         try
         {
-            Item? item  = await _itemLogic.GetItemById(id);
+            Item? item  = await _itemLogic.GetItemByIdAsync(id);
             return Ok(item);
         }
         catch (Exception e)
@@ -53,7 +52,7 @@ public class ItemsController : ControllerBase
     {
         try
         {
-            ICollection<Item?> items = await _itemLogic.GetItems();
+            ICollection<Item?> items = await _itemLogic.GetItemsAsync();
             return Ok(items);
         }
         catch (Exception e)

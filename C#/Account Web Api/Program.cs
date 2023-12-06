@@ -1,5 +1,4 @@
 using System.Text;
-using Application.Account.DaoInterfaces;
 using Application.Account.Logic;
 using Application.Account.LogicInterfaces;
 using Domain.Auth;
@@ -16,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<UsersService>();
+builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<IUserLogic, UserLogic>();
 builder.Services.AddScoped<IAdminLogic, AdminLogic>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
