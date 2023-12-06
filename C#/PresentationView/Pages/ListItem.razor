@@ -1,8 +1,13 @@
 ﻿@page "/listitem"
 @using Microsoft.AspNetCore.Components.Forms
 @using Supabase.Storage
-@inject Supabase.Client supabase
+@using HTTPClients.ClientInterfaces
+@using Domain.Account.DTOs
+@using PresentationView.Auth
+@inject Supabase.Client Supabase
+@inject IItemService ItemService
 @inject NavigationManager NavigationManager
+@inject AuthProvider AuthProvider
 
 <AuthorizeView>
     <Authorized>
@@ -102,9 +107,13 @@
             {
                 _isAvailable = false;
             }
-            
-            //await ItemService.CreateItemAsync(new ItemCreationDto(_name,_price,_quantity,_availability,_description))
-            
+            var authState = await AuthProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var userIdClaim = user.FindFirst("Id");
+            string? imageUrl = await UploadToSupabase();
+
+            if (imageUrl != null) await ItemService.CreateAsync(new ItemCreationDto(int.Parse(userIdClaim?.Value!), _name, imageUrl, _description, int.Parse(_price), _quantity));
+
             _name = "";
             _price = "";
             _quantity = 0;
@@ -133,13 +142,13 @@
         _file = e.GetMultipleFiles().FirstOrDefault();
     }
 
-    private async Task UploadToSupabase()
+    private async Task<string?> UploadToSupabase()
     {
         try
         {
             if (_file != null)
             {
-                var storage = supabase.Storage.From("Item_Photos");
+                var storage = Supabase.Storage.From("Item_Photos");
                 var fileName = _file.Name;
                 var fileBytes = await ConvertFileToByteArray(_file);
                 var options = new FileOptions()
@@ -148,14 +157,16 @@
                 };
                 var response = await storage.Upload(fileBytes, fileName, options);
                 Console.WriteLine(response);
-                var publicUrl = await supabase.Storage.From("Item_Photos").CreateSignedUrl(fileName, 999999999);
+                var publicUrl = await Supabase.Storage.From("Item_Photos").CreateSignedUrl(fileName, 999999999);
                 Console.WriteLine(publicUrl);
+                return publicUrl;
             }
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
         }
+        return null;
     }
 
     private async Task<byte[]> ConvertFileToByteArray(IBrowserFile file)

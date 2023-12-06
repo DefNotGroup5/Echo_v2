@@ -3,7 +3,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 import "users.proto";
 option java_multiple_files = true;
-option java_package = "via.sdj3.protobuf.users";
+option java_package = "via.sdj3.protobuf.users.admin";
 option java_outer_classname = "AdminProto";
 
 service AdminService {

@@ -12,7 +12,7 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
         _channel = GrpcChannel.ForAddress("http://localhost:3030");
     }
 
-    public async Task AddAsync(Item item)
+    public async Task<int> AddItemAsync(Item item)
     {
         try
         {
@@ -24,12 +24,14 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
             });
             
             Console.WriteLine(reply);
+            return reply.ItemId;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
         }
-        
+
+        return 0;
     }
 
     public async Task<Item?> GetItemById(int id, int sellerId)
@@ -37,7 +39,7 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
         try
         {
             var grpcClient = new GrpcClientServices.ItemService.ItemServiceClient(_channel);
-            var reply = await grpcClient.GetItemById(new GetItemByIdRequest 
+            var reply = await grpcClient.GetItemByIdAsync(new GetItemByIdRequest 
             {
                 ItemId = id, SellerId =sellerId
                 
@@ -54,9 +56,6 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
         return null;
     }
 
-    
-   
-    
     private Item? GenerateItem(GrpcItem item)
     {
         Item? generatedItem = null;

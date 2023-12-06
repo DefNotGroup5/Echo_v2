@@ -33,12 +33,12 @@ public class ItemsController : ControllerBase
         }
     }
     
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<ICollection<Item>>> GetByIdAsync([FromRoute] int id)
+    [HttpGet("{id:int}/{sellerId:int}")]
+    public async Task<ActionResult<ICollection<Item>>> GetByIdAsync([FromRoute] int id,  [FromRoute] int sellerId)
     {
         try
         {
-            Item? item  = await _itemLogic.GetItemById(id);
+            Item? item  = await _itemLogic.GetItemById(id, sellerId);
             return Ok(item);
         }
         catch (Exception e)

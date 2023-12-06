@@ -1,5 +1,6 @@
 using Application.Shopping.Logic;
 using Application.Shopping.LogicInterfaces;
+using GrpcClientServices.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IItemLogic, ItemLogic>();
+builder.Services.AddScoped<UsersService>();
+builder.Services.AddScoped<ItemService>();
 
 var app = builder.Build();
 

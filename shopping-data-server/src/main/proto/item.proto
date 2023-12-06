@@ -31,12 +31,13 @@ message AddItemRequest {
 
 message AddItemResponse {
   string result = 1;
+  int32 itemId = 2;
 }
 
 
 
 message GetItemByIdRequest {
-  int32 itemIid = 1;
+  int32 itemId = 1;
   int32 sellerId = 2;
 }
 

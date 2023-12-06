@@ -2,7 +2,9 @@ syntax = "proto3";
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
-option csharp_namespace = "GrpcClientServices";
+option java_multiple_files = true;
+option java_package = "via.sdj3.protobuf.item";
+option java_outer_classname = "ItemProto";
 
 
 service ItemService {
@@ -43,3 +45,5 @@ message GetItemByIdRequest {
 message GetItemByIdResponse {
   GrpcItem item = 1;
 }
+
+

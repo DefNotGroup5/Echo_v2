@@ -8,7 +8,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import via.sdj3.grpcserverexample.entities.ItemEntity;
 import via.sdj3.grpcserverexample.entities.ItemEntityId;
 import via.sdj3.grpcserverexample.repository.ItemRepository;
-import via.sdj3.protobuf.*;
+import via.sdj3.protobuf.item.*;
 
 import java.util.Optional;
 
@@ -18,36 +18,36 @@ public class ItemServiceImpl extends ItemServiceGrpc.ItemServiceImplBase {
     private ItemRepository itemRepository;
 
 
-    public ItemServiceImpl (ItemRepository itemRepository)
+    public ItemServiceImpl(ItemRepository itemRepository)
     {
         this.itemRepository = itemRepository;
     }
 
-    public void add(AddItemRequest request, StreamObserver<AddItemResponse> responseObserver)
-    {
+    @Override
+    public void addItem(AddItemRequest request, StreamObserver<AddItemResponse> responseObserver) {
         try
         {
-        GrpcItem item = request.getGrpcItem(); //information from the request is put on an item object
-        ItemEntity itemToAdd = generateItemEntity(request.getGrpcItem()); //takes the grpc item object and transforms it into a ItemEntity object
-        itemRepository.save(itemToAdd); // saves the data to the database or repository
-        AddItemResponse response = AddItemResponse.newBuilder().setResult("THe item was added.").setItemId(itemToAdd.getId().getItemId()).build(); //makes a response to say the item was added
-        System.out.println("The item was added.");
-        responseObserver.onNext(response); //sends the response to the client
-        responseObserver.onCompleted(); //operation complete
+            GrpcItem item = request.getGrpcItem(); //information from the request is put on an item object
+            ItemEntity itemToAdd = generateItemEntity(request.getGrpcItem()); //takes the grpc item object and transforms it into a ItemEntity object
+            itemRepository.save(itemToAdd); // saves the data to the database or repository
+            AddItemResponse response = AddItemResponse.newBuilder().setResult("THe item was added.").setItemId(itemToAdd.getId().getItemId()).build(); //makes a response to say the item was added
+            System.out.println("The item was added.");
+            responseObserver.onNext(response); //sends the response to the client
+            responseObserver.onCompleted(); //operation complete
         }
         catch (Exception e)
         {
-        Status status = Status.INTERNAL.withDescription("Error adding item"); //message in case on error
-        responseObserver.onError(new StatusRuntimeException(status)); //sends it to the client
+            Status status = Status.INTERNAL.withDescription("Error adding item"); //message in case on error
+            responseObserver.onError(new StatusRuntimeException(status)); //sends it to the client
         }
     }
 
-    public void getById(GetItemByIdRequest request, StreamObserver<GetItemByIdResponse> responseStreamObserver)
+    @Override public void getItemById(GetItemByIdRequest request, StreamObserver<GetItemByIdResponse> responseStreamObserver)
     {
         try
         {
             ItemEntityId itemEntityId = new ItemEntityId(request.getItemId(), request.getSellerId());
-            Optional<ItemEntity> itemOptional  = itemRepository.getByIId(itemEntityId); //gets an item from the repository based on the id
+            Optional<ItemEntity> itemOptional  = itemRepository.getById(itemEntityId); //gets an item from the repository based on the id
             if(itemOptional.isPresent()) {
                 ItemEntity item = itemOptional.get();
                 GetItemByIdResponse response = GetItemByIdResponse.newBuilder().setItem(generateGrpcItem(item)).build(); //converts the item entity retrieved into a grpc self generated response message
@@ -82,7 +82,7 @@ public class ItemServiceImpl extends ItemServiceGrpc.ItemServiceImplBase {
 private ItemEntity generateItemEntity(GrpcItem item)
 {
     ItemEntity itemEntity = new ItemEntity();
-    ItemEntityId itemId = new ItemEntityId(item.getSellerId(), item.getItemId()); //Change constructor to accept only sellerId
+    ItemEntityId itemId = new ItemEntityId(item.getSellerId(), 2); //Change constructor to accept only sellerId
     itemEntity.setId(itemId);
     itemEntity.setName(item.getName());
     itemEntity.setImage_url(item.getImageUrl());

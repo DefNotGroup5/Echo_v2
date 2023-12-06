@@ -8,10 +8,10 @@ namespace Application.Shopping.Logic;
 public class ItemLogic : IItemLogic
 {
 
-    private readonly string _itemsService;
+    private readonly ItemService _itemsService;
     private readonly UsersService _usersService;
 
-    public ItemLogic(string itemsService, UsersService usersService)
+    public ItemLogic(ItemService itemsService, UsersService usersService)
     {
         _usersService = usersService;
         _itemsService = itemsService;
@@ -19,7 +19,6 @@ public class ItemLogic : IItemLogic
 
     public async Task<Item?> CreateItem(ItemCreationDto dto)
     {
-        //Item needs ID
         try
         {
            ValidateCreationDto(dto);
@@ -29,11 +28,11 @@ public class ItemLogic : IItemLogic
                Name = dto.Name,
                Price = dto.Price,
                Stock = dto.Stock,
-               ImageUrl = dto.ImageUrl
+               ImageUrl = dto.ImageUrl,
+               SellerId = dto.SellerId
            };
-           //Item item = await _itemsService.CreateAsync(itemToCreate);
-            
-            return new Item();
+           int itemId = await _itemsService.AddItemAsync(itemToCreate);
+           return await GetItemById(itemId, dto.SellerId);
         }
         catch (Exception e)
         {
@@ -41,13 +40,10 @@ public class ItemLogic : IItemLogic
             throw;
         }
     }
-
-    public async Task<Item?> GetItemById(int id)
+    public async Task<Item?> GetItemById(int id, int sellerId)
     {
-        /*
-        Item item = await _itemsService.GetByIdAsync(id); Need this method
-         */
-        return null;
+        Item? item = await _itemsService.GetItemById(id, sellerId);
+        return item;
     }
 
     public async Task<ICollection<Item?>> GetItems()
@@ -60,8 +56,7 @@ public class ItemLogic : IItemLogic
 
     private async void ValidateCreationDto(ItemCreationDto itemCreationDto)
     {
-        //I need Seller ID
-        User? user = await _usersService.GetByIdAsync(23);
+        User? user = await _usersService.GetByIdAsync(itemCreationDto.SellerId);
         if (user == null)
             throw new Exception("Error: User with such id does not exist!");
         if(itemCreationDto.Price < 0)

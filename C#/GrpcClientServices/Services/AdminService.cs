@@ -4,7 +4,7 @@ namespace GrpcClientServices.Services
 {
     public class AdminService : GrpcClientServices.AdminService.AdminServiceClient
     {
-        private readonly GrpcChannel _channel;
+        /*private readonly GrpcChannel _channel;
 
         public AdminService()
         {
@@ -44,6 +44,6 @@ namespace GrpcClientServices.Services
                 Console.WriteLine(e.Message);
                 throw;
             }
-        }
+        }*/
     }
 }
