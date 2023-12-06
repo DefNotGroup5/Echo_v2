@@ -7,9 +7,11 @@ import org.springframework.stereotype.Repository;
 import via.sdj3.grpcserverexample.entities.ItemEntity;
 import via.sdj3.grpcserverexample.entities.ItemEntityId;
 
+import java.util.List;
 import java.util.Optional;
 @Repository
 
+@Repository
 public interface ItemRepository extends JpaRepository<ItemEntity, ItemEntityId> {
 
     @Query("SELECT i FROM ItemEntity i WHERE i.name = :name")
@@ -30,8 +32,10 @@ public interface ItemRepository extends JpaRepository<ItemEntity, ItemEntityId> 
     Optional<ItemEntity> getByHighestPriceToLowest (int price);
 
     @Query("SELECT name FROM ItemEntity")
-    Optional<ItemEntity> getAllItems(String name);
+    Optional<ItemEntity> getAllItemsByName(String name);
 
+    @Query("SELECT i FROM ItemEntity i")
+    List<ItemEntity> getAllItemsById(ItemEntityId id);
 
 }
 
