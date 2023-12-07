@@ -105,7 +105,7 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
         userEntity.setLastName(user.getLastName());
         userEntity.setAddress(user.getAddress());
         userEntity.setEmail(user.getEmail());
-        userEntity.setSeller(user.getIsSeller());
+        userEntity.setIsSeller(user.getIsSeller());
         userEntity.setCity(user.getCity());
         userEntity.setCountry(user.getCountry());
         userEntity.setPostalCode(user.getPostalCode());

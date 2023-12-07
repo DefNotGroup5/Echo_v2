@@ -73,11 +73,11 @@
             _result = "Success!";
             _type = "customer";
             
-            if (_type.Equals("customer"))
+            if (_type.Equals("customer", StringComparison.OrdinalIgnoreCase))
             {
                 _isSeller = false;
             }
-            if (_type.Equals("seller"))
+            if (_type.Equals("seller", StringComparison.OrdinalIgnoreCase))
             {
                 _isSeller = true;
             }
