@@ -1,0 +1,45 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_multiple_files = true;
+option java_package = "via.sdj3.protobuf.category";
+option java_outer_classname = "CategoryProto";
+
+
+service CategoryService {
+  rpc AddCategory (AddCategoryRequest) returns (AddCategoryResponse);
+  rpc GetCategoryByName (GetCategoryByNameRequest) returns (GetCategoryByNameResponse);
+  rpc GetAllCategories (GetAllCategoriesRequest) returns (GetAllCategoriesResponse);
+}
+
+message GrpcCategory {
+  int32 id = 1;
+  string name = 2;
+}
+
+
+message AddCategoryRequest {
+  GrpcCategory category = 1;
+}
+
+message AddCategoryResponse {
+  GrpcCategory category = 1;
+}
+
+message GetCategoryByNameRequest{
+  GrpcCategory category = 1;
+}
+
+message GetCategoryByNameResponse{
+  GrpcCategory category = 1;
+}
+
+message GetAllCategoriesRequest {
+
+}
+
+message GetAllCategoriesResponse {
+  repeated GrpcCategory categories = 1;
+}
+
