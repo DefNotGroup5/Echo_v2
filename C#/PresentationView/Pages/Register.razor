@@ -58,14 +58,7 @@
 
         try
         {
-            if (_type.Equals("customer"))
-            {
-                _isSeller = false;
-            }
-            if (_type.Equals("seller"))
-            {
-                _isSeller = true;
-            }
+          
             await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, _city, _postcode, _country, _isSeller, false));
     // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
             _firstName = "";
@@ -79,8 +72,20 @@
             _isSeller = false;
             _result = "Success!";
             _type = "customer";
+            
+            if (_type.Equals("customer"))
+            {
+                _isSeller = false;
+            }
+            if (_type.Equals("seller"))
+            {
+                _isSeller = true;
+            }
+            
             Console.WriteLine(_result);
             NavigationManager.NavigateTo("/login");
+            
+            
         }
         catch (Exception e)
         {
