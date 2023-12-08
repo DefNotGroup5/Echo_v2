@@ -1,5 +1,6 @@
 using Application.Shopping.Logic;
 using Application.Shopping.LogicInterfaces;
+using Domain.Auth;
 using GrpcClientServices.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,9 +11,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthorization();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<IItemLogic, ItemLogic>();
+AuthorizationPolicies.AddPolicies(builder.Services);
 
 
 var app = builder.Build();

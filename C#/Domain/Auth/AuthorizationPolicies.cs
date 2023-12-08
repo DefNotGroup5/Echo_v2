@@ -18,6 +18,7 @@ public static class AuthorizationPolicies
             options.AddPolicy("IsSeller", policy =>
                 policy.RequireAssertion(context =>
                     context.User.HasClaim(c => c.Type == "IsSeller" && c.Value == "True")));
+
             
             //options.AddPolicy("isItemNull", policy=>
                 

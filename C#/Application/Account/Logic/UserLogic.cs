@@ -34,7 +34,8 @@ public class UserLogic : IUserLogic
                     Address = dto.Address,
                     City = dto.City,
                     PostalCode = dto.PostalCode,
-                    Country = dto.City,
+                    Country = dto.Country,
+                    IsSeller = dto.IsSeller,
                 };
             }
             else
@@ -47,7 +48,7 @@ public class UserLogic : IUserLogic
                     Address = dto.Address,
                     City = dto.City,
                     PostalCode = dto.PostalCode,
-                    Country = dto.City,
+                    Country = dto.Country,
                 };
             }
 
