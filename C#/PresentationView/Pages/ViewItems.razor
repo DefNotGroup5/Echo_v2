@@ -1,5 +1,8 @@
 ﻿@page "/items"
 @using HTTPClients.ClientInterfaces
+@using Domain.Account.Models
+@inject IItemService ItemService;
+@inject NavigationManager NavigationManager;
 <div class="wrapper">
     <div class="search-part">
             <div class="filter">
@@ -19,100 +22,41 @@
                 <button>Search</button>
             </div>
         </div>
-        <div class="items">
-            <div class="row">
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
+    <div class="items">
+        @if (_items != null && _items.Any())
+        {
+            @foreach (var item in _items)
+            {
+                <div class="item" @onclick="() => NavigateToItem(item?.Id)">
+                    <div class="image"><img src="@item?.ImageUrl"/></div>
+                    <h2>@item?.Name</h2>
+                    <h3>@item?.Price DKK</h3>
                 </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-                <div class="item">
-                    <div class="image"></div>
-                    <h2>Item Name Maybe Two Lines</h2>
-                    <h3>399 DKK</h3>
-                </div>
-            </div>
-            
-        </div>
+            }
+        }
+        else
+        {
+            <p>No items to display...</p>
+        }
+    </div>
 </div>
 
 
 @code {
-    
+    private ICollection<Item?>? _items;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _items = await ItemService.GetAsync();
+    }
+
+    private Task NavigateToItem(int? id)
+    {
+        if (id is null)
+        {
+            return Task.CompletedTask;
+        }
+        NavigationManager.NavigateTo($"/items/view/{id}");
+        return Task.CompletedTask;
+    }
 }
