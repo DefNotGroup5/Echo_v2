@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Collections;
+using System.Net.Http.Json;
 using System.Text.Json;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
@@ -15,7 +16,7 @@ public class ItemHttpClient : IItemService
         _client = client;
     }
 
-    public async Task<string?> CreateAsync(ItemCreationDto itemCreationDto)
+    public async Task<Item?> CreateAsync(ItemCreationDto itemCreationDto)
     {
         HttpResponseMessage response = await _client.PostAsJsonAsync("/Items", itemCreationDto);
         string result = await response.Content.ReadAsStringAsync();
@@ -23,15 +24,14 @@ public class ItemHttpClient : IItemService
         {
             throw new Exception(result);
         }
-        
         Item item = JsonSerializer.Deserialize<Item>(result, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         })!;
-        return null;
+        return item;
     }
 
-    public async Task<string?> GetById(int id)
+    public async Task<Item?> GetById(int id)
     {
         HttpResponseMessage response = await _client.GetAsync($"/Items/{id}");
         string result = await response.Content.ReadAsStringAsync();
@@ -39,16 +39,15 @@ public class ItemHttpClient : IItemService
         {
             throw new Exception(result);
         }
-        /*
         Item item = JsonSerializer.Deserialize<Item>(result, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         })!;
-        */
-        return null;
+        
+        return item;
     }
 
-    public async Task<ICollection<string?>> GetAsync()
+    public async Task<ICollection<Item?>?> GetAsync()
     {
         HttpResponseMessage response = await _client.GetAsync($"/Items");
         string result = await response.Content.ReadAsStringAsync();
@@ -56,12 +55,11 @@ public class ItemHttpClient : IItemService
         {
             throw new Exception(result);
         }
-        /*
-        Item item = JsonSerializer.Deserialize<Item>(result, new JsonSerializerOptions
+
+        ICollection<Item?>? items = JsonSerializer.Deserialize<ICollection<Item>>(result, new JsonSerializerOptions()
         {
             PropertyNameCaseInsensitive = true
         })!;
-        */
-        return new List<string?>();
+        return items;
     }
 }
