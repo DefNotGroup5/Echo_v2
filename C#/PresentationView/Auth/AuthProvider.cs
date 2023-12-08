@@ -18,8 +18,39 @@ public class AuthProvider : AuthenticationStateProvider
     {
         ClaimsPrincipal principal = await _userService.GetAuthAsync();
         
+        bool isSeller = DetermineIfUserIsSeller(principal);
+        if (isSeller)
+        {
+            if (principal.Identity != null)
+                ((ClaimsIdentity)principal.Identity).AddClaim(new Claim("IsSeller", "True"));
+        }
+        
         return new AuthenticationState(principal);
     }
+    
+    private bool DetermineIfUserIsSeller(ClaimsPrincipal principal)
+    {
+        // Get the "IsSeller" claim from the user's identity
+        Claim? isSellerClaim = principal.FindFirst("IsSeller");
+
+        // Check if the claim exists and log its value
+        if (isSellerClaim != null)
+        {
+            Console.WriteLine($"IsSeller claim found. Value: {isSellerClaim.Value}");
+
+            // Check if its value is equivalent to "True" (case-insensitive) and log the result
+            bool isSeller = string.Equals(isSellerClaim.Value, "True", StringComparison.OrdinalIgnoreCase);
+            Console.WriteLine($"IsSeller: {isSeller}");
+
+            return isSeller;
+        }
+        else
+        {
+            Console.WriteLine("IsSeller claim not found.");
+            return false;
+        }
+    }
+
     
     private void AuthStateChanged(ClaimsPrincipal principal)
     {
