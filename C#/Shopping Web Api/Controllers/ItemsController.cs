@@ -1,12 +1,14 @@
 ﻿using Application.Shopping.LogicInterfaces;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Shopping_Web_Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Policy = "IsSeller")]
 public class ItemsController : ControllerBase
 {
     private readonly IItemLogic _itemLogic;

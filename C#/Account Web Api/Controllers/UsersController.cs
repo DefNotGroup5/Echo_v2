@@ -70,7 +70,7 @@ public class UsersController : ControllerBase
     
 
 
-    [HttpPost]
+    [HttpPost("Register")]
     public async Task<ActionResult<User>> Register(UserCreationDto userCreationDto)
     {
         try

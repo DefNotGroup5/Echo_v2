@@ -148,7 +148,7 @@ public class UserEntity {
     return isSeller;
   }
 
-  public void setSeller(boolean seller)
+  public void setIsSeller(boolean seller)
   {
     isSeller = seller;
   }

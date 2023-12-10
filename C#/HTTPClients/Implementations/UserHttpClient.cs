@@ -80,10 +80,13 @@ public class UserHttpClient : IUserService
         return Task.CompletedTask;
     }
     
-    public Task AddItemToShoppingCart(Item item)
+    public Task AddItemToShoppingCart(Item item, int quantity)
     {
         if (_shoppingCart == null) return Task.CompletedTask;
-        _shoppingCart?.ItemsInCart.Add(item);
+        for (int i = 0; i < quantity; i++)
+        {
+            _shoppingCart?.ItemsInCart.Add(item);
+        }
         NotifyShoppingCartChanged();
         return Task.CompletedTask;
     }

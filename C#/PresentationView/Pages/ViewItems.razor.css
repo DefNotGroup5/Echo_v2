@@ -74,25 +74,26 @@
     cursor: pointer;
 }
 
+.image img {
+    height: 13rem;
+    width: auto;
+    overflow: hidden;
+}
+
 .search-bar button:hover {
     background-color: #aa81ec;
 }
 
 
 .items {
-    margin: 50px;
+    margin-top: 50px;
+    margin-bottom: 50px;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    flex-direction: column;
-    gap: 3.94rem;
-}
-
-.row {
-    display: flex;
-    justify-content: center;
-    gap: 4.6rem;
-    align-items: center;
+    flex-direction: row;
+    gap: 5rem;
+    flex-wrap: wrap;
 }
 
 .item {
@@ -122,6 +123,7 @@
     height: 13rem;
     box-shadow: 0 0 17.6px 2px rgba(0, 0, 0, 0.25);
     border-radius: 0.75rem;
+    overflow: hidden;
 }
 
 .item h2 {

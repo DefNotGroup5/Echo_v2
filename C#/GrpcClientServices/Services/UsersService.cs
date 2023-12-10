@@ -143,8 +143,8 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
             City = user.City,
             Country = user.Country,
             FirstName = user.FirstName,
-            IsSeller = isSeller,
-            IsAdmin = isAdmin,
+            IsSeller = isSeller && !isAdmin,
+            IsAdmin = isAdmin && !isSeller,
             LastName = user.LastName,
             Password = user.Password,
             PostalCode = user.PostalCode

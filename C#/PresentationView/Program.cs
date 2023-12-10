@@ -10,13 +10,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped<IUserService, UserHttpClient>();
+builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped(
     sp => 
         new HttpClient { 
             BaseAddress = new Uri("http://localhost:5105") 
         }
 );
+builder.Services.AddScoped(
+    sp => 
+        new HttpClient()
+        {
+            BaseAddress = new Uri("http://localhost:5111")
+        }
+);
+
 builder.Services.AddScoped<AuthenticationStateProvider, AuthProvider>();
 AuthorizationPolicies.AddPolicies(builder.Services);
 string url = "https://jfroxdaztgabtnnttaou.supabase.co/";
