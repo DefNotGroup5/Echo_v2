@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
+using Domain.Shopping.Models;
 using HTTPClients.ClientInterfaces;
 
 namespace HTTPClients.Implementations;
@@ -11,13 +12,29 @@ namespace HTTPClients.Implementations;
 public class UserHttpClient : IUserService
 {
     private readonly HttpClient _client;
+    private ShoppingCart? _shoppingCart;
     public static string? Jwt { get; private set; } = "";
     public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; } = principal => { };
-    
+    public event Action<ShoppingCart?>? OnShoppingCartChanged;
+    public Task<ShoppingCart?> GetShoppingCart()
+    {
+        return Task.FromResult(_shoppingCart);
+    }
+
     public UserHttpClient(HttpClient client)
     {
         _client = client;
+        _shoppingCart = new ShoppingCart();
     }
+
+    private void NotifyShoppingCartChanged()
+    {
+        OnShoppingCartChanged?.Invoke(_shoppingCart);
+        Console.WriteLine("Shopping cart changed event fired!");
+        Console.WriteLine(_shoppingCart.ItemsInCart.Count);
+    }
+    
+    
     
     public async Task<User> CreateAsync(UserCreationDto dto)
     {
@@ -37,12 +54,11 @@ public class UserHttpClient : IUserService
     
     public async Task LoginAsync(UserLoginDto dto)
     {
+        _shoppingCart = new ShoppingCart();
         string userAsJson = JsonSerializer.Serialize(dto);
         StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
-
         HttpResponseMessage response = await _client.PatchAsync("/Users/Login", content);
         string responseContent = await response.Content.ReadAsStringAsync();
-        
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(responseContent);
@@ -52,17 +68,30 @@ public class UserHttpClient : IUserService
         Jwt = token;
         ClaimsPrincipal principal = CreateClaimsPrincipal();
         OnAuthStateChanged.Invoke(principal);
+        NotifyShoppingCartChanged();
     }
 
     public Task LogoutAsync()
     {
+        _shoppingCart = null;
         Jwt = "";
         ClaimsPrincipal emptyPrincipal = new ClaimsPrincipal();
         OnAuthStateChanged?.Invoke(emptyPrincipal);
         return Task.CompletedTask;
     }
     
-    
+    public Task AddItemToShoppingCart(Item item, int quantity)
+    {
+        if (_shoppingCart == null) return Task.CompletedTask;
+        for (int i = 0; i < quantity; i++)
+        {
+            _shoppingCart?.ItemsInCart.Add(item);
+        }
+        NotifyShoppingCartChanged();
+        return Task.CompletedTask;
+    }
+
+
     public Task<ClaimsPrincipal> GetAuthAsync()
     {
         ClaimsPrincipal principal = CreateClaimsPrincipal();

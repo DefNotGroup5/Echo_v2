@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Account.LogicInterfaces;
 using System.Threading.Tasks;
+using Domain.Account.Models;
+using GrpcClientServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Account_Web_Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+//[Authorize(Policy = "IsAdmin")]
 public class AdminController : ControllerBase
 {
     private readonly IAdminLogic _adminLogic;
@@ -16,7 +20,7 @@ public class AdminController : ControllerBase
     }
     
     [HttpGet("sellers")]
-    public async Task<IActionResult> ListSellers()
+    public async Task<ActionResult<ICollection<User>>> ListSellers()
     {
         try
         {
@@ -30,8 +34,8 @@ public class AdminController : ControllerBase
         }
     }
     
-    [HttpPost("authorize-seller/{userId}")]
-    public async Task<IActionResult> AuthorizeSeller(int userId, [FromBody] bool isAuthorized)
+    [HttpPatch("authorize-seller/{userId}")]
+    public async Task<ActionResult> AuthorizeSeller([FromRoute] int userId, [FromBody] bool isAuthorized)
     {
         try
         {

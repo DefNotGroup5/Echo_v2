@@ -1,0 +1,29 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "Protos/users.proto";
+
+
+option csharp_namespace = "GrpcClientServices";
+
+service AdminService {
+  rpc AuthorizeSeller(ChangeSellerAuthorizationRequest) returns (ChangeSellerAuthorizationResponse);
+  rpc ListSellers (ListUsersRequest) returns (ListUsersResponse);
+}
+
+message ListUsersResponse {
+  repeated GrpcUser users = 1;  
+}
+
+message ListUsersRequest {
+
+}
+
+message ChangeSellerAuthorizationRequest {
+  int32 id = 1;
+  bool authorizationState = 2;
+}
+
+message ChangeSellerAuthorizationResponse {
+  string result = 1;
+}

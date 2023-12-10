@@ -1,10 +1,14 @@
 ﻿using Application.Shopping.LogicInterfaces;
+using Domain.Account.DTOs;
+using Domain.Account.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Shopping_Web_Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Policy = "IsSeller")]
 public class ItemsController : ControllerBase
 {
     private readonly IItemLogic _itemLogic;
@@ -15,14 +19,13 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> CreateAsync(string itemCreationDto)
+    public async Task<ActionResult<Item>> CreateAsync(ItemCreationDto dto)
     {
         try
         {
-            string? item = await _itemLogic.CreateItem(itemCreationDto);
-            if (item != null) 
-                return Created($"/Items/{item.Length}", item);
-            throw new Exception("Error creating an Item!");
+            Item? item = await _itemLogic.CreateItemAsync(dto);
+            if (item != null) return Created($"/Items/{item.Id}", item);
+            return StatusCode(500, "ERROR! Item was null!");
         }
         catch (Exception e)
         {
@@ -32,11 +35,11 @@ public class ItemsController : ControllerBase
     }
     
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ICollection<string>>> GetByIdAsync([FromRoute] int id)
+    public async Task<ActionResult<ICollection<Item>>> GetByIdAsync([FromRoute] int id)
     {
         try
         {
-            string? item  = await _itemLogic.GetItemById(id);
+            Item? item  = await _itemLogic.GetItemByIdAsync(id);
             return Ok(item);
         }
         catch (Exception e)
@@ -47,11 +50,11 @@ public class ItemsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ICollection<string>>> GetAsync()
+    public async Task<ActionResult<ICollection<Item>>> GetAsync()
     {
         try
         {
-            ICollection<string?> items = await _itemLogic.GetItems();
+            ICollection<Item?> items = await _itemLogic.GetItemsAsync();
             return Ok(items);
         }
         catch (Exception e)

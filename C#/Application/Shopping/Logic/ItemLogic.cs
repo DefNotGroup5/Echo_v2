@@ -1,4 +1,5 @@
 ﻿using Application.Shopping.LogicInterfaces;
+using Domain.Account.DTOs;
 using Domain.Account.Models;
 using GrpcClientServices.Services;
 
@@ -7,63 +8,86 @@ namespace Application.Shopping.Logic;
 public class ItemLogic : IItemLogic
 {
 
-    private readonly string _itemsService;
+    private readonly ItemService _itemsService;
     private readonly UsersService _usersService;
 
-    public ItemLogic(string itemsService, UsersService usersService)
+    public ItemLogic(ItemService itemsService, UsersService usersService)
     {
         _usersService = usersService;
         _itemsService = itemsService;
     }
 
-    public async Task<string?> CreateItem(string itemCreationDto)
+    public async Task<Item?> CreateItemAsync(ItemCreationDto dto)
     {
         try
         {
-            ValidateCreationDto(itemCreationDto);
-            /*
-            Item itemToCreate = new Item()
-            Item item = await _itemsService.CreateAsync(itemToCreate);
-            */
-            return string.Empty;
+           string validation = await ValidateCreationDto(dto);
+           if (string.IsNullOrEmpty(validation))
+           {
+               throw new Exception(validation);
+           }
+           Item itemToCreate = new Item(dto.Name, dto.ImageUrl, dto.Description)
+           {
+               Price = dto.Price,
+               Quantity = dto.Quantity,
+               SellerId = dto.SellerId
+           };
+           Item? item = await _itemsService.AddItemAsync(itemToCreate);
+           return item;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            throw;
         }
-    }
-
-    public async Task<string?> GetItemById(int id)
-    {
-        /*
-        Item item = await _itemsService.GetByIdAsync(id); 
-         */
         return null;
     }
-
-    public async Task<ICollection<string?>> GetItems()
+    public async Task<Item?> GetItemByIdAsync(int id)
     {
-        /*
-        ICollection<Item> items = await _itemsService.GetItems();
-         */
-        return new List<string?>();
+        Item? item = await _itemsService.GetItemByIdAsync(id);
+        return item;
     }
 
-    private async void ValidateCreationDto(string itemCreationDto)
+    public async Task<ICollection<Item?>> GetItemsAsync()
     {
-        User? user = await _usersService.GetByIdAsync(23);
+        
+        ICollection<Item?> items = await _itemsService.GetAllItemsAsync(); 
+        return items;
+    }
+
+    private async Task<string> ValidateCreationDto(ItemCreationDto itemCreationDto)
+    {
+        string validation = "";
+        User? user = await _usersService.GetByIdAsync(itemCreationDto.SellerId);
         if (user == null)
-            throw new Exception("Error: User with such id does not exist!");
-        /*
+        {
+            validation = "Error: User with such id does not exist!";
+            return validation;
+        }
         if(itemCreationDto.Price < 0)
-            throw new Exception("Price is an invalid number!");
-        if(itemCreationDto.Name == null || itemCreationDto.Name.Equals(""))
-            throw new Exception("Name cannot be empty!");
-        if(itemCreationDto.Description == null || itemCreationDto.Description.Equals(""))
-            throw new Exception("Description cannot be empty!");    
-        if(itemCreationDto.Description == null || itemCreationDto.Description.Equals(""))
-            throw new Exception("Description cannot be empty!");
-        */
+        {
+            validation = "Price is an invalid number!";
+            return validation;
+        }
+        if(string.IsNullOrEmpty(itemCreationDto.Name))
+        {
+            validation = "Name cannot be empty!";
+            return validation;
+        }
+        if(string.IsNullOrEmpty(itemCreationDto.Description))
+        {
+            validation = "Description cannot be empty!";
+            return validation;
+        }
+        if(itemCreationDto.Quantity < 0)
+        {
+            validation = "Stock must be either 0 or a positive number!";
+            return validation;
+        }
+        if (string.IsNullOrEmpty(itemCreationDto.ImageUrl))
+        {
+            validation = "Image must be chosen!";
+            return validation;
+        }
+        return validation;
     }
 }

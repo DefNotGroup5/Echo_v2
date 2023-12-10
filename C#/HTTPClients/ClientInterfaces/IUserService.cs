@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
+using Domain.Shopping.Models;
 
 namespace HTTPClients.ClientInterfaces;
 
@@ -11,6 +12,9 @@ public interface IUserService
     public Task LoginAsync(UserLoginDto dto);
     public Task LogoutAsync();
     public Task<ClaimsPrincipal> GetAuthAsync();
+    public Task AddItemToShoppingCart(Item item, int id);
 
     public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; }
+    public event Action<ShoppingCart?>? OnShoppingCartChanged;
+    public Task<ShoppingCart?> GetShoppingCart();
 }

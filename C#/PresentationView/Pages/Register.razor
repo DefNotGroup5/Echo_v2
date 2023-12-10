@@ -25,6 +25,10 @@
             <a @onclick="SwitchToLogin">Already have an account?</a>
             <button @onclick="Create">Register</button>
         </div>
+        @if(!string.IsNullOrEmpty(_result))
+        {
+            <label>@_result</label>
+        }
     </div>
 </div>
 
@@ -46,13 +50,7 @@
     {
         NavigationManager.NavigateTo("/login");
     }
-
-    private void ClearFields()
-    {
-        _email = "";
-        _password = "";
-        _result = "";
-    }
+    
     
     private async Task Create()
     {
@@ -60,14 +58,7 @@
 
         try
         {
-            if (_type.Equals("customer"))
-            {
-                _isSeller = false;
-            }
-            if (_type.Equals("seller"))
-            {
-                _isSeller = true;
-            }
+          
             await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, _city, _postcode, _country, _isSeller, false));
     // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
             _firstName = "";
@@ -81,7 +72,20 @@
             _isSeller = false;
             _result = "Success!";
             _type = "customer";
+            
+            if (_type.Equals("customer", StringComparison.OrdinalIgnoreCase))
+            {
+                _isSeller = false;
+            }
+            if (_type.Equals("seller", StringComparison.OrdinalIgnoreCase))
+            {
+                _isSeller = true;
+            }
+            
             Console.WriteLine(_result);
+            NavigationManager.NavigateTo("/login");
+            
+            
         }
         catch (Exception e)
         {

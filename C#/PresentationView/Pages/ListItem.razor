@@ -1,0 +1,180 @@
+﻿@page "/listitem"
+@using Microsoft.AspNetCore.Components.Forms
+@using Supabase.Storage
+@using HTTPClients.ClientInterfaces
+@using Domain.Account.DTOs
+@using PresentationView.Auth
+@inject Supabase.Client Supabase
+@inject IItemService ItemService
+@inject NavigationManager NavigationManager
+@inject AuthProvider AuthProvider
+
+<AuthorizeView>
+    <Authorized>
+        <div class="wrapper">
+            <div class="list-items-wrapper">
+                <h1>List an item</h1>
+                <div class="inputs-container">
+                    <div class="input-box-container">
+                        <div class="row">
+                            <input type="text" placeholder="Name" class="input-box input-box1" @bind="_name" @bind:event="oninput" disabled="@(!nameEditable)"/>
+                            <input type="text" placeholder="Price" class="input-box input-box3" @bind="_price" @bind:event="oninput" disabled="@(!priceEditable)"/>
+                        </div>
+                        <div class="row">
+                            <input type="text" placeholder="Quantity" class="input-box input-box2" @bind="_quantity" @bind:event="oninput" disabled="@(!quantityEditable)"/>
+                            <select type="text" placeholder="Availability" class="input-box input-box4" @bind="_availability" disabled="@(!availabilityEditable)">
+                                <option value="available">Available</option>
+                                <option value="not available">Not Available</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <input type="text" placeholder="Description" class="input-box input-box5" @bind="_description" @bind:event="oninput" disabled="@(!descriptionEditable)"/>
+                        </div>
+                    </div>
+                    <div class="input-box-container">
+                        <div class="input-box input-box6">
+                            <InputFile OnChange="OnFileSelected"/>
+                            <button @onclick="UploadToSupabase">Upload</button>
+                        </div>
+                    </div>
+                </div>
+                @if (!confirmPublish)
+                {
+                    <button class="button" @onclick="ShowConfirmation">Publish</button>
+                }
+                else
+                {
+                    <div class="buttons">
+                        <div class="confirmation-text">
+                            <button class="buttons-style" disabled>Are you sure?</button>
+                        </div>
+                        <div class="confirmation-buttons">
+                            <button class="button" @onclick="PublishItem">Yes</button>
+                            <button class="buttons-style" @onclick="CancelPublish">No</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private string _name = "";
+    private string _price = "";
+    private int _quantity = 0;
+    private bool _isAvailable = false;
+    private string _availability = "not available";
+    private string _description = "";
+    private IBrowserFile? _file;
+    private bool confirmPublish = false;
+    private bool nameEditable = true;
+    private bool priceEditable = true;
+    private bool quantityEditable = true;
+    private bool availabilityEditable = true;
+    private bool descriptionEditable = true;
+    private string _result = "";
+
+    private void ShowConfirmation()
+    {
+        confirmPublish = true;
+        nameEditable = false;
+        priceEditable = false;
+        quantityEditable = false;
+        availabilityEditable = false;
+        descriptionEditable = false;
+    }
+
+    private void CancelPublish()
+    {
+        confirmPublish = false;
+        nameEditable = true;
+        priceEditable = true;
+        quantityEditable = true;
+        availabilityEditable = true;
+        descriptionEditable = true;
+    }
+    private async Task PublishItem()
+    {
+        NavigationManager.NavigateTo("/...");
+        try
+        {
+            if (_availability.Equals("available"))
+            {
+                _isAvailable = true;
+            }
+            if (_availability.Equals("not available"))
+            {
+                _isAvailable = false;
+            }
+            var authState = await AuthProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var userIdClaim = user.FindFirst("Id");
+            string? imageUrl = await UploadToSupabase();
+
+            if (imageUrl != null) await ItemService.CreateAsync(new ItemCreationDto(int.Parse(userIdClaim?.Value!), _name, imageUrl, _description, int.Parse(_price), _quantity));
+
+            _name = "";
+            _price = "";
+            _quantity = 0;
+            _isAvailable = false;
+            _availability = "not available";
+            _description = "";
+            confirmPublish = false;
+            nameEditable = true;
+            priceEditable = true;
+            quantityEditable = true;
+            availabilityEditable = true;
+            descriptionEditable = true;
+            _result = "Success";
+            Console.WriteLine(_result);
+            
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            _result = e.Message;
+        }
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        _file = e.GetMultipleFiles().FirstOrDefault();
+    }
+
+    private async Task<string?> UploadToSupabase()
+    {
+        try
+        {
+            if (_file != null)
+            {
+                var storage = Supabase.Storage.From("Item_Photos");
+                var fileName = _file.Name;
+                var fileBytes = await ConvertFileToByteArray(_file);
+                var options = new FileOptions()
+                {
+                    ContentType = _file.ContentType
+                };
+                var response = await storage.Upload(fileBytes, fileName, options);
+                Console.WriteLine(response);
+                var publicUrl = await Supabase.Storage.From("Item_Photos").CreateSignedUrl(fileName, 999999999);
+                Console.WriteLine(publicUrl);
+                return publicUrl;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        return null;
+    }
+
+    private async Task<byte[]> ConvertFileToByteArray(IBrowserFile file)
+    {
+        using (var ms = new MemoryStream())
+        {
+            await file.OpenReadStream().CopyToAsync(ms);
+            return ms.ToArray();
+        }
+    }
+}

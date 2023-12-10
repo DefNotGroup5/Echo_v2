@@ -3,22 +3,17 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
 option java_multiple_files = true;
-option java_package = "via.sdj3.protobuf.users";
+option java_package = "via.sdj3.protobuf.users"; //Important!!! Put packages (e.g. ".users")!
 option java_outer_classname = "UsersProto";
 
 service UsersService {
-  rpc Update (UpdateRequest) returns (UpdateResponse);
+  rpc Update (UpdateRequest) returns (UpdateResponse); //Request returns response :D
   rpc Add (AddRequest) returns (AddResponse);
   rpc GetByEmail (GetByEmailRequest) returns (GetByEmailResponse);
   rpc GetById (GetByIdRequest) returns (GetByIdResponse);
 }
 
-service AdminService {
-  rpc AuthorizeSeller(AuthorizeSellerRequest) returns (AuthorizeSellerResponse);
-  rpc ListSellers (google.protobuf.Empty) returns (ListUsersResponse);
-}
-
-message GrpcUser {
+message GrpcUser { //Can be considered like a class/object? but not really, it's like a response with many attributes
   int32 id = 1;
   string email = 2;
   string firstName = 3;
@@ -34,11 +29,11 @@ message GrpcUser {
 }
 
 message GetByEmailRequest {
-  string email = 1;
+  string email = 1; //Parameter sent from client
 }
 
 message GetByEmailResponse {
-  GrpcUser user = 1;
+  GrpcUser user = 1; //Grpc Server answer
 }
 
 message GetByIdRequest {
@@ -63,17 +58,4 @@ message UpdateRequest {
 
 message UpdateResponse {
   string result = 1;
-}
-
-message AuthorizeSellerRequest {
-    int32 id = 1;
-    bool isAuthorized = 2;
-}
-
-message AuthorizeSellerResponse {
-    string result = 1;
-}
-
-message ListUsersResponse {
-  repeated GrpcUser users = 1;
 }

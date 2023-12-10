@@ -9,13 +9,13 @@ public class UserCreationDto
     public string Password { get; set; }
     public string Address { get; set; }
     public string City { get; set; }
-    public long PostalCode { get; set; }
+    public int PostalCode { get; set; }
     public string Country { get; set; }
     public bool IsSeller { get; set; }
     public bool IsAdmin { get; set; }
     
     public UserCreationDto(string email, string firstName, string lastName, string password, 
-        string address, string city, long postalCode, string country, bool isSeller, bool isAdmin)
+        string address, string city, int postalCode, string country, bool isSeller, bool isAdmin)
     {
         Id = 0;
         Email = email;

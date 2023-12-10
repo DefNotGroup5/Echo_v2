@@ -1,5 +1,4 @@
-﻿using Application.Account.DaoInterfaces;
-using Domain.Account.DTOs;
+﻿using Domain.Account.DTOs;
 using Domain.Account.Models;
 using GrpcClientServices.Services;
 
@@ -16,79 +15,138 @@ public class UserLogic : IUserLogic
 
     public async Task<User?> Register(UserCreationDto dto)
     {
-        User? user = await _usersService.GetByEmailAsync(dto.Email);
-        if(user != null)
-            throw new Exception("Email is already taken!");    
-        
-        ValidateRegister(dto);
-        User userToCreate = null;
-        if (dto.IsSeller)
+        try
         {
-            userToCreate = new Seller(dto.Email, dto.Password)
+            User? user = await _usersService.GetByEmailAsync(dto.Email);
+            if(user != null)
+                throw new Exception("Email is already taken!");
+            string validated = await ValidateRegister(dto);
+            if (!string.IsNullOrEmpty(validated))
+                throw new Exception(validated);
+            User userToCreate = null;
+            if (dto.IsSeller)
             {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Password = dto.Password,
-                Address = dto.Address,
-                City = dto.City,
-                PostalCode = dto.PostalCode,
-                Country = dto.City,
-            };
-        }
-        else
-        {
-            userToCreate = new Customer(dto.Email, dto.Password)
+                userToCreate = new Seller(dto.Email, dto.Password)
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Password = dto.Password,
+                    Address = dto.Address,
+                    City = dto.City,
+                    PostalCode = dto.PostalCode,
+                    Country = dto.Country,
+                    IsSeller = dto.IsSeller,
+                };
+            }
+            else
             {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Password = dto.Password,
-                Address = dto.Address,
-                City = dto.City,
-                PostalCode = dto.PostalCode,
-                Country = dto.City,
-            };
-        }
+                userToCreate = new Customer(dto.Email, dto.Password)
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Password = dto.Password,
+                    Address = dto.Address,
+                    City = dto.City,
+                    PostalCode = dto.PostalCode,
+                    Country = dto.Country,
+                };
+            }
 
-        await _usersService.AddAsync(userToCreate);
-        User? created = await _usersService.GetByEmailAsync(dto.Email);
-        return created;
+            await _usersService.AddAsync(userToCreate);
+            User? created = await _usersService.GetByEmailAsync(dto.Email);
+            return created;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<User?> Login(UserLoginDto dto)
     {
-        ValidateLogin(dto);
+        try
+        {
+            string validated = await ValidateLogin(dto);
+            if (!string.IsNullOrEmpty(validated))
+            {
+                throw new Exception(validated);
+            }
+            User? user = await _usersService.GetByEmailAsync(dto.Email);
+            return user;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private async Task<string> ValidateRegister(UserCreationDto dto)
+    {
+        string validated = "";
         User? user = await _usersService.GetByEmailAsync(dto.Email);
-        return user;
-    }
-
-    private void ValidateRegister(UserCreationDto dto)
-    {
+        if (user != null)
+        {
+            validated = "User with such email already exists!";
+            return validated;
+        }
         if(string.IsNullOrEmpty(dto.Email))
-            throw new Exception("Email cannot be empty!");
+        {
+            validated = "Email cannot be empty!";
+            return validated;
+        }
         if (string.IsNullOrEmpty(dto.FirstName))
-            throw new Exception("First Name cannot be empty!");
+        {
+            validated = "First Name cannot be empty!";
+            return validated;
+        }
         if (string.IsNullOrEmpty(dto.LastName))
-            throw new Exception("Last Name cannot be empty!");
+        {
+            validated = "Last Name cannot be empty!";
+            return validated;
+        }
         if (string.IsNullOrEmpty(dto.Password))
-            throw new Exception("Password cannot be empty!");
+        {
+            validated = "Password cannot be empty!";
+            return validated;
+        }
         if(dto.Password.Length < 8)
-            throw new Exception("Password must contain at least 8 characters!");
+        {
+            validated = "Password must contain at least 8 characters!";
+            return validated;
+        }
         if(string.IsNullOrEmpty(dto.Address))
-            throw new Exception("Address cannot be empty!");
+        {
+            validated = "Address cannot be empty!";
+            return validated;
+        }
         if(string.IsNullOrEmpty(dto.City))
-            throw new Exception("City cannot be empty!");
+        {
+            validated = "City cannot be empty!";
+            return validated;
+        }
         if(dto.PostalCode < 0 || dto.PostalCode > 9999999)
-            throw new Exception("Postal code is invalid!");
+        {
+            validated = "Postal code is invalid!";
+            return validated;
+        }
         if(string.IsNullOrEmpty(dto.Country))
-            throw new Exception("Country cannot be empty");
+        {
+            validated = "Country cannot be empty";
+            return validated;
+        }
+        return validated;
     }
 
-    private async void ValidateLogin(UserLoginDto dto)
+    private async Task<string> ValidateLogin(UserLoginDto dto)
     {
+        string validated = "";
         User? user = await _usersService.GetByEmailAsync(dto.Email);
         if(user == null)
-            throw new Exception("Username or password is incorrect!");
-        if(!user.Password.Equals(dto.Password))
-            throw new Exception("Username or Password is incorrect!");
+            validated = "Username or password is incorrect!";
+        if(user != null && !user.Password.Equals(dto.Password))
+            validated = "Username or Password is incorrect!";
+        return validated;
     }
 }

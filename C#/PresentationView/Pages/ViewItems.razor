@@ -1,0 +1,62 @@
+﻿@page "/items"
+@using HTTPClients.ClientInterfaces
+@using Domain.Account.Models
+@inject IItemService ItemService;
+@inject NavigationManager NavigationManager;
+<div class="wrapper">
+    <div class="search-part">
+            <div class="filter">
+                <select>
+                    <option value="" disabled selected>Filter</option>
+                    <option>Random</option>
+                    <option>Price: Low-High</option>
+                    <option>Price: High-Low</option>
+                    <option>Rating: Low-High</option>
+                    <option>Rating: High-Low</option>
+                    <option>Popularity: Low-High</option>
+                    <option>Popularity: High-Low</option>
+                </select>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search">
+                <button>Search</button>
+            </div>
+        </div>
+    <div class="items">
+        @if (_items != null && _items.Any())
+        {
+            @foreach (var item in _items)
+            {
+                <div class="item" @onclick="() => NavigateToItem(item?.Id)">
+                    <div class="image"><img src="@item?.ImageUrl"/></div>
+                    <h2>@item?.Name</h2>
+                    <h3>@item?.Price DKK</h3>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No items to display...</p>
+        }
+    </div>
+</div>
+
+
+@code {
+    private ICollection<Item?>? _items;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _items = await ItemService.GetAsync();
+    }
+
+    private Task NavigateToItem(int? id)
+    {
+        if (id is null)
+        {
+            return Task.CompletedTask;
+        }
+        NavigationManager.NavigateTo($"/items/view/{id}");
+        return Task.CompletedTask;
+    }
+}

@@ -10,17 +10,34 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped<IUserService, UserHttpClient>();
+builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped(
     sp => 
         new HttpClient { 
             BaseAddress = new Uri("http://localhost:5105") 
         }
 );
+builder.Services.AddScoped(
+    sp => 
+        new HttpClient()
+        {
+            BaseAddress = new Uri("http://localhost:5111")
+        }
+);
+
 builder.Services.AddScoped<AuthenticationStateProvider, AuthProvider>();
 AuthorizationPolicies.AddPolicies(builder.Services);
+string url = "https://jfroxdaztgabtnnttaou.supabase.co/";
+string key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impmcm94ZGF6dGdhYnRubnR0YW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDEzODY3MDAsImV4cCI6MjAxNjk2MjcwMH0.UZgEug8wJOZG_6KkiZtZcQGe7vkp5PmhRNcVhKL8Kg4";
+builder.Services.AddSingleton(new Supabase.Client(url, key));
 
-
+builder.Services.AddHttpClient<IAdminService, AdminHttpClient>(
+    client =>
+    {
+        client.BaseAddress = new Uri("http://localhost:5105");
+    });
 
 var app = builder.Build();
 

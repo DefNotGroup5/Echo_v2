@@ -85,7 +85,7 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
         return null;
     }
 
-    private User? GenerateUser(GrpcUser user)
+    public static User? GenerateUser(GrpcUser user)
     {
         User? generatedUser = null;
         if (user.IsSeller)
@@ -99,6 +99,19 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PostalCode = user.PostalCode
+            };
+        }
+        if (user.IsAdmin)
+        {
+            generatedUser = new Admin(user.Email, user.Password)
+            {
+                Id = user.Id,
+                Address = user.Address,
+                City = user.City,
+                Country = user.Country,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PostalCode = user.PostalCode,
             };
         }
         else
@@ -115,14 +128,13 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
             };
         }
         
-        generatedUser.IsAdmin = user.IsAdmin;
-        
         return generatedUser;
     }
 
-    private GrpcUser GenerateGrpcUser(User user)
+    public static GrpcUser GenerateGrpcUser(User user)
     {
         bool isSeller = user is Seller;
+        bool isAdmin = user is Admin;
         GrpcUser generatedGrpcUser = new GrpcUser()
         {
             Id = user.Id,
@@ -131,11 +143,11 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
             City = user.City,
             Country = user.Country,
             FirstName = user.FirstName,
-            IsSeller = isSeller,
-            IsAdmin = user.IsAdmin,
+            IsSeller = isSeller && !isAdmin,
+            IsAdmin = isAdmin && !isSeller,
             LastName = user.LastName,
             Password = user.Password,
-            PostalCode = (int)user.PostalCode
+            PostalCode = user.PostalCode
         };
         return generatedGrpcUser;
     }

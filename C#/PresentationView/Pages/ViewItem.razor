@@ -1,0 +1,95 @@
+﻿@page "/items/view/{ItemId:int}"
+@using Domain.Account.Models
+@using HTTPClients.ClientInterfaces
+@inject IItemService ItemService;
+@inject IUserService UserService;
+<div class="wrapper">
+    @if (_item != null)
+    {
+        <div class="item-container">
+            <div class="image">
+                <img src="@_item.ImageUrl"/>
+            </div>
+            <div class="info">
+                <div class="info-text">
+                    @if (_item.Quantity > 0)
+                    {
+                        <label id="stock">In Stock</label>
+                    }
+                    else
+                    {
+                        <label id="out-stock">Out Of Stock</label>
+                    }
+                    <p id="name">@_item?.Name</p>
+                    <p id="description">@_item?.Description</p>
+                </div>
+                <div class="quantity-price">
+                    <div class="quantity">
+                        <h3>Quantity</h3>
+                        <div class="quantity-choice">
+                            <label class="q-choice" id="q-minus" @onclick="() => ChangeQuantity('-')">-</label>
+                            <label class="q-choice" id="q-number">@_quantity</label>
+                            <label class="q-choice" id="q-plus" @onclick="() => ChangeQuantity('+')">+</label>
+                        </div>
+                    </div>
+                    <div class="price">
+                        <h3>Price Per Unit</h3>
+                        <label>@_item?.Price DKK</label>
+                    </div>
+                </div>
+                <button @onclick="AddToCart">Add To Cart</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>Such item does not exist!</p>
+    }
+</div>
+
+@code {
+    private Item? _item;
+    private int _quantity = 1;
+    [Parameter]
+    public int ItemId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _item = await ItemService.GetById(ItemId);
+        _quantity = 1;
+    }
+
+    private Task ChangeQuantity(char type)
+    {
+        switch (type)
+        {
+            case '+':
+            {
+                if (_quantity != 10)
+                {
+                    _quantity++;
+                }
+                break;
+            }
+            case '-':
+            {
+                if (_quantity != 1)
+                {
+                    _quantity--;
+                }
+                break;
+            }
+        }
+        return Task.CompletedTask;
+    }
+
+    private Task AddToCart()
+    {
+        if(_item != null)
+        {
+            UserService.AddItemToShoppingCart(_item, _quantity);
+        }
+        return Task.CompletedTask;
+    }
+    
+}

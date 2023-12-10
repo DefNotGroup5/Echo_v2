@@ -6,16 +6,16 @@ public class ItemCreationDto
     public String Name { get; set; }
     public String ImageUrl { get; set; }
     public String Description { get; set; }
-    public int Price { get; set; }
-    public int Stock { get; set; }
+    public double Price { get; set; }
+    public int Quantity{ get; set; }
 
-    public ItemCreationDto(int sellerId, string name, string imageUrl, string description, int price, int stock)
+    public ItemCreationDto(int sellerId, string name, string imageUrl, string description, double price, int quantity)
     {
-        sellerId = 0;
+        SellerId = sellerId;
         Name = name;
         ImageUrl = imageUrl;
         Description = description;
         Price = price;
-        Stock = stock;
+        Quantity = quantity;
     }
 }

@@ -2,11 +2,11 @@ package via.sdj3.grpcserverexample.entities;
 
 import jakarta.persistence.*;
 
-@Entity
-@Table
+@Entity //Important
+@Table //Important
 public class UserEntity {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id //Important! One ID only
+  @GeneratedValue(strategy = GenerationType.IDENTITY) //Generates ID depending on free id spot
   @Column
   private int id;
   @Column
@@ -50,6 +50,7 @@ public class UserEntity {
     this.country = country;
     this.isSeller = isSeller;
     this.isAdmin = isAdmin;
+    this.isAuthorizedSeller = false;
   }
 
   public int getId()
@@ -147,7 +148,7 @@ public class UserEntity {
     return isSeller;
   }
 
-  public void setSeller(boolean seller)
+  public void setIsSeller(boolean seller)
   {
     isSeller = seller;
   }
