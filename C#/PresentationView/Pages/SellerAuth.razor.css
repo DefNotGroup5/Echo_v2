@@ -33,6 +33,7 @@ h1 {
     font-weight: 100;
     line-height: normal;
     margin-bottom: 2.5rem;
+    text-align: center;
 }
 
 .auth-wrapper input {

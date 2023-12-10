@@ -15,6 +15,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<IItemLogic, ItemLogic>();
+builder.Services.AddScoped<IOrderLogic, OrderLogic>();
 AuthorizationPolicies.AddPolicies(builder.Services);
 
 
