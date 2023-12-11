@@ -1,5 +1,4 @@
 using Application.Shopping.LogicInterfaces;
-using Domain.Account.Models;
 using Domain.Shopping.Models;
 using GrpcClientServices;
 using ReviewService = GrpcClientServices.Services.ReviewService;

@@ -1,4 +1,7 @@
 using Application.Shopping.LogicInterfaces;
+
+using Domain.Shopping.DTOs;
+
 using Domain.Shopping.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

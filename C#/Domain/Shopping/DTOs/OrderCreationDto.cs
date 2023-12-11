@@ -1,6 +1,6 @@
-﻿using Domain.Account.Models;
+﻿using Domain.Shopping.Models;
 
-namespace Domain.Account.DTOs;
+namespace Domain.Shopping.DTOs;
 
 public class OrderCreationDto
 {
