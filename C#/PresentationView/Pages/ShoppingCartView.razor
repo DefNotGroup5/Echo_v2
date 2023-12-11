@@ -1,0 +1,49 @@
+﻿@page "/view"
+@using Domain.Shopping.Models
+@using HTTPClients.ClientInterfaces
+@inject IShoppingCartService ShoppingCartService;
+
+<div class="container">
+    <div class="cart-container">
+            <h1>Shopping Cart</h1>
+            <input type="text" class="search" placeholder="Search">
+            <div class="items">
+                @if (true || ShoppingCart.ItemsInCart.Any())
+                {
+                    foreach (var item in ShoppingCart.ItemsInCart)
+                    {
+                        <div class="item">
+                            <div class="image-name">
+                                <div class="image">
+                                    <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cG90YXRvfGVufDB8fDB8fHww"/>
+                                </div>
+                                <h3>@item.Name</h3>
+                            </div>
+                            <h3>Qty: 1</h3>
+                            <div class="price-delete-check">
+                                <h3>@item.Price DKK</h3>
+                                <button class="delete" @onclick="() => DeleteFromShoppingCart(item.Id)">Delete</button>
+                                <FancyCheckbox></FancyCheckbox>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+</div>
+
+@code {
+    private ShoppingCart ShoppingCart => ShoppingCartService.GetShoppingCart();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ShoppingCartService.UpdateShoppingCart(ShoppingCartService.GetShoppingCart());
+        Console.WriteLine(ShoppingCart.ItemsInCart.Count());
+    }
+    
+    private Task DeleteFromShoppingCart(int itemId)
+    {
+        ShoppingCartService.RemoveItemFromShoppingCart(itemId);
+        return Task.CompletedTask;
+    }
+}

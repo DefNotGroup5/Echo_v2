@@ -13,6 +13,7 @@ public interface IUserService
     public Task LogoutAsync();
     public Task<ClaimsPrincipal> GetAuthAsync();
     public Task AddItemToShoppingCart(Item item, int id);
+    public Task RemoveItemFromShoppingCart(int id);
 
     public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; }
     public event Action<ShoppingCart?>? OnShoppingCartChanged;
