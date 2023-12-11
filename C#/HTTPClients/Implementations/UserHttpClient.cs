@@ -2,8 +2,7 @@
 using System.Text.Json;
 using System.Security.Claims;
 using System.Text;
-using Domain.Account.DTOs;
-using Domain.Account.Models;
+using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
 using HTTPClients.ClientInterfaces;
 

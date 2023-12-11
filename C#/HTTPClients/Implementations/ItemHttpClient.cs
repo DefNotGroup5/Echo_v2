@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
-using Domain.Account.DTOs;
-using Domain.Account.Models;
+using Domain.Shopping.DTOs;
+using Domain.Shopping.Models;
 using HTTPClients.ClientInterfaces;
 
 namespace HTTPClients.Implementations;

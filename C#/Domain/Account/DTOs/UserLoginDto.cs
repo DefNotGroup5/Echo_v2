@@ -1,4 +1,4 @@
-namespace Domain.Account.DTOs;
+namespace Domain.Shopping.DTOs;
 
 public class UserLoginDto
 {

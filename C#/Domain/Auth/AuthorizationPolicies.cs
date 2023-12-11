@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Domain.Account.Models;
+using Domain.Shopping.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
