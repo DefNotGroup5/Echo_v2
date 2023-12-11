@@ -1,14 +1,80 @@
 @page "/ManageCategories"
-<h3>ManageCategories</h3>
+@using HTTPClients.ClientInterfaces
+@using Domain.Account.Models
+@using Microsoft.VisualBasic
+@inject ICategoryService CategoryService;
+@inject NavigationManager NavigationManager;
 
-<div>
+<div class="wrapper">
+    <h3>ManageCategories</h3>
+        <!-- First do title, then do search bar (pull from code if statement, display category), then do boxes for each category, see view items for inspo, do not forget buttons -->
+        <div class="wrapper">
+            <div class="search-bar">
+                <input type="text" placeholder="Search">
+                <button @onclick="() => FindCategory()">Search</button>
+            </div>
+            <div class="categories">
+                @if (_categories != null && _categories.Any())
+                {
+                    @foreach (var category in _categories)
+                    {
+                        <h2>@category.CategoryName</h2>
+                        <div class="category">
+                            <button @onclick="EditCategoryName(this, EventArgs)">Edit</button>
+                            <a href="#" class="delete-button">Delete</a>
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No categories, try again :/</p>
+                }
+            </div>
+        </div>
+
+    
     
 </div>
 
+
 @code {
 
-    private string _name = "";
-     
+    private ICollection<Category?>? _categories;
+    private string _currentName = "";
+    private Category? _categorySearchedName;
+    
+    public EventArgs EventArgs { get; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await CategoryService.GetAllCategories();
+        
+    }
+
+
+    private async Task<Category?> FindCategory(string name)
+    {
+        _categorySearchedName = await CategoryService.GetCategoryByName(name);
+        return _categorySearchedName;
+
+    }
+    
+    private async Task<string?> EditCategoryName(object sender, EventArgs e)
+    {
+        <!--_categoryName = await CategoryService.GetCategoryByName(name);
+        String? editedName = _categoryName.Replace("name", "newName");
+        return editedName;-->
+        
+        string newName = Microsoft.VisualBasic.Interaction.InputBox("Please enter a new name for this category:", "Edit this Category's Name", _currentName);
+
+        if (!string.IsNullOrWhiteSpace(newName))
+        {
+            _currentName = newName;
+        }
+        return _currentName;
+
+    }     
     
 
 }

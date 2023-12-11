@@ -35,6 +35,25 @@ public class CategoryService
      return null;
    }
 
+   public async Task<Category?> GetCategoryByEmailAsync(Category? category)
+   {
+       try
+       {
+           var client = new GrpcClientServices.CategoryService.CategoryServiceClient(_channel);
+           var reply = await client.GetByCategoryByEmailAsync(new GetCategoryByNameRequest()
+           {
+               Category = category
+           });
+           category = GenerateCategory(reply.Category);
+           return category;
+       }
+       catch (Exception e)
+       {
+           Console.WriteLine(e.Message);
+       }
+
+       return null;
+   }
 
    private Category? GenerateCategory(GrpcCategory category)
    {

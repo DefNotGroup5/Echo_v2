@@ -1,0 +1,15 @@
+
+/*change this later*/
+button, a.edit-button {
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+button:hover, a.edit-button:hover {
+    background-color: #2980b9;
+}

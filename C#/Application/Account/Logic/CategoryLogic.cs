@@ -14,7 +14,7 @@ public class CategoryLogic : ICategoryLogic
     {
         try
         {
-            Category? category = await _categoryService.GetCategoryByName(dto.CategoryName);
+            Category? category = await _categoryService.GetCategoryByNameAsync(dto.CategoryName);
             if (category != null)
                 throw new Exception("Category already exists");
             string validated = await ValidateCategory(dto);
@@ -37,16 +37,13 @@ public class CategoryLogic : ICategoryLogic
         
     }
 
-    public Task<Category?> GetCategoryByName(CategoryCreationDto dto)
-    {
-        
-    }
+    
 
 
     private async Task<string> ValidateCategory(CategoryCreationDto dto)
     {
         string validated = "";
-        Category? category = await _categoryService.GetCategoryByName(dto.CategoryName);
+        Category? category = await _categoryService(dto.CategoryName);
         if (category != null)
         {
             validated = "A category with this name already exists";
