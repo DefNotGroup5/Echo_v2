@@ -18,7 +18,7 @@ public class ItemHttpClient : IItemService
 
     public async Task<Item?> CreateAsync(ItemCreationDto itemCreationDto)
     {
-        HttpResponseMessage response = await _client.PostAsJsonAsync("/Items", itemCreationDto);
+        HttpResponseMessage response = await _client.PostAsJsonAsync("http://localhost:5111/Items", itemCreationDto);
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -33,7 +33,7 @@ public class ItemHttpClient : IItemService
 
     public async Task<Item?> GetById(int id)
     {
-        HttpResponseMessage response = await _client.GetAsync($"/Items/{id}");
+        HttpResponseMessage response = await _client.GetAsync($"http://localhost:5111/Items/{id}");
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -49,7 +49,7 @@ public class ItemHttpClient : IItemService
 
     public async Task<ICollection<Item?>?> GetAsync()
     {
-        HttpResponseMessage response = await _client.GetAsync($"/Items");
+        HttpResponseMessage response = await _client.GetAsync($"http://localhost:5111/Items");
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
