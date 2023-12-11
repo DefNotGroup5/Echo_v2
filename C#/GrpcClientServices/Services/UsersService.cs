@@ -1,4 +1,4 @@
-﻿using Domain.Account.Models;
+﻿using Domain.Shopping.Models;
 
 namespace GrpcClientServices.Services;
 using Grpc.Net.Client;

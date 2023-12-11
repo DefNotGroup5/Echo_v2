@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Application.Shopping.LogicInterfaces;
-using Domain.Account.DTOs;
-using Domain.Account.Models;
+using Domain.Shopping.DTOs;
+using Domain.Shopping.Models;
 using GrpcClientServices.Services;
 
 namespace Application.Shopping.Logic;
@@ -10,6 +10,12 @@ public class OrderLogic : IOrderLogic
 {
     private readonly UsersService _usersService;
     private readonly ItemService _itemsService;
+
+    public OrderLogic(UsersService usersService, ItemService itemsService)
+    {
+        _usersService = usersService;
+        _itemsService = itemsService;
+    }
 
     public Task<Order> CreateOrder(OrderCreationDto dto)
     {

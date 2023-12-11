@@ -17,13 +17,13 @@ public class AuthProvider : AuthenticationStateProvider
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         ClaimsPrincipal principal = await _userService.GetAuthAsync();
-        
-        bool isSeller = DetermineIfUserIsSeller(principal);
-        if (isSeller)
-        {
-            if (principal.Identity != null)
-                ((ClaimsIdentity)principal.Identity).AddClaim(new Claim("IsSeller", "True"));
-        }
+         // bool isSeller = DetermineIfUserIsSeller(principal);
+                // if (isSeller)
+                // {
+                //     if (principal.Identity != null)
+                //         ((ClaimsIdentity)principal.Identity).AddClaim(new Claim("IsSeller", "True"));
+                // }
+       
         
         return new AuthenticationState(principal);
     }

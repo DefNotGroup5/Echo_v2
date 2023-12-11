@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Account.Models;
+using Domain.Shopping.Models;
 
 namespace HTTPClients.ClientInterfaces;
 
