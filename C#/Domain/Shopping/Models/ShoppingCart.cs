@@ -1,5 +1,4 @@
-﻿using Domain.Account.Models;
-
+﻿
 namespace Domain.Shopping.Models;
 
 public class ShoppingCart

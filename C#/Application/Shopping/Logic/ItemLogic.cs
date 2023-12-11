@@ -1,7 +1,8 @@
 ﻿using Application.Shopping.LogicInterfaces;
-using Domain.Account.DTOs;
+using Domain.Shopping.DTOs;
 using Domain.Account.Models;
 using GrpcClientServices.Services;
+using Domain.Shopping.Models;
 
 namespace Application.Shopping.Logic;
 
