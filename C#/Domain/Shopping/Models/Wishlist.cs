@@ -8,10 +8,10 @@ public class Wishlist
     public Item ItemId { get; set; }
     public User UserId { get; set; }
 
-    public Wishlist(Item itemId, User userId)
+    public Wishlist(int itemId, int userId)
     {
-        ItemId = itemId;
-        UserId = userId;
+        ItemId.Id = itemId;
+        UserId.Id = userId;
     }
 
 }
