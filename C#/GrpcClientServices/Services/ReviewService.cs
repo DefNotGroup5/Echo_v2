@@ -2,11 +2,11 @@ using Grpc.Net.Client;
 using GrpcClientServices;
 using System.Threading.Tasks;
 using Domain.Account.Models;
-using Domain.Shopping.Models; // Import your domain models namespace
+using Domain.Shopping.Models;
 
 namespace GrpcClientServices.Services
 {
-    public class ReviewService : GrpcClientServices.ReviewService.ReviewServiceClient
+    public class ReviewService : GrpcClientServices.
     {
         private readonly GrpcChannel _channel;
 
@@ -40,10 +40,60 @@ namespace GrpcClientServices.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"Error in AddReviewAsync: {e.Message}");
                 throw;
             }
         }
 
+        public async Task<bool> CheckReviewExistsAsync(int userId, int itemId)
+        {
+            var request = new CheckReviewExistsRequest { UserId = userId, ItemId = itemId };
+            var client = new GrpcClientServices.ReviewService.ReviewServiceClient(_channel);
+            var reply = await client.CheckReviewExistsAsync(request);
+
+            return reply.Exists;
+        }
+
+        public async Task<List<Review>> GetReviewsByItemAsync(int itemId)
+        {
+            var request = new GetReviewsByItemRequest { ItemId = itemId };
+            var client = new GrpcClientServices.ReviewService.ReviewServiceClient(_channel);
+            var reply = await client.GetReviewsByItemAsync(request);
+
+            var reviews = new List<Review>();
+            foreach (var grpcReview in reply.Reviews)
+            {
+                reviews.Add(new Review(
+                    id: grpcReview.Id,
+                    userId: grpcReview.UserId,
+                    itemId: grpcReview.ItemId,
+                    rating: grpcReview.Rating,
+                    comment: grpcReview.Comment
+                ));
+            }
+
+            return reviews;
+        }
+
+        public async Task<List<Review>> GetReviewsByUserAsync(int userId)
+        {
+            var request = new GetReviewsByUserRequest { UserId = userId };
+            var client = new GrpcClientServices.ReviewService.ReviewServiceClient(_channel);
+            var reply = await client.GetReviewsByUserAsync(request);
+
+            var reviews = new List<Review>();
+            foreach (var grpcReview in reply.Reviews)
+            {
+                reviews.Add(new Review(
+                    id: grpcReview.Id,
+                    userId: grpcReview.UserId,
+                    itemId: grpcReview.ItemId,
+                    rating: grpcReview.Rating,
+                    comment: grpcReview.Comment
+                ));
+            }
+
+            return reviews;
+        }
     }
 }
