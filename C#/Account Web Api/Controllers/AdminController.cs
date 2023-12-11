@@ -9,7 +9,7 @@ namespace Account_Web_Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-//[Authorize(Policy = "IsAdmin")]
+[Authorize(Policy = "IsAdmin")]
 public class AdminController : ControllerBase
 {
     private readonly IAdminLogic _adminLogic;

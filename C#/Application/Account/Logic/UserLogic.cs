@@ -38,6 +38,20 @@ public class UserLogic : IUserLogic
                     IsSeller = dto.IsSeller,
                 };
             }
+            if (dto.IsAdmin)
+            {
+                userToCreate = new Admin(dto.Email, dto.Password)
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Password = dto.Password,
+                    Address = dto.Address,
+                    City = dto.City,
+                    PostalCode = dto.PostalCode,
+                    Country = dto.Country,
+                };
+            }
+            
             else
             {
                 userToCreate = new Customer(dto.Email, dto.Password)
