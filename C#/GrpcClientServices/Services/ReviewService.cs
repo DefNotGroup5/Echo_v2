@@ -1,7 +1,6 @@
 using Grpc.Net.Client;
 using GrpcClientServices;
 using System.Threading.Tasks;
-using Domain.Account.Models;
 using Domain.Shopping.Models;
 
 namespace GrpcClientServices.Services
