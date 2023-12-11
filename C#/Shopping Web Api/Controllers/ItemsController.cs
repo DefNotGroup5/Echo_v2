@@ -8,7 +8,6 @@ namespace Shopping_Web_Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(Policy = "IsSeller")]
 public class ItemsController : ControllerBase
 {
     private readonly IItemLogic _itemLogic;

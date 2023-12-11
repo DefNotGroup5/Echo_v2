@@ -19,7 +19,7 @@ public class AdminHttpClient : IAdminService
     
     public async Task<IEnumerable<User>> ListSellersAsync()
     {
-        HttpResponseMessage response = await _client.GetAsync("/api/admin/sellers");
+        HttpResponseMessage response = await _client.GetAsync("http://localhost:5105/api/admin/sellers");
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception("Failed to retrieve sellers");
@@ -35,7 +35,7 @@ public class AdminHttpClient : IAdminService
     
     public async Task AuthorizeSellerAsync(int userId, bool isAuthorized)
     {
-        HttpResponseMessage response = await _client.PostAsJsonAsync($"/api/admin/authorize-seller/{userId}", isAuthorized);
+        HttpResponseMessage response = await _client.PostAsJsonAsync($"http://localhost:5105/api/admin/authorize-seller/{userId}", isAuthorized);
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception("Failed to authorize seller");

@@ -92,6 +92,7 @@ public class UsersController : ControllerBase
     {
         try
         {
+            Console.WriteLine("Reached");
             User? user = await _userLogic.Login(userLoginDto);
             string token = "";
             if (user != null)

@@ -37,7 +37,7 @@ public class UserHttpClient : IUserService
     
     public async Task<User> CreateAsync(UserCreationDto dto)
     {
-        HttpResponseMessage response = await _client.PostAsJsonAsync("/Users", dto);
+        HttpResponseMessage response = await _client.PostAsJsonAsync("http://localhost:5105/Users", dto);
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -56,7 +56,7 @@ public class UserHttpClient : IUserService
         _shoppingCart = new ShoppingCart();
         string userAsJson = JsonSerializer.Serialize(dto);
         StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await _client.PatchAsync("/Users/Login", content);
+        HttpResponseMessage response = await _client.PatchAsync("http://localhost:5105/Users/Login", content);
         string responseContent = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -87,6 +87,7 @@ public class UserHttpClient : IUserService
             _shoppingCart?.ItemsInCart.Add(item);
         }
         NotifyShoppingCartChanged();
+        Console.WriteLine(_shoppingCart?.ItemsInCart.Count);
         return Task.CompletedTask;
     }
 
