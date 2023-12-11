@@ -1,5 +1,5 @@
-﻿using Domain.Account.DTOs;
-using Domain.Account.Models;
+﻿using Domain.Shopping.DTOs;
+using Domain.Shopping.Models;
 using GrpcClientServices.Services;
 
 namespace Application.Account.LogicInterfaces;
