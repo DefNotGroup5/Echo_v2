@@ -14,7 +14,7 @@ public class ReviewLogic : IReviewLogic
         _reviewService = reviewService;
     }
 
-    /*public async Task<Review> AddReviewAsync(Review review)
+    public async Task<Review> AddReviewAsync(Review review)
     {
         
         if (review.Rating < 1 || review.Rating > 5)
@@ -22,5 +22,5 @@ public class ReviewLogic : IReviewLogic
 
         
         return await _reviewService.AddReviewAsync(review);
-    }*/
+    }
 }

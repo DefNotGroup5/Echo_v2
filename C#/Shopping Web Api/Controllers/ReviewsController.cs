@@ -1,7 +1,4 @@
 using Application.Shopping.LogicInterfaces;
-using Domain.Account.DTOs;
-using Domain.Account.Models;
-using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,5 +17,27 @@ public class ReviewsController : ControllerBase
         _reviewLogic = reviewLogic;
     }
 
- //   [HttpPost]
+    [HttpPost]
+    public async Task<IActionResult> AddReviewAsync([FromBody] Review review)
+    {
+        try
+        {
+            // Call your logic layer to add the review
+            var addedReview = await _reviewLogic.AddReviewAsync(review);
+            if (addedReview != null)
+            {
+                return CreatedAtAction(nameof(GetReviewById), new { id = addedReview.Id }, addedReview);
+            }
+            return BadRequest("Failed to add review.");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
 }
