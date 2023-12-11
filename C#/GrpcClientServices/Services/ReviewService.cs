@@ -6,7 +6,7 @@ using Domain.Shopping.Models;
 
 namespace GrpcClientServices.Services
 {
-    public class ReviewService : GrpcClientServices.
+    public class ReviewService : GrpcClientServices.ReviewService.ReviewServiceClient
     {
         private readonly GrpcChannel _channel;
 

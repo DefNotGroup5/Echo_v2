@@ -22,21 +22,50 @@ public class ReviewsController : ControllerBase
     {
         try
         {
-            // Call your logic layer to add the review
             var addedReview = await _reviewLogic.AddReviewAsync(review);
             if (addedReview != null)
             {
-                return CreatedAtAction(nameof(GetReviewById), new { id = addedReview.Id }, addedReview);
+                return Created($"/Reviews/{addedReview.Id}", addedReview);
             }
             return BadRequest("Failed to add review.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException e)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(e.Message);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Console.WriteLine(ex);
+            Console.WriteLine(e);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+    
+    [HttpGet("item/{itemId}")]
+    public async Task<ActionResult<IEnumerable<Review>>> GetReviewsByItemAsync(int itemId)
+    {
+        try
+        {
+            var reviews = await _reviewLogic.GetReviewsByItemAsync(itemId);
+            return Ok(reviews);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    [HttpGet("user/{userId}")]
+    public async Task<ActionResult<IEnumerable<Review>>> GetReviewsByUserAsync(int userId)
+    {
+        try
+        {
+            var reviews = await _reviewLogic.GetReviewsByUserAsync(userId);
+            return Ok(reviews);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
             return StatusCode(500, "Internal Server Error");
         }
     }

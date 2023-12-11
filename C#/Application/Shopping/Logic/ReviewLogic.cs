@@ -1,7 +1,8 @@
 using Application.Shopping.LogicInterfaces;
 using Domain.Account.Models;
 using Domain.Shopping.Models;
-using GrpcClientServices.Services;
+using GrpcClientServices;
+using ReviewService = GrpcClientServices.Services.ReviewService;
 
 namespace Application.Shopping.Logic;
 
