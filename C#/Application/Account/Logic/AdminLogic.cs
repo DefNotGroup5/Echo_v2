@@ -1,4 +1,4 @@
-using Domain.Account.Models;
+using Domain.Shopping.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Account.LogicInterfaces;

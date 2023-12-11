@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class UserEntity {
   @Id //Important! One ID only
   @GeneratedValue(strategy = GenerationType.IDENTITY) //Generates ID depending on free id spot
-  @Column
+  @Column(name = "user_id")
   private int id;
   @Column
   private String email;

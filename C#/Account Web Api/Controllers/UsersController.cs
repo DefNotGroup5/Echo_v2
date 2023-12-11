@@ -2,8 +2,8 @@
 using System.Security.Claims;
 using System.Text;
 using Application.Account.LogicInterfaces;
-using Domain.Account.DTOs;
-using Domain.Account.Models;
+using Domain.Shopping.DTOs;
+using Domain.Shopping.Models;
 using Microsoft.AspNetCore.Http.HttpResults;    
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -92,6 +92,7 @@ public class UsersController : ControllerBase
     {
         try
         {
+            Console.WriteLine("Reached");
             User? user = await _userLogic.Login(userLoginDto);
             string token = "";
             if (user != null)
