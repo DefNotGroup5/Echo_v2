@@ -13,18 +13,20 @@ public class UserHttpClient : IUserService
     private readonly HttpClient _client;
     private ShoppingCart? _shoppingCart;
     public static string? Jwt { get; private set; } = "";
+
     public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; } = principal => { };
     public event Action<ShoppingCart?>? OnShoppingCartChanged;
+    public UserHttpClient(HttpClient client)
+    {
+        _shoppingCart = new ShoppingCart();
+        _client = client;
+    }
+    
     public Task<ShoppingCart?> GetShoppingCart()
     {
         return Task.FromResult(_shoppingCart);
     }
 
-    public UserHttpClient(HttpClient client)
-    {
-        _client = client;
-        _shoppingCart = new ShoppingCart();
-    }
 
     private void NotifyShoppingCartChanged()
     {
@@ -53,7 +55,6 @@ public class UserHttpClient : IUserService
     
     public async Task LoginAsync(UserLoginDto dto)
     {
-        _shoppingCart = new ShoppingCart();
         string userAsJson = JsonSerializer.Serialize(dto);
         StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
         HttpResponseMessage response = await _client.PatchAsync("http://localhost:5105/Users/Login", content);
@@ -72,7 +73,6 @@ public class UserHttpClient : IUserService
 
     public Task LogoutAsync()
     {
-        _shoppingCart = null;
         Jwt = "";
         ClaimsPrincipal emptyPrincipal = new ClaimsPrincipal();
         OnAuthStateChanged?.Invoke(emptyPrincipal);
@@ -81,6 +81,11 @@ public class UserHttpClient : IUserService
     
     public Task AddItemToShoppingCart(Item item, int quantity)
     {
+        if (string.IsNullOrEmpty(Jwt))
+        {
+            Console.WriteLine("User is not logged in. Cannot add items to the shopping cart.");
+            return Task.CompletedTask;
+        }
         if (_shoppingCart == null) return Task.CompletedTask;
         for (int i = 0; i < quantity; i++)
         {
@@ -88,6 +93,21 @@ public class UserHttpClient : IUserService
         }
         NotifyShoppingCartChanged();
         Console.WriteLine(_shoppingCart?.ItemsInCart.Count);
+        return Task.CompletedTask;
+    }
+    
+    public Task RemoveItemFromShoppingCart(int id)
+    {
+        if (_shoppingCart?.ItemsInCart != null)
+            foreach (var item in _shoppingCart.ItemsInCart)
+            {
+                if (item.Id == id)
+                {
+                    _shoppingCart.ItemsInCart.Remove(item);
+                    NotifyShoppingCartChanged();
+                    break;
+                }
+            }
         return Task.CompletedTask;
     }
 
