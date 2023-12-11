@@ -18,6 +18,14 @@ public class ReviewServiceImpl {
     public ReviewEntity addReview(ReviewEntity review) throws IllegalArgumentException {
         validateReview(review);
 
+        int userId = review.getCustomer().getId();
+        int itemId = review.getItem().getId();
+
+        // Corrected the method call here
+        if(reviewRepository.findByUserIdAndItemId(userId, itemId).isPresent()) {
+            throw new IllegalArgumentException("User has already reviewed this item.");
+        }
+
         return reviewRepository.save(review);
     }
 
