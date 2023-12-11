@@ -1,6 +1,5 @@
 ﻿using Application.Shopping.LogicInterfaces;
 using Domain.Shopping.DTOs;
-using Domain.Account.Models;
 using GrpcClientServices.Services;
 using Domain.Shopping.Models;
 

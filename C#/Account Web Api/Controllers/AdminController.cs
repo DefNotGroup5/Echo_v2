@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Account.LogicInterfaces;
 using System.Threading.Tasks;
-using Domain.Account.Models;
+using Domain.Shopping.Models;
 using GrpcClientServices;
 using Microsoft.AspNetCore.Authorization;
 
