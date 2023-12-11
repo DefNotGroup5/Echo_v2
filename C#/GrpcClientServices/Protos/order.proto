@@ -1,0 +1,56 @@
+@ -1,55 +0,0 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "GrpcClientServices"; 
+
+
+service OrderService {
+  rpc CreateOrder (CreateOrderRequest) returns (CreateOrderResponse);
+  rpc GetOrderById (GetOrderByIdRequest) returns (GetOrderByIdResponse);
+  rpc GetAllOrders (GetAllOrdersRequest) returns (GetAllOrdersResponse);
+}
+
+enum OrderStatus {
+  PENDING = 0;
+  COMPLETED = 1;
+  CANCELLED = 2;
+}
+
+message GrpcOrderItem {
+  int32 itemId = 1;
+  int32 quantity = 2;
+}
+
+message GrpcOrder {
+  int32 orderId = 1;
+  repeated GrpcOrderItem items = 2;
+  double totalCost = 3;
+  OrderStatus status = 4;
+  int32 customerId = 5;
+}
+
+message CreateOrderRequest {
+  repeated GrpcOrderItem items = 1;
+  int32 customerId = 2;
+}
+
+message CreateOrderResponse {
+  GrpcOrder order = 1;
+}
+
+message GetOrderByIdRequest {
+  int32 id = 1;
+}
+
+message GetOrderByIdResponse {
+  GrpcOrder order = 1;
+}
+
+message GetAllOrdersRequest {
+}
+
+message GetAllOrdersResponse {
+  repeated GrpcOrder orders = 1;
+}

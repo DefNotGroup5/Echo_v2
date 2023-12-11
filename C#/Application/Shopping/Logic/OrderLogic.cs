@@ -11,6 +11,12 @@ public class OrderLogic : IOrderLogic
     private readonly UsersService _usersService;
     private readonly ItemService _itemsService;
 
+    public OrderLogic(UsersService usersService, ItemService itemsService)
+    {
+        _usersService = usersService;
+        _itemsService = itemsService;
+    }
+
     public Task<Order> CreateOrder(OrderCreationDto dto)
     {
         try
