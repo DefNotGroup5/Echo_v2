@@ -1,12 +1,13 @@
 package via.sdj3.grpcserverexample.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import via.sdj3.grpcserverexample.entities.CategoryEntity;
 import via.sdj3.grpcserverexample.entities.ItemEntity;
 
 import java.util.Optional;
 
-public interface CategoryRepository {
+public interface CategoryRepository extends JpaRepository<CategoryEntity, String> {
 
     @Query("SELECT c FROM CategoryEntity c WHERE c.categoryName = :categoryName")
     Optional<CategoryEntity> getByCategoryName(String categoryName);
