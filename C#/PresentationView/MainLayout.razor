@@ -1,6 +1,48 @@
-﻿@inherits LayoutComponentBase
+﻿@using PresentationView.ComponentServices.Interfaces
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager;
+@inject IConfirmationService ConfirmationService
 
 <main>
-     <NavBar/>
-     @Body
+     <div class="container">
+          <div style="display: @(_showConfirmation ? "block" : "none")" class="confirm-window">
+               <Confirmation ShowConfirmation="@_showConfirmation"
+                             Title="@_confirmationTitle"
+                             Description="@_confirmationDescription"
+                             OnConfirmation="HideConfirmation">
+               </Confirmation>
+          </div>
+          <div class="nav-body">
+               <NavBar/>
+               @Body
+          </div>
+     </div>
 </main>
+
+@code {
+     private bool _showConfirmation = false;
+     private string _confirmationTitle = string.Empty;
+     private string _confirmationDescription = string.Empty;
+
+     protected override void OnInitialized()
+     {
+          ConfirmationService.OnConfirmationRequested += HandleConfirmationRequested;
+     }
+
+     private void HandleConfirmationRequested(string title, string description, Action<bool> callback)
+     {
+          _confirmationTitle = title;
+          _confirmationDescription = description;
+          _showConfirmation = true;
+          StateHasChanged();
+          callback?.Invoke(_showConfirmation);
+     }
+
+     private void HideConfirmation()
+     {
+          _showConfirmation = false;
+          _confirmationTitle = string.Empty;
+          _confirmationDescription = string.Empty;
+          StateHasChanged();
+     }
+}

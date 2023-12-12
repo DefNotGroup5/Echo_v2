@@ -1,0 +1,26 @@
+﻿<div style="display: @(ShowConfirmation ? "block" : "none")" class="wrapper">
+        <div class="confirmation-wrapper">
+            <h2>@Title</h2>
+            <p>@Description</p>
+            <button @onclick="Confirm" class="confirm">Okay</button>
+        </div>
+    </div>
+@code {
+    [Parameter]
+    public bool ShowConfirmation { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Description { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnConfirmation { get; set; }
+
+    private async Task Confirm()
+    {
+        await OnConfirmation.InvokeAsync(true);
+    }
+
+}
