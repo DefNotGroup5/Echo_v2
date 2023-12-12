@@ -1,0 +1,46 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "GrpcClientServices";
+
+service SupportService {
+  rpc RequestSupport (SupportRequest) returns (SupportResponse);
+  rpc ProvideSupport (ProvideSupportRequest) returns (ProvideSupportResponse);
+  rpc GetAll (GetAllRequest) returns (GetAllResponse);
+}
+
+message GrpcMessage {
+  int32 customer_id = 1;
+  int32 id = 2;
+  string message = 3;
+  string response = 4;
+  bool isAnswered = 5;
+}
+
+message SupportRequest {
+  int32 customer_id = 1;
+  string message = 2;
+}
+
+message SupportResponse {
+  GrpcMessage message = 1;
+}
+
+message ProvideSupportRequest {
+  int32 message_id = 1;
+  string response = 2;
+}
+
+message ProvideSupportResponse {
+  string result = 1;
+}
+
+message GetAllRequest {
+
+}
+
+message GetAllResponse {
+  repeated GrpcMessage messages = 1;
+}
+

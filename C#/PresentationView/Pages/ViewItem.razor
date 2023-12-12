@@ -2,7 +2,6 @@
 @using Domain.Shopping.Models
 @using HTTPClients.ClientInterfaces
 @inject IItemService ItemService;
-@inject IUserService UserService;
 <div class="wrapper">
     @if (_item != null)
     {
@@ -37,7 +36,7 @@
                         <label>@_item?.Price DKK</label>
                     </div>
                 </div>
-                <button @onclick="AddToCart">Add To Cart</button>
+                <button @onclick="">Add To Cart</button>
             </div>
         </div>
     }
@@ -82,14 +81,4 @@
         }
         return Task.CompletedTask;
     }
-
-    private Task AddToCart()
-    {
-        if(_item != null)
-        {
-            UserService.AddItemToShoppingCart(_item, _quantity);
-        }
-        return Task.CompletedTask;
-    }
-    
 }

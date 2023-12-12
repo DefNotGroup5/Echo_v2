@@ -3,12 +3,14 @@ package via.sdj3.grpcserverexample.entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "reviews")
+@Table(name = "reviews", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"customer_id", "item_id"}) // for
+})
 public class ReviewEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
@@ -25,19 +27,19 @@ public class ReviewEntity {
     private String comment;
 
     public ReviewEntity() {}
-    public ReviewEntity(Long id, UserEntity customer, ItemEntity item, int rating, String comment) {
-        this.id = id;
+
+    public ReviewEntity(UserEntity customer, ItemEntity item, int rating, String comment) {
         this.customer = customer;
         this.item = item;
         this.rating = rating;
         this.comment = comment;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

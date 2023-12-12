@@ -4,8 +4,15 @@ import "google/protobuf/wrappers.proto";
 
 option csharp_namespace = "GrpcClientServices"; 
 
+option java_multiple_files = true;
+option java_package = "via.sdj3.protobuf.review";
+option java_outer_classname = "ReviewProto";
+
 service ReviewService {
   rpc AddReview (AddReviewRequest) returns (AddReviewResponse);
+  rpc CheckReviewExists (CheckReviewExistsRequest) returns (CheckReviewExistsResponse);
+  rpc GetReviewsByItem (GetReviewsByItemRequest) returns (GetReviewsByItemResponse);
+  rpc GetReviewsByUser (GetReviewsByUserRequest) returns (GetReviewsByUserResponse);
 }
 
 message GrpcReview {
@@ -22,4 +29,29 @@ message AddReviewRequest {
 
 message AddReviewResponse {
   GrpcReview review = 1;
+}
+
+message CheckReviewExistsRequest {
+  int32 userId = 1;
+  int32 itemId = 2;
+}
+
+message CheckReviewExistsResponse {
+  bool exists = 1;
+}
+
+message GetReviewsByItemRequest {
+  int32 itemId = 1;
+}
+
+message GetReviewsByItemResponse {
+  repeated GrpcReview reviews = 1;
+}
+
+message GetReviewsByUserRequest {
+  int32 userId = 1;
+}
+
+message GetReviewsByUserResponse {
+  repeated GrpcReview reviews = 1;
 }

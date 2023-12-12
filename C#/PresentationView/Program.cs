@@ -4,6 +4,7 @@ using HTTPClients.Implementations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.OutputCaching;
 using PresentationView.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
