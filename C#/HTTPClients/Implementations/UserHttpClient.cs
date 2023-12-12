@@ -11,7 +11,7 @@ namespace HTTPClients.Implementations;
 public class UserHttpClient : IUserService
 {
     private readonly HttpClient _client;
-    private readonly ShoppingCart? _shoppingCart;
+    private ShoppingCart? _shoppingCart;
     public static string? Jwt { get; private set; } = "";
 
     public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; } = principal => { };
@@ -110,25 +110,6 @@ public class UserHttpClient : IUserService
             }
         return Task.CompletedTask;
     }
-    
-    public Task<int?> GetCurrentUserIdAsync()
-    {
-        if (string.IsNullOrEmpty(Jwt))
-        {
-            Console.WriteLine("JWT is not set. The user might not be logged in.");
-            return Task.FromResult<int?>(null);
-        }
-
-        var principal = CreateClaimsPrincipal();
-        var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier); // or "Id" if you're using custom claim type for user id
-        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
-        {
-            return Task.FromResult<int?>(userId);
-        }
-
-        Console.WriteLine("User ID claim not found in the JWT.");
-        return Task.FromResult<int?>(null);
-    }
 
 
     public Task<ClaimsPrincipal> GetAuthAsync()
@@ -173,6 +154,4 @@ public class UserHttpClient : IUserService
         ClaimsPrincipal principal = new(identity);
         return principal;
     }
-    
-    
 }

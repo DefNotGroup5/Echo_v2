@@ -17,5 +17,4 @@ public interface IUserService
     public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; }
     public event Action<ShoppingCart?>? OnShoppingCartChanged;
     public Task<ShoppingCart?> GetShoppingCart();
-    public Task<int?> GetCurrentUserIdAsync();
 }
