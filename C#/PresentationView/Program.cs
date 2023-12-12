@@ -15,7 +15,6 @@ builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped<IUserService, UserHttpClient>();
 builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped<IAdminService, AdminHttpClient>();
-builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped(
     sp => 
         new HttpClient { 

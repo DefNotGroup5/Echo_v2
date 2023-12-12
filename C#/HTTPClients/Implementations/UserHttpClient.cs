@@ -11,29 +11,14 @@ namespace HTTPClients.Implementations;
 public class UserHttpClient : IUserService
 {
     private readonly HttpClient _client;
-    private ShoppingCart? _shoppingCart;
     public static string? Jwt { get; private set; } = "";
 
     public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; } = principal => { };
-    public event Action<ShoppingCart?>? OnShoppingCartChanged;
     public UserHttpClient(HttpClient client)
     {
-        _shoppingCart = new ShoppingCart();
         _client = client;
     }
     
-    public Task<ShoppingCart?> GetShoppingCart()
-    {
-        return Task.FromResult(_shoppingCart);
-    }
-
-
-    private void NotifyShoppingCartChanged()
-    {
-        OnShoppingCartChanged?.Invoke(_shoppingCart);
-        Console.WriteLine("Shopping cart changed event fired!");
-        Console.WriteLine(_shoppingCart.ItemsInCart.Count);
-    }
     
     
     
@@ -68,7 +53,6 @@ public class UserHttpClient : IUserService
         Jwt = token;
         ClaimsPrincipal principal = CreateClaimsPrincipal();
         OnAuthStateChanged.Invoke(principal);
-        NotifyShoppingCartChanged();
     }
 
     public Task LogoutAsync()
@@ -79,37 +63,8 @@ public class UserHttpClient : IUserService
         return Task.CompletedTask;
     }
     
-    public Task AddItemToShoppingCart(Item item, int quantity)
-    {
-        if (string.IsNullOrEmpty(Jwt))
-        {
-            Console.WriteLine("User is not logged in. Cannot add items to the shopping cart.");
-            return Task.CompletedTask;
-        }
-        if (_shoppingCart == null) return Task.CompletedTask;
-        for (int i = 0; i < quantity; i++)
-        {
-            _shoppingCart?.ItemsInCart.Add(item);
-        }
-        NotifyShoppingCartChanged();
-        Console.WriteLine(_shoppingCart?.ItemsInCart.Count);
-        return Task.CompletedTask;
-    }
-    
-    public Task RemoveItemFromShoppingCart(int id)
-    {
-        if (_shoppingCart?.ItemsInCart != null)
-            foreach (var item in _shoppingCart.ItemsInCart)
-            {
-                if (item.Id == id)
-                {
-                    _shoppingCart.ItemsInCart.Remove(item);
-                    NotifyShoppingCartChanged();
-                    break;
-                }
-            }
-        return Task.CompletedTask;
-    }
+   
+ 
 
 
     public Task<ClaimsPrincipal> GetAuthAsync()
