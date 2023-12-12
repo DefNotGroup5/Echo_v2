@@ -2,9 +2,12 @@
 @using Domain.Shopping.Models
 @using HTTPClients.ClientInterfaces
 @using Domain.Shopping.DTOs
+@using PresentationView.ComponentServices.Interfaces
 @inject IShoppingCartService ShoppingCartService;
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject IItemService ItemService;
+@inject NavigationManager NavigationManager
+@inject IConfirmationService ConfirmationService;
 <div class="wrapper">
     @if (_item != null)
     {
@@ -112,6 +115,17 @@
                 Quantity = _quantity
             };
             await ShoppingCartService.CreateAsync(dto);
+            string confirmationTitle = "Item added to shopping cart!";
+            string confirmationDescription = "Your item has been added to the shopping cart. You can now purchase it!";
+            ConfirmationService.ShowConfirmation(confirmationTitle, confirmationDescription, HandleConfirmationResult);
+        }
+    }
+    
+    private void HandleConfirmationResult(bool isConfirmed)
+    {
+        if (isConfirmed)
+        {
+            NavigationManager.NavigateTo("/items");
         }
     }
 }
