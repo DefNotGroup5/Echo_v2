@@ -2,16 +2,16 @@
 
 public class Message
 {
-    public int customerId { get; set; }
-    public bool answered { get; set; }
-    public string request { get; set; }
-    public string response { get; set; }
-    public int id { get; set; }
+    public int CustomerId { get; set; }
+    public bool Answered { get; set; }
+    public string Request { get; set; }
+    public string Response { get; set; }
+    public int Id { get; set; }
     
     public Message(int customerId, string request)
     {
-        this.customerId = customerId;
-        this.request = request;
-        answered = false;
+        CustomerId = customerId;
+        Request = request;
+        Answered = false;
     }
 }

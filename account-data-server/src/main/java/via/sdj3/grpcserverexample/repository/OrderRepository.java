@@ -8,6 +8,6 @@ import via.sdj3.grpcserverexample.entities.UserEntity;
 import java.util.List;
 
 @Repository
-public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
+public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
 
 }
