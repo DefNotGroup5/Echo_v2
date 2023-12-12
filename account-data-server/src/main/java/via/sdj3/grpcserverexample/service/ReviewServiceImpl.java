@@ -10,7 +10,7 @@ import via.sdj3.protobuf.review.ReviewServiceGrpc;
 @GrpcService
 public class ReviewServiceImpl extends ReviewServiceGrpc.ReviewServiceImplBase {
 
-    private final ReviewRepository reviewRepository;
+   /* private final ReviewRepository reviewRepository;
 
     @Autowired
     public ReviewServiceImpl(ReviewRepository reviewRepository) {
@@ -35,5 +35,5 @@ public class ReviewServiceImpl extends ReviewServiceGrpc.ReviewServiceImplBase {
         if (review.getRating() < 1 || review.getRating() > 5) {
             throw new IllegalArgumentException("Rating must be between 1 and 5.");
         }
-    }
+    }*/
 }
