@@ -1,21 +1,21 @@
 ﻿@inject NavigationManager NavigationManager
-@page "/admindash"
+@page "/sellerdash"
 <div class="wrapper">
     <div class="auth-wrapper">
-        <h1 id="title">Admin Dashboard</h1> 
+        <h1 id="title">Seller Dashboard</h1> 
         <div class="wrapper-containers">
             <div class="container">
-                <h1>Authorize Sellers</h1>
+                <h1>List New Items</h1>
                 <div class="spacer"></div>
-                <button class="container-button" @onclick="AuthSellers">Open</button>
+                <button class="container-button" @onclick="NewItems">Open</button>
             </div>
             <div class="container">
-                <h1>Manage Categories</h1>
+                <h1>View Items For Sale</h1>
                 <div class="spacer"></div>
                 <button class="container-button">Open</button>
             </div>
             <div class="container">
-                <h1>Customer Support</h1>
+                <h1>View Order</h1>
                 <div class="spacer"></div>
                 <button class="container-button">Open</button>
             </div>
@@ -25,13 +25,15 @@
 
 @code {
 
-    public void AuthSellers()
+    private void NewItems()
     {
-        NavigationManager.NavigateTo("/seller/auth");
+        NavigationManager.NavigateTo("/listitem");
     }
-    
-    //public void ManageCategories()
-    
-    //public void CustomerSupport()
+    //No page for viewing items yet
+    //
+    // private void ViewItems()
+    // {
+    //     NavigationManager.NavigateTo("/viewitems");
+    // }
     
 }
