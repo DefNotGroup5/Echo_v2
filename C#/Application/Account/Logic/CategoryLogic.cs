@@ -12,7 +12,7 @@ public class CategoryLogic : ICategoryLogic
     
     public async Task<Category?> AddCategory(CategoryCreationDto dto)
     {
-        try
+       /* try
         {
             Category? category = await _categoryService.GetCategoryByNameAsync(dto.CategoryName);
             if (category != null)
@@ -32,15 +32,15 @@ public class CategoryLogic : ICategoryLogic
         {
             Console.WriteLine(e);
             throw;
-        }
+        }*/
 
-        
+       return null;
     }
 
     
 
 
-    private async Task<string> ValidateCategory(CategoryCreationDto dto)
+  /*  private async Task<string> ValidateCategory(CategoryCreationDto dto)
     {
         string validated = "";
         Category? category = await _categoryService(dto.CategoryName);
@@ -56,6 +56,6 @@ public class CategoryLogic : ICategoryLogic
         }
 
         return validated;
-    }
+    }*/
     
 }

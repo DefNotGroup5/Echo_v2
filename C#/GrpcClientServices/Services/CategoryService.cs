@@ -3,7 +3,7 @@ using Grpc.Net.Client;
 
 namespace GrpcClientServices.Services;
 
-public class CategoryService
+public class CategoryService 
 {
    private readonly GrpcChannel _channel;
     
@@ -15,9 +15,9 @@ public class CategoryService
 
    public async Task<Category?> AddCategoryAsync(Category category)
    {
-     try
+     /*try
      {
-         GrpcCategory categoryToAdd = GenerateGrpcCategory(category);
+          GrpcCategory categoryToAdd = GenerateGrpcCategory(category);
          var client = new GrpcClientServices.CategoryService.CategoryServiceClient(_channel);
          var reply = await client.AddCategoryAsync(new AddCategoryRequest()
          {
@@ -30,14 +30,14 @@ public class CategoryService
      catch (Exception e)
      {
          Console.WriteLine(e.Message);
-     }
+     }*/
 
      return null;
    }
 
    public async Task<Category?> GetCategoryByEmailAsync(Category? category)
    {
-       try
+      /* try
        {
            var client = new GrpcClientServices.CategoryService.CategoryServiceClient(_channel);
            var reply = await client.GetByCategoryByEmailAsync(new GetCategoryByNameRequest()
@@ -50,12 +50,12 @@ public class CategoryService
        catch (Exception e)
        {
            Console.WriteLine(e.Message);
-       }
+       }*/
 
        return null;
    }
 
-   private Category? GenerateCategory(GrpcCategory category)
+  /* private Category? GenerateCategory(GrpcCategory category)
    {
        Category? generatedCategory = null;
 
@@ -79,6 +79,6 @@ public class CategoryService
        };
 
        return generatedGrpcCategory;
-   }
+   }*/
    
 }
