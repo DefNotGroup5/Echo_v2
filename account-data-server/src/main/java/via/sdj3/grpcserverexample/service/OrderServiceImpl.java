@@ -1,5 +1,6 @@
 package via.sdj3.grpcserverexample.service;
 
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,13 +10,14 @@ import via.sdj3.grpcserverexample.entities.OrderStatus;
 import via.sdj3.grpcserverexample.entities.OrderItemEntity;
 import via.sdj3.grpcserverexample.entities.UserEntity;
 import via.sdj3.grpcserverexample.repository.OrderRepository;
+import via.sdj3.protobuf.order.OrderServiceGrpc;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
-public class OrderServiceImpl {
+@GrpcService
+public class OrderServiceImpl extends OrderServiceGrpc.OrderServiceImplBase {
 
     private final OrderRepository orderRepository;
 
