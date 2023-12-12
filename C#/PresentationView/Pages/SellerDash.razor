@@ -1,4 +1,5 @@
-﻿@page "/sellerdash"
+﻿@inject NavigationManager NavigationManager
+@page "/sellerdash"
 <div class="wrapper">
     <div class="auth-wrapper">
         <h1 id="title">Seller Dashboard</h1> 
@@ -6,7 +7,7 @@
             <div class="container">
                 <h1>List New Items</h1>
                 <div class="spacer"></div>
-                <button class="container-button">Open</button>
+                <button class="container-button" @onclick="NewItems">Open</button>
             </div>
             <div class="container">
                 <h1>View Items For Sale</h1>
@@ -23,5 +24,16 @@
 </div>
 
 @code {
+
+    private void NewItems()
+    {
+        NavigationManager.NavigateTo("/listitem");
+    }
+    //No page for viewing items yet
+    //
+    // private void ViewItems()
+    // {
+    //     NavigationManager.NavigateTo("/viewitems");
+    // }
     
 }
