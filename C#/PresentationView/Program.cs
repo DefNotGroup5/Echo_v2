@@ -4,6 +4,7 @@ using HTTPClients.Implementations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.OutputCaching;
 using PresentationView.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped<IUserService, UserHttpClient>();
 builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped<IAdminService, AdminHttpClient>();
+builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped(
     sp => 
         new HttpClient { 

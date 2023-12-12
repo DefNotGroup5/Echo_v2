@@ -2,7 +2,7 @@
 @using Domain.Shopping.Models
 @using HTTPClients.ClientInterfaces
 @inject IItemService ItemService;
-@inject IUserService UserService;
+@inject IShoppingCartService ShoppingCartService;
 <div class="wrapper">
     @if (_item != null)
     {
@@ -85,11 +85,11 @@
 
     private Task AddToCart()
     {
-        if(_item != null)
+        if (_item != null)
         {
-            UserService.AddItemToShoppingCart(_item, _quantity);
+            ShoppingCartService.AddItemToShoppingCart(_item, _quantity);
+            Console.WriteLine(ShoppingCartService.GetShoppingCart().ItemsInCart);
         }
         return Task.CompletedTask;
     }
-    
 }
