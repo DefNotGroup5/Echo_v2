@@ -103,7 +103,6 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
             Description = item.Description,
             Price = item.Price,
             Quantity = item.Quantity,
-
         };
         return generatedGrpcItem;
     }

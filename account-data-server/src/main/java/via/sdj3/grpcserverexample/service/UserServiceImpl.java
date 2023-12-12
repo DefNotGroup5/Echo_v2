@@ -86,7 +86,18 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     public void getById(GetByIdRequest request, StreamObserver<GetByIdResponse> responseObserver) {
         try
         {
-            UserEntity existingUser = userRepository.getReferenceById(request.getId());
+            UserEntity existingUser = null;
+            Optional<UserEntity> user = userRepository.getById(request.getId());
+            if(user.isPresent())
+            {
+                existingUser = user.get();
+            }
+            else
+            {
+                Status status = Status.INTERNAL.withDescription("User not found!");
+                responseObserver.onError(new StatusRuntimeException(status));
+            }
+            assert existingUser != null;
             GetByIdResponse response = GetByIdResponse.newBuilder().setUser(generateGrpcUser(existingUser)).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();

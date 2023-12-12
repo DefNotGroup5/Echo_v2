@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
+public interface ReviewRepository extends JpaRepository<ReviewEntity, Integer> {
     List<ReviewEntity> findByItemId(int itemId);
     List<ReviewEntity> findByUserId(int userId);
     Optional<ReviewEntity> findByUserIdAndItemId(int userId, int itemId);
