@@ -1,6 +1,9 @@
 ﻿@page "/items/view/{ItemId:int}"
 @using Domain.Shopping.Models
 @using HTTPClients.ClientInterfaces
+@using Domain.Shopping.DTOs
+@inject IShoppingCartService ShoppingCartService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject IItemService ItemService;
 <div class="wrapper">
     @if (_item != null)
@@ -36,7 +39,7 @@
                         <label>@_item?.Price DKK</label>
                     </div>
                 </div>
-                <button @onclick="">Add To Cart</button>
+                <button @onclick="AddToShoppingCart">Add To Cart</button>
             </div>
         </div>
     }
@@ -49,11 +52,13 @@
 @code {
     private Item? _item;
     private int _quantity = 1;
+    private int _userId;
     [Parameter]
     public int ItemId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        await InitializeUserIdAsync();
         _item = await ItemService.GetById(ItemId);
         _quantity = 1;
     }
@@ -80,5 +85,33 @@
             }
         }
         return Task.CompletedTask;
+    }
+    
+    private async Task InitializeUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst("Id"); 
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+            {
+                _userId = userId;
+            }
+        }
+    }
+
+    private async Task AddToShoppingCart()
+    {
+        if (_item != null)
+        {
+            CartItemCreationDto dto = new CartItemCreationDto()
+            {
+                ItemId = _item.Id,
+                CustomerId = _userId,
+                Quantity = _quantity
+            };
+            await ShoppingCartService.CreateAsync(dto);
+        }
     }
 }

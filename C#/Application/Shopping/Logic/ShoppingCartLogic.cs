@@ -67,7 +67,7 @@ public class ShoppingCartLogic : IShoppingCartLogic
         {
             foreach (var cartItem in items )
             {
-                if (cartItem.ItemId.Equals(dto.ItemId))
+                if (cartItem.ItemId == dto.ItemId)
                     return "Sorry, for now you are only able to add once to the shopping cart! Adjust quantity there";
             }
         }
