@@ -60,7 +60,6 @@
         {
           
             await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, _city, _postcode, _country, _isSeller, false));
-    // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
             _firstName = "";
             _lastName = "";
             _password = "";
@@ -81,15 +80,11 @@
             {
                 _isSeller = true;
             }
-            
             Console.WriteLine(_result);
             NavigationManager.NavigateTo("/login");
-            
-            
         }
         catch (Exception e)
         {
-            await Console.Error.WriteAsync("Something went wrong");
             Console.WriteLine(e);
             _result = e.Message;
         }

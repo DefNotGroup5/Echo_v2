@@ -136,7 +136,7 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
                 PostalCode = user.PostalCode,
             };
         }
-        else
+        else if (user is { IsAdmin: false, IsSeller: false })
         {
             generatedUser = new Customer(user.Email, user.Password)
             {

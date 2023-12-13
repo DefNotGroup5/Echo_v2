@@ -69,11 +69,21 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     public void getByEmail(GetByEmailRequest request, StreamObserver<GetByEmailResponse> responseObserver) {
         try
         {
-            Optional<UserEntity> existingUser = userRepository.getByEmail(request.getEmail());
-            GetByEmailResponse response = GetByEmailResponse.newBuilder().setUser(generateGrpcUser(existingUser.get())).build();
-           responseObserver.onNext(response);
-           responseObserver.onCompleted();
-            System.out.println("Ya");
+            UserEntity existingUser = null;
+            Optional<UserEntity> user = userRepository.getByEmail(request.getEmail());
+            if(user.isPresent())
+            {
+                existingUser = user.get();
+            }
+            else
+            {
+                Status status = Status.INTERNAL.withDescription("User not found!");
+                responseObserver.onError(new StatusRuntimeException(status));
+            }
+            assert existingUser != null;
+            GetByEmailResponse response = GetByEmailResponse.newBuilder().setUser(generateGrpcUser(existingUser)).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
         }
         catch (Exception e)
         {

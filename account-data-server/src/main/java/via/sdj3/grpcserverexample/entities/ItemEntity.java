@@ -16,7 +16,7 @@ public class ItemEntity {
     @Column
     private String name;
 
-    @Column
+    @Column(length = 2048)
     private String image_url;
 
     @Column
