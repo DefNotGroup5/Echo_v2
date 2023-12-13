@@ -1,4 +1,17 @@
-﻿@page "/"
-<div>
-    <h1>HEllo</h1>
+﻿@inject NavigationManager NavigationManager
+@page "/"
+<div class="wrapper">
+    <div class="home-wrapper">
+        <h1>Welcome to Our Store!</h1>
+        <p>Explore our wide range of products and offers. Sign in to start shopping now.</p>
+        <button @onclick="Login">Login</button>
+    </div>
 </div>
+
+@code
+{
+    private void Login()
+    {
+        NavigationManager.NavigateTo("/Login");
+    }
+}
