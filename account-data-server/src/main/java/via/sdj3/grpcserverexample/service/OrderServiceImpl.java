@@ -63,7 +63,7 @@ public class OrderServiceImpl extends OrderServiceGrpc.OrderServiceImplBase {
                 GrpcOrderItem orderItem = GrpcOrderItem.newBuilder()
                         .setId(entity.getId())
                         .setCustomerId(entity.getCustomer_id())
-                        .setOrderDate(returnEntity.getOrderDate())
+                        .setOrderDate(entity.getOrderDate())
                         .setTotalPrice(entity.getTotalPrice()) // Updated field name to totalPrice
                         .setStatus(entity.getStatus())
                         .setItemId(entity.getItem_id())
