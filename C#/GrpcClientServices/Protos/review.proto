@@ -4,10 +4,6 @@ import "google/protobuf/wrappers.proto";
 
 option csharp_namespace = "GrpcClientServices"; 
 
-option java_multiple_files = true;
-option java_package = "via.sdj3.protobuf.review";
-option java_outer_classname = "ReviewProto";
-
 service ReviewService {
   rpc AddReview (AddReviewRequest) returns (AddReviewResponse);
   rpc CheckReviewExists (CheckReviewExistsRequest) returns (CheckReviewExistsResponse);
