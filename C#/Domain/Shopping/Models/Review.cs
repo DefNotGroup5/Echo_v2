@@ -16,4 +16,9 @@ public class Review
         Rating = rating;
         Comment = comment;
     }
+
+    public Review()
+    {
+        throw new NotImplementedException();
+    }
 }

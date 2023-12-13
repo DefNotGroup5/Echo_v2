@@ -6,9 +6,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.OutputCaching;
 using PresentationView.Auth;
-using PresentationView.ComponentServices.Implementations;
-using PresentationView.ComponentServices.Interfaces;
-using PresentationView.Pages.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -16,11 +13,10 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped<IUserService, UserHttpClient>();
+builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped<IAdminService, AdminHttpClient>();
-builder.Services.AddScoped<IWishlistService, WishlistHttpClient>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartHttpClient>();
-builder.Services.AddScoped<IConfirmationService, ConfirmationService>();
-builder.Services.AddScoped<ISupportService, SupportHttpClient>();
+builder.Services.AddScoped<IReviewService, ReviewHttpClient>();
 builder.Services.AddScoped(
     sp => 
         new HttpClient { 
