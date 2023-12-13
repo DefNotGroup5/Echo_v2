@@ -79,7 +79,7 @@ public class SupportServiceImpl extends SupportServiceGrpc.SupportServiceImplBas
                     GrpcMessage message = GrpcMessage.newBuilder()
                             .setId(messageEntity.getId())
                             .setMessage(messageEntity.getRequest())
-                            .setCustomerId(messageEntity.getId())
+                            .setCustomerId(messageEntity.getCustomer_id())
                             .setIsAnswered(messageEntity.isAnswered()).build();
                     response.addMessages(message);
                 }
@@ -87,7 +87,7 @@ public class SupportServiceImpl extends SupportServiceGrpc.SupportServiceImplBas
                     GrpcMessage message = GrpcMessage.newBuilder()
                             .setId(messageEntity.getId())
                             .setMessage(messageEntity.getRequest())
-                            .setCustomerId(messageEntity.getId())
+                            .setCustomerId(messageEntity.getCustomer_id())
                             .setResponse(messageEntity.getResponse())
                             .setIsAnswered(messageEntity.isAnswered()).build();
                     response.addMessages(message);

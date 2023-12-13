@@ -11,6 +11,7 @@ service UsersService {
   rpc Add (AddRequest) returns (AddResponse);
   rpc GetByEmail (GetByEmailRequest) returns (GetByEmailResponse);
   rpc GetById (GetByIdRequest) returns (GetByIdResponse);
+  rpc GetAll (GetAllUsersRequest) returns (GetAllUsersResponse);
 }
 
 message GrpcUser { //Can be considered like a class/object? but not really, it's like a response with many attributes
@@ -42,6 +43,14 @@ message GetByIdRequest {
 
 message GetByIdResponse {
   GrpcUser user = 1;
+}
+
+message GetAllUsersRequest {
+
+}
+
+message GetAllUsersResponse {
+  repeated GrpcUser users = 1;
 }
 
 message AddRequest {

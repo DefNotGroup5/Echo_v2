@@ -62,9 +62,38 @@ public class UserHttpClient : IUserService
         OnAuthStateChanged?.Invoke(emptyPrincipal);
         return Task.CompletedTask;
     }
-    
-   
- 
+
+    public async Task<ICollection<User>> GetAllAsync()
+    {
+        HttpResponseMessage response = await _client.GetAsync($"http://localhost:5105/Users");
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(result);
+        }
+
+        ICollection<User>? users = JsonSerializer.Deserialize<ICollection<User>>(result, new JsonSerializerOptions()
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return users;
+    }
+
+    public async Task<User?> GetByIdAsync(int id)
+    {
+        HttpResponseMessage response = await _client.GetAsync($"http://localhost:5105/Users/{id}");
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(result);
+        }
+        User user = JsonSerializer.Deserialize<User>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        
+        return user;
+    }
 
 
     public Task<ClaimsPrincipal> GetAuthAsync()

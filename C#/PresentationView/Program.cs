@@ -20,6 +20,7 @@ builder.Services.AddScoped<IItemService, ItemHttpClient>();
 builder.Services.AddScoped<IAdminService, AdminHttpClient>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartHttpClient>();
 builder.Services.AddScoped<IConfirmationService, ConfirmationService>();
+builder.Services.AddScoped<ISupportService, SupportHttpClient>();
 builder.Services.AddScoped(
     sp => 
         new HttpClient { 

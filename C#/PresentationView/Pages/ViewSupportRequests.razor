@@ -1,0 +1,60 @@
+﻿@inject ISupportService SupportService;
+@inject IUserService UserService;
+@inject NavigationManager NavigationManager;
+@page "/view-support-requests"
+@using Domain.Shopping.Models
+@using HTTPClients.ClientInterfaces
+<div class="wrapper">
+    <div class="container">
+        <h1>Customer Service</h1>
+        <div class="messages-container">
+            <h3>New Messages</h3>
+            @if(_unansweredMessages != null)
+            {
+                @foreach (var user in _users)
+                {
+                    @if(user != null)
+                    {
+                        <div @onclick="() => NavigateToMessage(user.Id)" class="message">
+                            @user?.Email
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <p>No new messages</p>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private ICollection<Message>? _unansweredMessages = new List<Message>();
+    private ICollection<User?> _users = new List<User?>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _unansweredMessages = await SupportService.GetAllByIsAnswered(false);
+        await ConvertToUsers();
+        
+    }
+
+    private async Task ConvertToUsers()
+    {
+        if (_unansweredMessages != null)
+        {
+            foreach (var message in _unansweredMessages)
+            {
+                _users?.Add(await UserService.GetByIdAsync(message.CustomerId));
+            }
+        }
+    }
+
+    private async Task NavigateToMessage(int id)
+    {
+        NavigationManager.NavigateTo($"/provide-support/{id}");
+    }
+
+}

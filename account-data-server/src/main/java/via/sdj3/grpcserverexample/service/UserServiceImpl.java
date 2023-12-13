@@ -109,6 +109,27 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
         }
     }
 
+    @Override
+    public void getAll(GetAllUsersRequest request, StreamObserver<GetAllUsersResponse> responseObserver) {
+        try
+        {
+            List<UserEntity> users = userRepository.findAll();
+            GetAllUsersResponse.Builder response = GetAllUsersResponse.newBuilder();
+            for (UserEntity user : users)
+            {
+                response.addUsers(generateGrpcUser(user));
+            }
+            System.out.println("The users were gathered");
+            responseObserver.onNext(response.build());
+            responseObserver.onCompleted();
+        }
+        catch (Exception e)
+        {
+            Status status = Status.INTERNAL.withDescription("Error getting by all!");
+            responseObserver.onError(new StatusRuntimeException(status));
+        }
+    }
+
     public static UserEntity generateUserEntity(GrpcUser user) //Helping Method for generating UserEntity from GrpcUser
     {
         UserEntity userEntity = new UserEntity();
