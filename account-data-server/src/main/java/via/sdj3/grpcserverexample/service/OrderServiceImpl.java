@@ -1,5 +1,9 @@
 package via.sdj3.grpcserverexample.service;
 
+import com.google.protobuf.Timestamp;
+import com.google.protobuf.Empty;
+import org.hibernate.sql.Update;
+import java.util.List;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
@@ -17,15 +21,16 @@ public class OrderServiceImpl extends OrderServiceGrpc.OrderServiceImplBase {
         this.orderRepository = orderRepository;
     }
 
+
     @Override
     public void createOrder(CreateOrderRequest request, StreamObserver<CreateOrderResponse> responseObserver) {
         try {
             OrderEntity orderEntity = new OrderEntity();
             orderEntity.setCustomer_id(request.getCustomerId());
             orderEntity.setOrderDate(request.getOrderDate());
-            orderEntity.setTotalCost(request.getTotalCost());
+            orderEntity.setTotalPrice(request.getTotalPrice());
             orderEntity.setStatus(request.getStatus());
-            orderEntity.setItem_id(request.getItemId()); // Assuming you want to store item_id in the order
+            orderEntity.setItem_id(request.getItemId());
 
             OrderEntity returnEntity = orderRepository.save(orderEntity);
 
@@ -33,7 +38,7 @@ public class OrderServiceImpl extends OrderServiceGrpc.OrderServiceImplBase {
                     .setId(returnEntity.getId())
                     .setCustomerId(returnEntity.getCustomer_id())
                     .setOrderDate(returnEntity.getOrderDate())
-                    .setTotalCost(returnEntity.getTotalCost())
+                    .setTotalPrice(returnEntity.getTotalPrice()) // Updated field name to totalPrice
                     .setStatus(returnEntity.getStatus())
                     .setItemId(returnEntity.getItem_id())
                     .build();
@@ -58,8 +63,8 @@ public class OrderServiceImpl extends OrderServiceGrpc.OrderServiceImplBase {
                 GrpcOrderItem orderItem = GrpcOrderItem.newBuilder()
                         .setId(entity.getId())
                         .setCustomerId(entity.getCustomer_id())
-                        .setOrderDate(entity.getOrderDate())
-                        .setTotalCost(entity.getTotalCost())
+                        .setOrderDate(returnEntity.getOrderDate())
+                        .setTotalPrice(entity.getTotalPrice()) // Updated field name to totalPrice
                         .setStatus(entity.getStatus())
                         .setItemId(entity.getItem_id())
                         .build();

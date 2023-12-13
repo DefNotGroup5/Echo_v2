@@ -1,7 +1,7 @@
 package via.sdj3.grpcserverexample.entities;
 
 import jakarta.persistence.*;
-import java.util.Date;
+import com.google.protobuf.Timestamp;
 
 @Entity
 @Table(name = "orders")
@@ -15,10 +15,10 @@ public class OrderEntity {
     private int customer_id;
 
     @Column
-    private Date orderDate;
+    private Timestamp orderDate;
 
     @Column
-    private double totalCost;
+    private double totalPrice;
 
     @Column
     private String status;
@@ -45,20 +45,21 @@ public class OrderEntity {
         this.customer_id = customer_id;
     }
 
-    public Date getOrderDate() {
+    public Timestamp getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(Date orderDate) {
+    public void setOrderDate(Timestamp orderDate) {
         this.orderDate = orderDate;
     }
 
-    public double getTotalCost() {
-        return totalCost;
+
+    public double getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setTotalCost(double totalCost) {
-        this.totalCost = totalCost;
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public String getStatus() {
