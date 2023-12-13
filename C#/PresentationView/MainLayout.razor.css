@@ -1,6 +1,24 @@
-﻿main {
+﻿.container {
     min-height: 100vh;
-    background-image: url("Images/background.png");
+    background-image: url("Images/BackGroundECHO.png");
     background-size: cover;
     background-repeat: no-repeat;
+    position: relative;
+}
+
+.nav-body {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    left: 0;
+}
+
+.confirm-window {
+    position: absolute;
+    
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
 }

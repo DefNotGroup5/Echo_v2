@@ -1,11 +1,13 @@
 ﻿@page "/items/view/{ItemId:int}"
 @using Domain.Shopping.Models
 @using HTTPClients.ClientInterfaces
-@using Microsoft.AspNetCore.Authentication
-@inject IItemService ItemService;
+@using Domain.Shopping.DTOs
+@using PresentationView.ComponentServices.Interfaces
 @inject IShoppingCartService ShoppingCartService;
-@inject IReviewService ReviewService;
-@inject IUserService UserService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject IItemService ItemService;
+@inject NavigationManager NavigationManager
+@inject IConfirmationService ConfirmationService;
 <div class="wrapper">
     @if (_item != null)
     {
@@ -40,24 +42,8 @@
                         <label>@_item?.Price DKK</label>
                     </div>
                 </div>
-                <button @onclick="AddToCart">Add To Cart</button>
+                <button @onclick="AddToShoppingCart">Add To Cart</button>
             </div>
-        </div>
-        <div class="review-section">
-            <h2>Add a Review</h2>
-            <EditForm Model="_review" OnValidSubmit="HandleReviewSubmit">
-                <div class="form-group">
-                    <label for="rating">Rating (1-5):</label>
-                    <InputNumber id="rating" class="form-control" @bind-value="_review.Rating" min="1" max="5" />
-                    <ValidationMessage For="@(() => _review.Rating)" />
-                </div>
-                <div class="form-group">
-                    <label for="comment">Comment:</label>
-                    <InputTextArea id="comment" class="form-control" @bind-value="_review.Comment" />
-                    <ValidationMessage For="@(() => _review.Comment)" />
-                </div>
-                <button type="submit" class="btn btn-primary">Submit Review</button>
-            </EditForm>
         </div>
     }
     else
@@ -69,34 +55,15 @@
 @code {
     private Item? _item;
     private int _quantity = 1;
-    private Review _review = new Review();
-    private IEnumerable<Review> _itemReviews;
+    private int _userId;
     [Parameter]
     public int ItemId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        await InitializeUserIdAsync();
         _item = await ItemService.GetById(ItemId);
         _quantity = 1;
-        _itemReviews = (await ReviewService.GetReviewsByItemAsync(ItemId)).ToList();
-        _review.ItemId = ItemId;
-        var currentUserId = await UserService.GetCurrentUserIdAsync();
-        _review.UserId = currentUserId ?? 0;
-    }
-
-    private async Task HandleReviewSubmit()
-    {
-        var addedReview = await ReviewService.AddReviewAsync(_review);
-        if (addedReview != null)
-        {
-            _itemReviews = _itemReviews.Append(addedReview);
-            _review = new Review();
-            StateHasChanged();
-        }
-        else
-        {
-    // Handle the error case
-        }
     }
 
     private Task ChangeQuantity(char type)
@@ -122,14 +89,43 @@
         }
         return Task.CompletedTask;
     }
+    
+    private async Task InitializeUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst("Id"); 
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+            {
+                _userId = userId;
+            }
+        }
+    }
 
-    private Task AddToCart()
+    private async Task AddToShoppingCart()
     {
         if (_item != null)
         {
-            ShoppingCartService.AddItemToShoppingCart(_item, _quantity);
-            Console.WriteLine(ShoppingCartService.GetShoppingCart().ItemsInCart);
+            CartItemCreationDto dto = new CartItemCreationDto()
+            {
+                ItemId = _item.Id,
+                CustomerId = _userId,
+                Quantity = _quantity
+            };
+            await ShoppingCartService.CreateAsync(dto);
+            string confirmationTitle = "Item added to shopping cart!";
+            string confirmationDescription = "Your item has been added to the shopping cart. You can now purchase it!";
+            ConfirmationService.ShowConfirmation(confirmationTitle, confirmationDescription, HandleConfirmationResult);
         }
-        return Task.CompletedTask;
+    }
+    
+    private void HandleConfirmationResult(bool isConfirmed)
+    {
+        if (isConfirmed)
+        {
+            NavigationManager.NavigateTo("/items");
+        }
     }
 }

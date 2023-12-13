@@ -1,12 +1,10 @@
-﻿using Domain.Shopping.Models;
+﻿using Domain.Shopping.DTOs;
+using Domain.Shopping.Models;
 
 namespace HTTPClients.ClientInterfaces;
 
 public interface IShoppingCartService
 {
-    public ShoppingCart GetShoppingCart();
-    public void UpdateShoppingCart(ShoppingCart shoppingCart);
-    Task AddItemToShoppingCart(Item item, int quantity);
-    Task RemoveItemFromShoppingCart(int itemId);
-    public event Action<ShoppingCart?>? OnShoppingCartChanged;
+    public Task<CartItem?> CreateAsync(CartItemCreationDto dto);
+    public Task<ICollection<CartItem>?> GetByCustomerId(int id);
 }
