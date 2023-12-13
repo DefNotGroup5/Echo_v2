@@ -8,8 +8,9 @@ import jakarta.transaction.Transactional;
 import net.devh.boot.grpc.server.service.GrpcService;
 import via.sdj3.grpcserverexample.entities.UserEntity;
 import via.sdj3.grpcserverexample.repository.UserRepository;
+
 import via.sdj3.protobuf.users.*;
-import via.sdj3.protobuf.users.admin.*;
+
 
 import java.util.List;
 import java.util.Optional;

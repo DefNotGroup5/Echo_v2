@@ -1,9 +1,7 @@
 package via.sdj3.grpcserverexample.entities;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -11,58 +9,40 @@ public class OrderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int Id;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
-    private UserEntity customer;
+    @Column
+    private int customer_id;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItemEntity> items = new ArrayList<>();
-
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column
     private Date orderDate;
 
     @Column
     private double totalCost;
 
-    @Column(length = 30)
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    @Column
+    private String status;
+
+    @Column
+    private int item_id;
 
     public OrderEntity() {}
 
-    public OrderEntity(UserEntity customer, List<OrderItemEntity> items, Date orderDate, double totalCost, OrderStatus status) {
-        this.customer = customer;
-        this.items = items;
-        this.orderDate = orderDate;
-        this.totalCost = totalCost;
-        this.status = status;
-    }
 
     public int getId() {
-        return id;
+        return Id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        Id = id;
     }
 
-    public UserEntity getCustomer() {
-        return customer;
+    public int getCustomer_id() {
+        return customer_id;
     }
 
-    public void setCustomer(UserEntity customer) {
-        this.customer = customer;
-    }
-
-    public List<OrderItemEntity> getItems() {
-        return items;
-    }
-
-    public void setItems(List<OrderItemEntity> items) {
-        this.items = items;
+    public void setCustomer_id(int customer_id) {
+        this.customer_id = customer_id;
     }
 
     public Date getOrderDate() {
@@ -81,22 +61,19 @@ public class OrderEntity {
         this.totalCost = totalCost;
     }
 
-    public OrderStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(OrderStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public void addItem(OrderItemEntity item) {
-        items.add(item);
-        item.setOrder(this);
+    public int getItem_id() {
+        return item_id;
     }
 
-    public void removeItem(OrderItemEntity item) {
-        items.remove(item);
-        item.setOrder(null);
+    public void setItem_id(int item_id) {
+        this.item_id = item_id;
     }
 }
-
