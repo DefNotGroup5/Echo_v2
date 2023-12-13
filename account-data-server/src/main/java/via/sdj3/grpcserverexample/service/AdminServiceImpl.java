@@ -4,12 +4,13 @@ import com.google.protobuf.Empty;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
-import jakarta.transaction.Transactional;
 import net.devh.boot.grpc.server.service.GrpcService;
 import via.sdj3.grpcserverexample.entities.UserEntity;
 import via.sdj3.grpcserverexample.repository.UserRepository;
 import via.sdj3.protobuf.users.*;
 import via.sdj3.protobuf.users.admin.*;
+
+
 
 import java.util.List;
 import java.util.Optional;
@@ -42,17 +43,14 @@ public class AdminServiceImpl extends AdminServiceGrpc.AdminServiceImplBase {
 
 
     @Override
-    @Transactional
     public void authorizeSeller(ChangeSellerAuthorizationRequest request, StreamObserver<ChangeSellerAuthorizationResponse> responseObserver) {
         try {
             Optional<UserEntity> oldUser = userRepository.getById(request.getId());
-            if(oldUser.isEmpty())
-            {
+            if (oldUser.isEmpty()) {
                 Status status = Status.INTERNAL.withDescription("Error authorizing seller");
                 responseObserver.onError(new StatusRuntimeException(status));
             }
-            if(oldUser.isPresent())
-            {
+            if (oldUser.isPresent()) {
                 oldUser.get().setAuthorizedSeller(request.getAuthorizationState());
                 userRepository.save(oldUser.get());
                 ChangeSellerAuthorizationResponse response = ChangeSellerAuthorizationResponse.newBuilder()
@@ -66,4 +64,5 @@ public class AdminServiceImpl extends AdminServiceGrpc.AdminServiceImplBase {
             responseObserver.onError(new StatusRuntimeException(status));
         }
     }
+
 }

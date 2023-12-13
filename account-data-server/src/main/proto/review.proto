@@ -7,49 +7,31 @@ option java_package = "via.sdj3.protobuf.review";
 option java_outer_classname = "ReviewProto";
 
 service ReviewService {
-  rpc AddReview (AddReviewRequest) returns (AddReviewResponse);
-  rpc CheckReviewExists (CheckReviewExistsRequest) returns (CheckReviewExistsResponse);
-  rpc GetReviewsByItem (GetReviewsByItemRequest) returns (GetReviewsByItemResponse);
-  rpc GetReviewsByUser (GetReviewsByUserRequest) returns (GetReviewsByUserResponse);
+  rpc CreateReview (CreateReviewRequest) returns (CreateReviewResponse);
+  rpc GetAllReviews (GetAllReviewsRequest) returns (GetAllReviewsResponse);
 }
 
 message GrpcReview {
   int32 id = 1;
-  int32 itemId = 2;
-  int32 userId = 3;
+  int32 customer_id = 2;
+  int32 item_id = 3;
   int32 rating = 4;
   string comment = 5;
 }
 
-message AddReviewRequest {
-  GrpcReview review = 1;
-}
-
-message AddReviewResponse {
-  GrpcReview review = 1;
-}
-
-message CheckReviewExistsRequest {
-  int32 userId = 1;
+message CreateReviewRequest {
+  int32 customerId = 1;
   int32 itemId = 2;
+  int32 rating = 3;
+  string comment = 4;
 }
 
-message CheckReviewExistsResponse {
-  bool exists = 1;
+message CreateReviewResponse {
+  GrpcReview review = 1;
 }
 
-message GetReviewsByItemRequest {
-  int32 itemId = 1;
-}
+message GetAllReviewsRequest {}
 
-message GetReviewsByItemResponse {
-  repeated GrpcReview reviews = 1;
-}
-
-message GetReviewsByUserRequest {
-  int32 userId = 1;
-}
-
-message GetReviewsByUserResponse {
+message GetAllReviewsResponse {
   repeated GrpcReview reviews = 1;
 }
