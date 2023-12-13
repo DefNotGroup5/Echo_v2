@@ -50,6 +50,19 @@ public class ShoppingCartLogic : IShoppingCartLogic
         return userSpecificItems;
     }
 
+    public async Task ClearCart(int customerId)
+    {
+        try
+        {
+            await _shoppingCartService.ClearCart(customerId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     public async Task<string?> ValidateCreationDto(CartItemCreationDto dto)
     {
         User? user = await _usersService.GetByIdAsync(dto.CustomerId);

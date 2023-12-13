@@ -49,4 +49,19 @@ public class CartController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+
+    [HttpDelete("clear/{customerId:int}")]
+    public async Task<ActionResult> ClearCart([FromRoute] int customerId)
+    {
+        try
+        {
+            await _shoppingCartLogic.ClearCart(customerId);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
 }

@@ -1,9 +1,9 @@
 ﻿using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
 
-namespace Application.Shopping.LogicInterfaces;
+namespace HTTPClients.ClientInterfaces;
 
-public interface IOrderLogic
+public interface IOrderService
 {
     Task<Order?> CreateOrder(OrderCreationDto dto);
     Task<Order?> GetOrderById(String orderId);
