@@ -85,6 +85,28 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
         return null;
     }
 
+    public async Task<ICollection<User?>> GetAllUsersAsync()
+    {
+        try
+        {
+            var grpcClient = new GrpcClientServices.UsersService.UsersServiceClient(_channel);
+            var reply = await grpcClient.GetAllAsync(new GetAllUsersRequest());
+            ICollection<User?> users = new List<User?>();
+            foreach (var user in reply.Users)
+            {
+                users.Add(GenerateUser(user));
+            }
+
+            return users;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
+        return new List<User?>();
+    }
+
     public static User? GenerateUser(GrpcUser user)
     {
         User? generatedUser = null;

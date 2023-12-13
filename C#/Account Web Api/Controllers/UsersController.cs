@@ -107,4 +107,32 @@ public class UsersController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+
+    [HttpGet]
+    public async Task<ActionResult<ICollection<User>>> GetAllAsync()
+    {
+        try
+        {
+            return Ok(await _userLogic.GetAll());
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<User>> GetById([FromRoute] int id)
+    {
+        try
+        {
+            return Ok(await _userLogic.GetById(id));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
 }

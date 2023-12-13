@@ -1,0 +1,84 @@
+﻿@page "/provide-support/{UserId:int}"
+@inject IUserService UserService;
+@inject ISupportService SupportService;
+@using Domain.Shopping.Models
+@using HTTPClients.ClientInterfaces
+@inject NavigationManager NavigationManager;
+@using Domain.Account.DTOs
+<div class="wrapper">
+    <div class="container">
+        <h1>Customer Service</h1>
+        @if (_user != null)
+        {
+            <h2>Helping: @_user.Email</h2>
+        }
+        <div class="messages-container">
+            <div class="chat">
+                @foreach (var message in _messages.OrderBy(m => m.Id))
+                {
+                    if (!string.IsNullOrEmpty(message.Response))
+                    {
+                        <p>@_user?.Email: @message.Request</p>
+                        <p>Admin: @message.Response</p>
+                    }
+                    else
+                    {
+                        <p>@_user?.Email: @message.Request</p>
+                        _latestMessage = message;
+                    }
+                }
+            </div>
+            <input @bind="_response" class="send-text" placeholder="Write Here" type="text">
+        </div>
+        <div class="button-span">
+            @if (string.IsNullOrEmpty(_latestMessage?.Response))
+            {
+                <button @onclick="() => AnswerSupport(_latestMessage)" class="send-button">Send</button>
+            }
+            else
+            {
+                <button disabled @onclick="() => AnswerSupport(_latestMessage)" class="send-button">Send</button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] 
+    public int UserId { get; set; }
+
+    private string? _response;
+    private Message? _latestMessage;
+
+    private User? _user;
+    private ICollection<Message> _messages = new List<Message>(); 
+
+    protected override async Task OnInitializedAsync()
+    {
+        _user = await UserService.GetByIdAsync(UserId);
+        await GatherMessages();
+
+    }
+
+    private async Task GatherMessages()
+    {
+        _messages = (await SupportService.GetAll())
+            .Where(message => message.CustomerId == UserId)
+            .ToList();
+    }
+
+    private async Task AnswerSupport(Message? message)
+    {
+        if (!string.IsNullOrEmpty(_response) && message != null)
+        { 
+            await SupportService.ProvideSupport(new MessageResponseDto()
+            {
+                MessageId = message.Id,
+                Response = _response
+            });
+        }
+        _response = "";
+        StateHasChanged();
+    }
+
+}

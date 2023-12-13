@@ -96,6 +96,33 @@ public class UserLogic : IUserLogic
         }
     }
 
+    public async Task<ICollection<User?>> GetAll()
+    {
+        try
+        {
+            ICollection<User?> users = await _usersService.GetAllUsersAsync();
+            return users;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<User?> GetById(int id)
+    {
+        try
+        {
+            return await _usersService.GetByIdAsync(id);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     private async Task<string> ValidateRegister(UserCreationDto dto)
     {
         string validated = "";
