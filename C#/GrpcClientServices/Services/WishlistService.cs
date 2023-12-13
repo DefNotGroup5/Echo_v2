@@ -61,10 +61,10 @@ public class WishlistService : GrpcClientServices.WishlistService.WishlistServic
     private Wishlist? GenerateWishlist(GrpcWishlistItem wishlistItem)
     {
         Wishlist? generatedWishlistItem = null;
-        /*generatedWishlistItem = new Wishlist(wishlistItem.ItemId, wishlistItem.UserId)
+        generatedWishlistItem = new Wishlist(wishlistItem.ItemId, wishlistItem.UserId)
         {
             Id = wishlistItem.Id,
-        }; */
+        }; 
         return generatedWishlistItem;
     }
 

@@ -1,0 +1,85 @@
+﻿@page "/Wishlist"
+@using Domain.Shopping.Models
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject IItemService ItemService;
+@inject IWishlistService WishlistService;
+@using HTTPClients.ClientInterfaces
+
+<div class="container">
+    <div class="wishlist-container">
+            <h1>Wishlist</h1>
+            <input type="text" class="search" placeholder="Search">
+            <div class="items">
+                @if (_userId == 0)
+                {
+                    <p>Please Log in!</p>
+                }
+                @foreach (var item in _items)
+                {
+                    if (item != null)
+                    {
+                        <div class="item">
+                            <div class="image-name">
+                                <div class="image">
+                                    <img src="@item.ImageUrl" alt=""/>
+                                </div>
+                                <h3>@item.Name</h3>
+                            </div>
+                            <div class="price-delete-check">
+                                <h3>@item.Price DKK</h3>
+                                <button class="delete">Delete</button>
+                                <FancyCheckbox></FancyCheckbox>
+                            </div>
+                        </div>
+                        <!-- <button class="add">Add To Cart</button> -->
+                    }
+                    else
+                    {
+                        <p>No items to display...</p>
+                    }
+                }
+            </div>
+        </div>
+</div>
+
+@code {
+    private int _userId;
+    private ICollection<Wishlist>? _wishlists = new List<Wishlist>();
+    private ICollection<Item?> _items = new List<Item?>();
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeUserIdAsync();
+        await InitializeWishlistItems();
+        await ConvertToItems();
+    }
+
+    private async Task InitializeWishlistItems()
+    {
+        _wishlists = await WishlistService.GetByUserIdAsync(_userId);
+    }
+
+    private async Task ConvertToItems()
+    {
+        if(_wishlists != null)
+            foreach (var wishlistItem in _wishlists)
+            {
+                _items.Add(await ItemService.GetById(wishlistItem.ItemId.Id));
+            }
+    }
+
+
+    private async Task InitializeUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst("Id"); 
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+            {
+                _userId = userId;
+            }
+        }
+    }
+    
+}

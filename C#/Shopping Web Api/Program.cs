@@ -20,6 +20,8 @@ builder.Services.AddScoped<IItemLogic, ItemLogic>();
 builder.Services.AddScoped<IOrderLogic, OrderLogic>();
 builder.Services.AddScoped<ReviewService>();
 builder.Services.AddScoped<IReviewLogic, ReviewLogic>();
+builder.Services.AddScoped<WishlistService>();
+builder.Services.AddScoped<IWishlistLogic, WishlistLogic>();
 AuthorizationPolicies.AddPolicies(builder.Services);
 
 

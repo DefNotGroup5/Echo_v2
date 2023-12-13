@@ -6,11 +6,11 @@
 @inject IUserService UserService
 
 <nav class="navbar">
-    <button class="nav-button" id="home-button">Home</button>
+    <button class="nav-button" id="home-button" @onclick="Home">Home</button>
     <div class="central-buttons">
-        <button class="nav-button">Something</button>
-        <button class="nav-button">Something</button>
-        <button class="nav-button">Something</button>
+        <button class="nav-button">Support</button>
+        <button class="nav-button" @onclick="Store">Store</button>
+        <button class="nav-button" @onclick="Cart">Cart</button>
     </div>
     <AuthorizeView>
         <Authorized>
@@ -24,6 +24,13 @@
 </nav>
 
 @code {
+    
+    //Authorization ( When user is not registered DO NOT show Cart/Support/Store
+    //After logging in user should be able to see those
+    
+    // If user is a seller it should show Seller Dashboard
+    // If user is a admin it should show Admin Dashboard 
+
     private string _loginButtonText = "Login";
     
     protected override async Task OnInitializedAsync()
@@ -40,6 +47,28 @@
     {
         NavigationManager.NavigateTo("/Login");
     }
+
+    private void Store()
+    {
+        NavigationManager.NavigateTo("/items");
+    }
+
+    private void Cart()
+    {
+        NavigationManager.NavigateTo("/cart");
+    }
+
+    private void Home()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    // When Customer support is gonna be implemented uncomment that
+    
+    // private void Support()
+    // {
+    //     NavigationManager.NavigateTo("/support");
+    // }
 
     private async Task Logout()
     {
