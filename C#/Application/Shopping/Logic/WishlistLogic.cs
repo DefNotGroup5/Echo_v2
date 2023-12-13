@@ -23,7 +23,7 @@ public class WishlistLogic : IWishlistLogic
     {
         try
         {
-            Wishlist wishlistItemToCreate = new Wishlist(dto.ItemId, dto.UserId)
+            Wishlist wishlistItemToCreate = new Wishlist(dto.ItemId.Id, dto.UserId.Id)
             {
                 ItemId = dto.ItemId,
                 UserId = dto.UserId

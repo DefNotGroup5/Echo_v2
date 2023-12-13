@@ -11,7 +11,7 @@ namespace GrpcClientServices.Services
             _channel = GrpcChannel.ForAddress("http://localhost:3030");
         }
 
-        public async Task<Order?> AddOrderAsync(Order order)
+/*        public async Task<Order?> AddOrderAsync(Order order)
         {
             try
             {
@@ -34,6 +34,6 @@ namespace GrpcClientServices.Services
             }
 
             return null;
-        }
+        }*/
     }
 }
