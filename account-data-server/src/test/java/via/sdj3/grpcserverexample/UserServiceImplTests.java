@@ -17,7 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class GrpcServerExampleApplicationTests {
+class UserServiceImplTests {
 
     @Mock
     private UserRepository userRepository;
