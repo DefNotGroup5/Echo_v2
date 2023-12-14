@@ -14,12 +14,12 @@
                 <div class="container">
                     <h1>Manage Categories</h1>
                     <div class="spacer"></div>
-                    <button class="container-button">Open</button>
+                    <button class="container-button" @onclick="ManageCategories">Open</button>
                 </div>
                 <div class="container">
                     <h1>Customer Support</h1>
                     <div class="spacer"></div>
-                    <button class="container-button">Open</button>
+                    <button class="container-button" @onclick="CustomerSupport">Open</button>
                 </div>
             </div>
         </div>
@@ -33,9 +33,15 @@
     {
         NavigationManager.NavigateTo("/seller/auth");
     }
-    
-    //public void ManageCategories()
-    
-    //public void CustomerSupport()
+
+    public void ManageCategories()
+    {
+        NavigationManager.NavigateTo("/ManageCategories");
+    }
+
+    public void CustomerSupport()
+    {
+        NavigationManager.NavigateTo("/view-support-requests");
+    }
     
 }
