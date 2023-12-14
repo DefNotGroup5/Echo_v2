@@ -3,7 +3,13 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject IItemService ItemService;
 @inject IWishlistService WishlistService;
+@inject IShoppingCartService ShoppingCartService;
+@inject IConfirmationService ConfirmationService;
 @using HTTPClients.ClientInterfaces
+@inject NavigationManager NavigationManager;
+@using PresentationView.ComponentServices.Implementations
+@using Domain.Shopping.DTOs
+@using PresentationView.ComponentServices.Interfaces
 
 <div class="container">
     <div class="wishlist-container">
@@ -14,29 +20,21 @@
                 {
                     <p>Please Log in!</p>
                 }
-                @foreach (var item in _items)
+                @foreach (var (wishlistId, item) in _wishlistItems)
                 {
-                    if (item != null)
-                    {
-                        <div class="item">
-                            <div class="image-name">
-                                <div class="image">
-                                    <img src="@item.ImageUrl" alt=""/>
-                                </div>
-                                <h3>@item.Name</h3>
+                    <div class="item">
+                        <div class="image-name">
+                            <div class="image">
+                                <img src="@item.ImageUrl" alt=""/>
                             </div>
-                            <div class="price-delete-check">
-                                <h3>@item.Price DKK</h3>
-                                <button class="delete">Delete</button>
-                                <FancyCheckbox></FancyCheckbox>
-                            </div>
+                            <h3>@item.Name</h3>
                         </div>
-                        <!-- <button class="add">Add To Cart</button> -->
-                    }
-                    else
-                    {
-                        <p>No items to display...</p>
-                    }
+                        <div class="price-delete-check">
+                            <h3>@item.Price DKK</h3>
+                            <button @onclick="() => RemoveWishlist(wishlistId)" class="delete">Delete</button>
+                            <button @onclick="(() => AddToCart(item, wishlistId))" class="delete">Add To Cart</button>
+                        </div>
+                    </div>
                 }
             </div>
         </div>
@@ -44,8 +42,8 @@
 
 @code {
     private int _userId;
-    private ICollection<Wishlist>? _wishlists = new List<Wishlist>();
-    private ICollection<Item?> _items = new List<Item?>();
+    private ICollection<Wishlist?>? _wishlists = new List<Wishlist>()!;
+    private IDictionary<int, Item> _wishlistItems = new Dictionary<int, Item>();
     protected override async Task OnInitializedAsync()
     {
         await InitializeUserIdAsync();
@@ -60,11 +58,20 @@
 
     private async Task ConvertToItems()
     {
-        if(_wishlists != null)
+        if (_wishlists != null)
+        {
             foreach (var wishlistItem in _wishlists)
             {
-                _items.Add(await ItemService.GetById(wishlistItem.ItemId.Id));
+                if (wishlistItem != null)
+                {
+                    var item = await ItemService.GetById(wishlistItem.ItemId);
+                    if (item != null)
+                    {
+                        _wishlistItems.Add(wishlistItem.Id, item);
+                    }
+                }
             }
+        }
     }
 
 
@@ -79,6 +86,34 @@
             {
                 _userId = userId;
             }
+        }
+    }
+
+    private async Task RemoveWishlist(int id)
+    {
+        await WishlistService.RemoveWishlist(id);
+    }
+
+    private async Task AddToCart(Item item, int id)
+    {
+        CartItemCreationDto dto = new CartItemCreationDto()
+        {
+            ItemId = item.Id,
+            CustomerId = _userId,
+            Quantity = 1
+        };
+        await ShoppingCartService.CreateAsync(dto);
+        await WishlistService.RemoveWishlist(id);
+        string confirmationTitle = "Item added to shopping cart!";
+        string confirmationDescription = "Your item has been added to the shopping cart. You can now purchase it!";
+        ConfirmationService.ShowConfirmation(confirmationTitle, confirmationDescription, HandleConfirmationResult);
+    }
+
+    private void HandleConfirmationResult(bool isConfirmed)
+    {
+        if (isConfirmed)
+        {
+            NavigationManager.NavigateTo("/items");
         }
     }
     

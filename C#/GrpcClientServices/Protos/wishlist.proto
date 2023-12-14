@@ -7,6 +7,7 @@ option csharp_namespace = "GrpcClientServices";
 service WishlistService {
   rpc AddToWishlist(AddToWishlistRequest) returns (AddToWishlistResponse);
   rpc GetWishlistByUser(GetWishlistByUserRequest) returns (GetWishlistByUserResponse);
+  rpc RemoveWishlist (RemoveWishlistRequest) returns (RemoveWishlistResponse);
 }
 
 message GrpcWishlistItem {
@@ -29,4 +30,12 @@ message GetWishlistByUserRequest {
 
 message GetWishlistByUserResponse {
   repeated GrpcWishlistItem wishlistItems = 1;
+}
+
+message RemoveWishlistRequest {
+  int32 id = 1;
+}
+
+message RemoveWishlistResponse {
+  string result = 1;
 }
