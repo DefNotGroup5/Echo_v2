@@ -1,3 +1,11 @@
 ﻿<label class="select">
-    <input type="checkbox">
+    <input type="checkbox" @bind="Checked" />
 </label>
+
+@code {
+    [Parameter]
+    public bool Checked { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> CheckedChanged { get; set; }
+}

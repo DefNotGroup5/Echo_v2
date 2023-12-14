@@ -4,6 +4,7 @@
 
 @inject IAdminService AdminService
 @inject NavigationManager NavigationManager
+@inject IUserService UserService;
 
 <div class="wrapper">
     <div class="auth-wrapper">
@@ -18,7 +19,14 @@
                     <div class="auth-item__button">
                         <button class="btn btn-primary" @onclick="() => DeleteSeller(seller.Id)">Delete</button>
                     </div>
-                    <input type="checkbox" class="auth-item__checkbox" @onselect="() => AuthorizeSeller(seller.Id)"/>              
+                    @if (seller.IsAuthorized)
+                    {
+                        <input checked="checked" type="checkbox" class="auth-item__checkbox" @onchange="() => ToggleAuthorization(seller.Id)"/> 
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="auth-item__checkbox" @onchange="() => ToggleAuthorization(seller.Id)"/> 
+                    }
                 </div>
             }
         </div>
@@ -26,22 +34,39 @@
 </div>
 
 @code {
-    private IEnumerable<User> _sellers = new List<Seller>();
+    private ICollection<Seller> _sellers = new List<Seller>();
 
     protected override async Task OnInitializedAsync()
     {
-        _sellers = await AdminService.ListSellersAsync();
+        ICollection<User> users = await UserService.GetAllAsync();
+        foreach (var user in users)
+        {
+            if (user is Seller seller)
+            {
+                _sellers.Add(seller);
+            }
+        }
     }
 
-    private async Task AuthorizeSeller(int id)
+    private async Task ToggleAuthorization(int id)
     {
-        await AdminService.AuthorizeSellerAsync(id, true);
-        NavigationManager.NavigateTo("/seller/auth", true);
+        bool isAuthorized = await IsSellerAuthorized(id);
+        await AdminService.AuthorizeSellerAsync(id, !isAuthorized);
+        await OnInitializedAsync();
+    }
+
+    private async Task<bool> IsSellerAuthorized(int id)
+    {
+        Seller seller = (Seller)(await UserService.GetByIdAsync(id))!;
+        if (seller.IsAuthorized)
+        {
+            return true;
+        }
+        return false;
     }
 
     private async Task DeleteSeller(int id)
     {
-        await AdminService.DeleteSellerAsync(id);
         NavigationManager.NavigateTo("/seller/auth", true);
     }
 }

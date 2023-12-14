@@ -120,7 +120,8 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
                 Country = user.Country,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                PostalCode = user.PostalCode
+                PostalCode = user.PostalCode,
+                IsAuthorized = user.IsAuthorizedSeller
             };
         }
         if (user.IsAdmin)
