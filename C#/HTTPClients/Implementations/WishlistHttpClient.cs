@@ -33,7 +33,7 @@ public class WishlistHttpClient : IWishlistService
 
     public async Task<ICollection<Wishlist?>?> GetByUserIdAsync(int id)
     {
-        HttpResponseMessage response = await _client.GetAsync($"http://localhost:5111/Wishlist/{id}");
+        HttpResponseMessage response = await _client.GetAsync($"http://localhost:5111/Wishlist/by-user/{id}");
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -46,5 +46,23 @@ public class WishlistHttpClient : IWishlistService
                 PropertyNameCaseInsensitive = true
             })!;
         return wishlistItems;
+    }
+
+    public async Task RemoveWishlist(int id)
+    {
+        try
+        {
+            HttpResponseMessage response = await _client.DeleteAsync($"http://localhost:5111/Wishlist/{id}");
+            if (!response.IsSuccessStatusCode)
+            {
+                string result = await response.Content.ReadAsStringAsync();
+                throw new Exception(result);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

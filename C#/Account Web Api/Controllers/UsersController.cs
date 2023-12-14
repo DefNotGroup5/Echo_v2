@@ -1,9 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Application.Account.LogicInterfaces;
+using Domain.Account.DTOs;
+using Domain.Account.Models;
 using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
+using GrpcClientServices.Services;
 using Microsoft.AspNetCore.Http.HttpResults;    
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -25,8 +29,8 @@ public class UsersController : ControllerBase
     }
     private List<Claim> GenerateClaims(User user)
     {
-        bool isSeller = user is Seller;
-        bool isAdmin = user is Admin;
+        bool isSeller = user.GetType().IsAssignableFrom(typeof(Seller));
+        bool isAdmin = user.GetType().IsAssignableFrom(typeof(Admin));
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, _config["Jwt:Subject"] ?? string.Empty),
@@ -109,11 +113,48 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ICollection<User>>> GetAllAsync()
+    public async Task<ActionResult<ICollection<UserTransferDto>>> GetAllAsync()
     {
         try
         {
-            return Ok(await _userLogic.GetAll());
+            ICollection<UserTransferDto> transferredUsers = new List<UserTransferDto>();
+            ICollection<User?> users = await _userLogic.GetAll();
+            foreach (var user in users)
+            {
+                UserTransferDto dto;
+                if (user is Seller seller)
+                {
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = true,
+                        IsAdmin = false,
+                        IsAuthorized = seller.IsAuthorized
+                    };
+                }
+                else if (user is Admin)
+                { 
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = false,
+                        IsAdmin = true,
+                        IsAuthorized = false
+                    };
+                }
+                else
+                { 
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = false,
+                        IsAdmin = false,
+                        IsAuthorized = false
+                    };
+                }
+                transferredUsers.Add(dto);
+            }
+            return Ok(transferredUsers);
         }
         catch (Exception e)
         {
@@ -123,11 +164,46 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<User>> GetById([FromRoute] int id)
+    public async Task<ActionResult<UserTransferDto>> GetById([FromRoute] int id)
     {
         try
         {
-            return Ok(await _userLogic.GetById(id));
+            UserTransferDto dto = null;
+            ICollection<User?> users = await _userLogic.GetAll();
+            foreach (var user in users)
+            {
+                if (user is Seller seller)
+                {
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = true,
+                        IsAdmin = false,
+                        IsAuthorized = seller.IsAuthorized
+                    };
+                }
+                else if (user is Admin)
+                { 
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = false,
+                        IsAdmin = true,
+                        IsAuthorized = false
+                    };
+                }
+                else
+                { 
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = false,
+                        IsAdmin = false,
+                        IsAuthorized = false
+                    };
+                }
+            }
+            return Ok(dto);
         }
         catch (Exception e)
         {

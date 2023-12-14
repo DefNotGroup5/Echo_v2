@@ -1,3 +1,4 @@
+using Domain.Account.Models;
 using Domain.Shopping.Models;
 using Grpc.Net.Client;
 
@@ -39,7 +40,17 @@ namespace GrpcClientServices.Services
                 ICollection<User?> users = new List<User?>();
                 foreach (GrpcUser user in reply.Users)
                 {
-                    users.Add(UsersService.GenerateUser(user));
+                    User seller = new Seller(user.Email, user.Password)
+                    {
+                        Id = user.Id,
+                        Address = user.Address,
+                        City = user.City,
+                        Country = user.Country,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        PostalCode = user.PostalCode
+                    };
+                    users.Add(seller);
                 }
                 return users;
             }

@@ -184,7 +184,14 @@
     line-height: normal;
 }
 
-.info button {
+.button-span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.wishlist-button button {
     width: 11.4375rem;
     height: 1.875rem;
     border-radius: 2.25rem;
@@ -200,9 +207,51 @@
     cursor: pointer;
 }
 
-.info button:hover {
+.wishlist-button:hover {
     background-color: #aa81ec;
 }
+
+.cart-button {
+    width: 11.4375rem;
+    height: 1.875rem;
+    border-radius: 2.25rem;
+    background: #BF98FF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: none;
+    color: #FFF;
+    font-family: Inter;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    cursor: pointer;
+}
+
+.cart-button:hover {
+    background-color: #aa81ec;
+}
+
+.wishlist-button {
+    width: 11.4375rem;
+    height: 1.875rem;
+    border-radius: 2.25rem;
+    background: #ffffff;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: none;
+    color: #9d9d9d;
+    font-family: Inter;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    cursor: pointer;
+}
+
+.wishlist-button:hover {
+    background: #d2d2d2;
+    color: #fff;
+}
+
 
 .comment-section {
     display: flex;
