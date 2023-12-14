@@ -8,9 +8,12 @@
 <nav class="navbar">
     <button class="nav-button" id="home-button" @onclick="Home">Home</button>
     <div class="central-buttons">
-        <button class="nav-button">Support</button>
-        <button class="nav-button" @onclick="Store">Store</button>
-        <button class="nav-button" @onclick="Cart">Cart</button>
+        @if (_isAuthenticated)
+        {
+            <button class="nav-button" @onclick="Store">Store</button>
+            <button class="nav-button" @onclick="Cart">Cart</button>
+            <button class="nav-button" @onclick="Support">Support</button>
+        }
     </div>
     
             <AuthorizeView Policy="IsAdmin">
@@ -37,17 +40,18 @@
 
 @code {
     
-    //Authorization ( When user is not registered DO NOT show Cart/Support/Store
-    //After logging in user should be able to see those
-    
-    // If user is a seller it should show Seller Dashboard
-    // If user is a admin it should show Admin Dashboard 
 
     private string _loginButtonText = "Login";
-    
+    private bool _isAuthenticated = false;
+
     protected override async Task OnInitializedAsync()
     {
-        
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        _isAuthenticated = user.Identity?.IsAuthenticated ?? false;
+
+        StateHasChanged();
     }
 
     private void NavigateTo(string route)
@@ -57,7 +61,7 @@
     
     private void Admin()
     {
-        NavigationManager.NavigateTo("/sellerdash");
+        NavigationManager.NavigateTo("/admindash");
     }
     private void Login()
     {
@@ -65,7 +69,7 @@
     }
     private void Seller()
     {
-        NavigationManager.NavigateTo("/admindash");
+        NavigationManager.NavigateTo("/sellerdash");
     }
 
     private void Store()
@@ -82,13 +86,10 @@
     {
         NavigationManager.NavigateTo("/");
     }
-
-    // When Customer support is gonna be implemented uncomment that
-    
-    // private void Support()
-    // {
-    //     NavigationManager.NavigateTo("/support");
-    // }
+    private void Support()
+    {
+     NavigationManager.NavigateTo("/support");
+    }
 
     private async Task Logout()
     {
