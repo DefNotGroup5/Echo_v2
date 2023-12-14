@@ -2,6 +2,7 @@ using Domain.Shopping.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Account.LogicInterfaces;
+using Domain.Account.Models;
 using GrpcClientServices;
 using AdminService = GrpcClientServices.Services.AdminService;
 using UsersService = GrpcClientServices.Services.UsersService;

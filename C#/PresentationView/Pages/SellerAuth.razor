@@ -1,6 +1,7 @@
 ﻿@page "/seller/auth"
 @using HTTPClients.ClientInterfaces
 @using Domain.Shopping.Models
+@using Domain.Account.Models
 
 @inject IAdminService AdminService
 @inject NavigationManager NavigationManager
@@ -16,9 +17,6 @@
                 <div class="auth-item">
                     <div class="auth-item__name">@seller.FirstName @seller.LastName</div>
                     <div class="auth-item__email">@seller.Email</div>
-                    <div class="auth-item__button">
-                        <button class="btn btn-primary" @onclick="() => DeleteSeller(seller.Id)">Delete</button>
-                    </div>
                     @if (seller.IsAuthorized)
                     {
                         <input checked="checked" type="checkbox" class="auth-item__checkbox" @onchange="() => ToggleAuthorization(seller.Id)"/> 
@@ -38,6 +36,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _sellers = new List<Seller>();
         ICollection<User> users = await UserService.GetAllAsync();
         foreach (var user in users)
         {
@@ -53,6 +52,7 @@
         bool isAuthorized = await IsSellerAuthorized(id);
         await AdminService.AuthorizeSellerAsync(id, !isAuthorized);
         await OnInitializedAsync();
+        NavigationManager.NavigateTo("/seller/auth");
     }
 
     private async Task<bool> IsSellerAuthorized(int id)

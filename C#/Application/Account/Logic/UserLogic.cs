@@ -1,4 +1,5 @@
-﻿using Domain.Shopping.DTOs;
+﻿using Domain.Account.Models;
+using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
 using GrpcClientServices.Services;
 
@@ -50,8 +51,7 @@ public class UserLogic : IUserLogic
                     Country = dto.Country
                 };
             }
-            
-            else if(dto is { IsAdmin: false, IsSeller: false })
+            if(dto is { IsAdmin: false, IsSeller: false })
             {
                 userToCreate = new Customer(dto.Email, dto.Password)
                 {
@@ -99,6 +99,17 @@ public class UserLogic : IUserLogic
         try
         {
             ICollection<User?> users = await _usersService.GetAllUsersAsync();
+            foreach (var user in users)
+            {
+                if (user is Seller)
+                {
+                    Console.WriteLine("true");
+                }
+                else
+                {
+                    Console.WriteLine("false");
+                }
+            }
             return users;
         }
         catch (Exception e)

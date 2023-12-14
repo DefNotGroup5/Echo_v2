@@ -1,4 +1,5 @@
-﻿using Domain.Shopping.Models;
+﻿using Domain.Account.Models;
+using Domain.Shopping.Models;
 
 namespace GrpcClientServices.Services;
 using Grpc.Net.Client;
@@ -95,6 +96,18 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
             foreach (var user in reply.Users)
             {
                 users.Add(GenerateUser(user));
+            }
+
+            foreach (var user in users)
+            {
+                if (user is Seller)
+                {
+                    Console.WriteLine("true");
+                }
+                else
+                {
+                    Console.WriteLine("false");
+                }
             }
 
             return users;

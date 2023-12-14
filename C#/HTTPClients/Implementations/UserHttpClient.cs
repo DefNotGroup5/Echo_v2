@@ -2,9 +2,14 @@
 using System.Text.Json;
 using System.Security.Claims;
 using System.Text;
+using Domain.Account.DTOs;
+using Domain.Account.Models;
 using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
 using HTTPClients.ClientInterfaces;
+using HTTPClients.Implementations.Converter;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace HTTPClients.Implementations;
 
@@ -31,9 +36,9 @@ public class UserHttpClient : IUserService
             throw new Exception(result);
         }
 
-        User user = JsonSerializer.Deserialize<User>(result, new JsonSerializerOptions
+        User user = JsonConvert.DeserializeObject<User>(result, new JsonSerializerSettings()
         {
-            PropertyNameCaseInsensitive = true
+            TypeNameHandling = TypeNameHandling.All
         })!;
         return user;
     }
@@ -71,11 +76,65 @@ public class UserHttpClient : IUserService
         {
             throw new Exception(result);
         }
-
-        ICollection<User>? users = JsonSerializer.Deserialize<ICollection<User>>(result, new JsonSerializerOptions()
+        
+        ICollection<UserTransferDto> dtos = JsonConvert.DeserializeObject<ICollection<UserTransferDto>>(result, new JsonSerializerSettings()
         {
-            PropertyNameCaseInsensitive = true
+            TypeNameHandling = TypeNameHandling.Auto,
         })!;
+        ICollection<User> users = new List<User>();
+        foreach (var dto in dtos)
+        {
+            User user = null;
+            if (dto.IsSeller)
+            {
+                Seller seller = new Seller(dto.User.Email, dto.User.Password)
+                {
+                    Id = dto.User.Id,
+                    FirstName = dto.User.FirstName,
+                    LastName = dto.User.LastName,
+                    Password = dto.User.Password,
+                    Address = dto.User.Address,
+                    City = dto.User.City,
+                    PostalCode = dto.User.PostalCode,
+                    Country = dto.User.Country,
+                };
+                if (dto.IsAuthorized)
+                {
+                    seller.IsAuthorized = true;
+                }
+                user = seller;
+            }
+            if (dto.IsAdmin)
+            {
+                user = new Admin(dto.User.Email, dto.User.Password)
+                {
+                    Id = dto.User.Id,
+                    FirstName = dto.User.FirstName,
+                    LastName = dto.User.LastName,
+                    Password = dto.User.Password,
+                    Address = dto.User.Address,
+                    City = dto.User.City,
+                    PostalCode = dto.User.PostalCode,
+                    Country = dto.User.Country
+                };
+            }
+            if(dto is { IsAdmin: false, IsSeller: false })
+            {
+                user = new Customer(dto.User.Email, dto.User.Password)
+                {
+                    Id = dto.User.Id,
+                    FirstName = dto.User.FirstName,
+                    LastName = dto.User.LastName,
+                    Password = dto.User.Password,
+                    Address = dto.User.Address,
+                    City = dto.User.City,
+                    PostalCode = dto.User.PostalCode,
+                    Country = dto.User.Country,
+                };
+            }
+
+            if (user != null) users.Add(user);
+        }
         return users;
     }
 
@@ -87,11 +146,55 @@ public class UserHttpClient : IUserService
         {
             throw new Exception(result);
         }
-        User user = JsonSerializer.Deserialize<User>(result, new JsonSerializerOptions
+        UserTransferDto dto = JsonConvert.DeserializeObject<UserTransferDto>(result, new JsonSerializerSettings()
         {
-            PropertyNameCaseInsensitive = true
+            TypeNameHandling = TypeNameHandling.All
         })!;
-        
+        User user = null;
+        if (dto.IsSeller)
+        {
+            Seller seller = new Seller(dto.User.Email, dto.User.Password)
+            {
+                FirstName = dto.User.FirstName,
+                LastName = dto.User.LastName,
+                Password = dto.User.Password,
+                Address = dto.User.Address,
+                City = dto.User.City,
+                PostalCode = dto.User.PostalCode,
+                Country = dto.User.Country,
+            };
+            if (dto.IsAuthorized)
+            {
+                seller.IsAuthorized = true;
+            }
+            user = seller;
+        }
+        if (dto.IsAdmin)
+        {
+            user = new Admin(dto.User.Email, dto.User.Password)
+            {
+                FirstName = dto.User.FirstName,
+                LastName = dto.User.LastName,
+                Password = dto.User.Password,
+                Address = dto.User.Address,
+                City = dto.User.City,
+                PostalCode = dto.User.PostalCode,
+                Country = dto.User.Country
+            };
+        }
+        if(dto is { IsAdmin: false, IsSeller: false })
+        {
+            user = new Customer(dto.User.Email, dto.User.Password)
+            {
+                FirstName = dto.User.FirstName,
+                LastName = dto.User.LastName,
+                Password = dto.User.Password,
+                Address = dto.User.Address,
+                City = dto.User.City,
+                PostalCode = dto.User.PostalCode,
+                Country = dto.User.Country,
+            };
+        }
         return user;
     }
 
