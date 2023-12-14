@@ -4,30 +4,34 @@
 @page "/view-support-requests"
 @using Domain.Shopping.Models
 @using HTTPClients.ClientInterfaces
-<div class="wrapper">
-    <div class="container">
-        <h1>Customer Service</h1>
-        <div class="messages-container">
-            <h3>New Messages</h3>
-            @if(_unansweredMessages != null)
-            {
-                @foreach (var user in _users)
-                {
-                    @if(user != null)
+<AuthorizeView Policy="IsAdmin">
+    <NotAuthorized>
+        <div class="wrapper">
+            <div class="container">
+                <h1>Customer Service</h1>
+                <div class="messages-container">
+                    <h3>New Messages</h3>
+                    @if(_unansweredMessages != null)
                     {
-                        <div @onclick="() => NavigateToMessage(user.Id)" class="message">
-                            @user?.Email
-                        </div>
+                        @foreach (var user in _users)
+                        {
+                            @if(user != null)
+                            {
+                                <div @onclick="() => NavigateToMessage(user.Id)" class="message">
+                                    @user?.Email
+                                </div>
+                            }
+                        }
                     }
-                }
-            }
-            else
-            {
-                <p>No new messages</p>
-            }
+                    else
+                    {
+                        <p>No new messages</p>
+                    }
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private ICollection<Message>? _unansweredMessages = new List<Message>();

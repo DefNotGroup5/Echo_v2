@@ -1,27 +1,31 @@
 ﻿@inject NavigationManager NavigationManager
 @page "/admindash"
-<div class="wrapper">
-    <div class="auth-wrapper">
-        <h1 id="title">Admin Dashboard</h1> 
-        <div class="wrapper-containers">
-            <div class="container">
-                <h1>Authorize Sellers</h1>
-                <div class="spacer"></div>
-                <button class="container-button" @onclick="AuthSellers">Open</button>
-            </div>
-            <div class="container">
-                <h1>Manage Categories</h1>
-                <div class="spacer"></div>
-                <button class="container-button">Open</button>
-            </div>
-            <div class="container">
-                <h1>Customer Support</h1>
-                <div class="spacer"></div>
-                <button class="container-button">Open</button>
+<AuthorizeView Policy="IsAdmin">
+<Authorized>
+    <div class="wrapper">
+        <div class="auth-wrapper">
+            <h1 id="title">Admin Dashboard</h1> 
+            <div class="wrapper-containers">
+                <div class="container">
+                    <h1>Authorize Sellers</h1>
+                    <div class="spacer"></div>
+                    <button class="container-button" @onclick="AuthSellers">Open</button>
+                </div>
+                <div class="container">
+                    <h1>Manage Categories</h1>
+                    <div class="spacer"></div>
+                    <button class="container-button">Open</button>
+                </div>
+                <div class="container">
+                    <h1>Customer Support</h1>
+                    <div class="spacer"></div>
+                    <button class="container-button">Open</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</Authorized>
+</AuthorizeView>
 
 @code {
 
