@@ -149,9 +149,6 @@
                 CustomerId = _userId
             });
             _bought = !_bought;
-            _items = new List<Item?>();
-            _cartItems = new List<CartItem>();
-            await ShoppingCartService.ClearCart(_userId);
         }
         catch (Exception e)
         {
@@ -160,8 +157,11 @@
         }
     }
 
-    private void Back()
+    private async Task Back()
     {
+        _items = new List<Item?>();
+        _cartItems = new List<CartItem>();
+        await ShoppingCartService.ClearCart(_userId);
         NavigationManager.NavigateTo("/items");
     }
 

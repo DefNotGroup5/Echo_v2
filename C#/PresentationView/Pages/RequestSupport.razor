@@ -1,6 +1,84 @@
 ﻿@page "/request-support"
-
+@using Domain.Shopping.Models
+@using HTTPClients.ClientInterfaces
+@using Domain.Account.DTOs
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject IUserService UserService;
+@inject ISupportService SupportService;
+<div class="wrapper">
+    <div class="container">
+        <h1>Customer Service</h1>
+        <h2>How can we help you?</h2>
+            <div class="messages-container">
+            <div class="chat">
+                @foreach (var message in _messages.OrderBy(m => m.Id))
+                {
+                    if (!string.IsNullOrEmpty(message.Response))
+                    {
+                        <p>@_user?.Email: @message.Request</p>
+                        <p>Admin: @message.Response</p>
+                    }
+                    else
+                    {
+                        <p>@_user?.Email: @message.Request</p>
+                        _latestMessage = message;
+                    }
+                }
+            </div>
+            <input @bind="_request" class="send-text" placeholder="Write Here" type="text">
+        </div>
+        <div class="button-span">
+            @if (!string.IsNullOrEmpty(_latestMessage?.Response))
+            {
+                <button @onclick="() => SendRequest(_latestMessage)" class="send-button">Send</button>
+            }
+            else
+            {
+                <button disabled class="send-button">Send</button>
+            }
+        </div>
+    </div>
+</div>
 
 @code {
-    
+    private int _userId;
+    private string? _request;
+    private Message? _latestMessage;
+    private ICollection<Message> _messages = new List<Message>(); 
+    private User? _user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeUserIdAsync();
+        _user = await UserService.GetByIdAsync(_userId);
+    }
+
+    private async Task InitializeUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst("Id");
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+            {
+                _userId = userId;
+            }
+        }
+    }
+
+    private async Task SendRequest(Message latestMessage)
+    {
+        if (!string.IsNullOrEmpty(_request) && latestMessage != null)
+        { 
+            await SupportService.RequestSupport(new MessageRequestDto()
+            {
+                CustomerId = _userId,
+                Request = _request
+            });
+        }
+        _request = "";
+        await OnInitializedAsync();
+    }
+
 }

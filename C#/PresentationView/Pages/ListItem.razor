@@ -1,9 +1,10 @@
 ﻿@page "/listitem"
 @using Microsoft.AspNetCore.Components.Forms
-@using Supabase.Storage
 @using HTTPClients.ClientInterfaces
 @using Domain.Shopping.DTOs
 @using PresentationView.ComponentServices.Interfaces
+@using FileOptions = Supabase.Storage.FileOptions
+@using System.IO
 @inject Supabase.Client Supabase
 @inject IItemService ItemService
 @inject NavigationManager NavigationManager
@@ -37,9 +38,9 @@
                     </div>
                 </div>
                 @if (!string.IsNullOrEmpty(_result))
-                                {
-                                    <label>@_result</label>
-                                }
+                {
+                    <label>@_result</label>
+                }
                 @if (!_confirmPublish)
                 {
                     <button class="button" @onclick="ShowConfirmation">Publish</button>
@@ -89,8 +90,8 @@
             await InitializeUserIdAsync();
             string? imageUrl = await UploadToSupabase();
             if (imageUrl != null) await ItemService.CreateAsync(new ItemCreationDto(_userId, _name, imageUrl, _description, double.Parse(_price), _quantity));
-            string confirmationTitle = "Item added to shopping cart!";
-            string confirmationDescription = "Your item has been added to the shopping cart. You can now purchase it!";
+            string confirmationTitle = "Item created!!";
+            string confirmationDescription = "Your item has been added for sale!";
             ConfirmationService.ShowConfirmation(confirmationTitle, confirmationDescription, HandleConfirmationResult);
             
             _name = "";
