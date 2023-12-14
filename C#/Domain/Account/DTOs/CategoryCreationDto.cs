@@ -1,15 +1,17 @@
+using Domain.Account.Models;
+
 namespace Domain.Account.DTOs;
 
 public class CategoryCreationDto
 {
-    public long Id { get; set; }
+    public int Id { get; set; }
     
-    public string CategoryName { get; set; }
+    public string? CategoryName { get; set; }
 
 
-    public CategoryCreationDto(long id, string categoryName)
+    public CategoryCreationDto(string categoryName)
     {
-        Id = id;
+        Id = 0;
         CategoryName = categoryName;
     }
     

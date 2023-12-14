@@ -6,7 +6,6 @@ import io.grpc.stub.StreamObserver;
 import via.sdj3.grpcserverexample.entities.CategoryEntity;
 import via.sdj3.grpcserverexample.repository.CategoryRepository;
 import via.sdj3.protobuf.category.*;
-import via.sdj3.protobuf.item.GetAllItemsResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,9 +33,9 @@ public class CategoryServiceImpl extends CategoryServiceGrpc.CategoryServiceImpl
 
     }
 
-    @Override public void getByCategoryName(GetCategoryByNameRequest request, StreamObserver<GetCategoryByNameResponse> responseStreamObserver){
+    @Override public void getCategoryByName(GetCategoryByNameRequest request, StreamObserver<GetCategoryByNameResponse> responseStreamObserver){
         try{
-            Optional<CategoryEntity> thisCategory = categoryRepository.getCategoryByName(request.getCategoryName());
+            Optional<CategoryEntity> thisCategory = categoryRepository.getCategoryByName(request.getName());
             if(thisCategory.isPresent()){
                 CategoryEntity category = thisCategory.get();
                 GetCategoryByNameResponse response = GetCategoryByNameResponse.newBuilder().setCategory(generateGrpcCategory(category)).build();
@@ -75,19 +74,42 @@ public class CategoryServiceImpl extends CategoryServiceGrpc.CategoryServiceImpl
 
     }
 
+    @Override
+    public void deleteCategory(DeleteCategoryRequest request, StreamObserver<DeleteCategoryResponse> responseStreamObserver) {
+        try {
+            String categoryName = request.getName();
+            Optional<CategoryEntity> category = categoryRepository.getCategoryByName(categoryName);
+            if (category != null) {
+                categoryRepository.deleteByCategoryName(categoryName);
+                DeleteCategoryResponse response = DeleteCategoryResponse.newBuilder().build();
+                responseStreamObserver.onNext(response);
+                responseStreamObserver.onCompleted();
+            } else {
+                Status status = Status.NOT_FOUND.withDescription("Category not found");
+                responseStreamObserver.onError(new StatusRuntimeException(status));
+            }
+        } catch (Exception e) {
+            Status status = Status.INTERNAL.withDescription("Error deleting category");
+            responseStreamObserver.onError(new StatusRuntimeException(status));
+        }
+    }
+
+
 
     private CategoryEntity generateCategoryEntity(GrpcCategory category)
-    {
-        CategoryEntity categoryEntity = new CategoryEntity();
-        categoryEntity.setCategoryId(categoryEntity.getCategoryId());
-        categoryEntity.setCategoryName(category.getCategoryName());
-        return categoryEntity;
-    }
+        {
+            CategoryEntity categoryEntity = new CategoryEntity();
+            categoryEntity.setCategoryId(categoryEntity.getCategoryId());
+            categoryEntity.setCategoryName(categoryEntity.getCategoryByName());
+            return categoryEntity;
+        }
+
 
     private GrpcCategory generateGrpcCategory(CategoryEntity categoryEntity)
     {
         return GrpcCategory.newBuilder()
                 .setId(categoryEntity.getCategoryId())
-                .setName(categoryEntity.getCategoryName());
+                .setName(categoryEntity.getCategoryByName())
+                .build();
     }
 }

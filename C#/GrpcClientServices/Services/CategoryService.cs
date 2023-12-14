@@ -15,7 +15,7 @@ public class CategoryService
 
    public async Task<Category?> AddCategoryAsync(Category category)
    {
-     /*try
+     try
      {
           GrpcCategory categoryToAdd = GenerateGrpcCategory(category);
          var client = new GrpcClientServices.CategoryService.CategoryServiceClient(_channel);
@@ -30,32 +30,74 @@ public class CategoryService
      catch (Exception e)
      {
          Console.WriteLine(e.Message);
-     }*/
+     }
 
      return null;
    }
 
-   public async Task<Category?> GetCategoryByEmailAsync(Category? category)
+   public async Task<Category?> GetCategoryByNameAsync(string? categoryName)
    {
-      /* try
+       try
        {
            var client = new GrpcClientServices.CategoryService.CategoryServiceClient(_channel);
-           var reply = await client.GetByCategoryByEmailAsync(new GetCategoryByNameRequest()
+           var reply = await client.GetCategoryByNameAsync(new GetCategoryByNameRequest()
            {
-               Category = category
+               Name = categoryName
            });
-           category = GenerateCategory(reply.Category);
+           Category? category = GenerateCategory(reply.Category);
            return category;
        }
        catch (Exception e)
        {
            Console.WriteLine(e.Message);
-       }*/
+       }
 
        return null;
    }
 
-  /* private Category? GenerateCategory(GrpcCategory category)
+
+  public async Task<ICollection<Category?>> GetAllCategories()
+   {
+       try
+       {
+           var client = new GrpcClientServices.CategoryService.CategoryServiceClient(_channel);
+           var reply = await client.GetAllCategoriesAsync(new GetAllCategoriesRequest());
+           
+           ICollection<Category?> categories = new List<Category?>();
+           foreach (var category in reply.Categories)
+           {
+               categories.Add(GenerateCategory(category));
+           }
+           return categories;
+       }
+       catch (Exception e)
+       {
+           Console.WriteLine(e.Message);
+       }
+
+       return null;
+   }
+
+   public async Task<Category?> DeleteCategory(string name)
+   {
+       try
+       {
+           var client = new GrpcClientServices.CategoryService.CategoryServiceClient(_channel);
+           var reply = await client.DeleteCategoryAsync(new DeleteCategoryRequest()
+           {
+                Name =  name
+           });
+           DeleteCategory(name);
+       }
+       catch (Exception e)
+       {
+           Console.WriteLine(e.Message);
+       }
+
+       return null;
+   }
+
+   private Category? GenerateCategory(GrpcCategory category)
    {
        Category? generatedCategory = null;
 
@@ -79,6 +121,6 @@ public class CategoryService
        };
 
        return generatedGrpcCategory;
-   }*/
+   }
    
 }

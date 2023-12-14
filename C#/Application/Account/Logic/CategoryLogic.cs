@@ -12,38 +12,87 @@ public class CategoryLogic : ICategoryLogic
     
     public async Task<Category?> AddCategory(CategoryCreationDto dto)
     {
-       /* try
+        try
         {
-            Category? category = await _categoryService.GetCategoryByNameAsync(dto.CategoryName);
-            if (category != null)
-                throw new Exception("Category already exists");
-            string validated = await ValidateCategory(dto);
-            if (!string.IsNullOrEmpty(validated))
-                throw new Exception(validated);
-            Category categoryToCreate = new Category(dto.CategoryName)
+            string validation = await ValidateCategory(dto);
+            if (string.IsNullOrEmpty(validation))
             {
-                CategoryName = dto.CategoryName,
-            };
+                throw new Exception(validation);
+            }
             
-            Category? categoryCreated = await _categoryService.AddCategoryAsync(categoryToCreate);
-            return categoryCreated;
+            Category categoryAdded = new Category(dto.CategoryName)
+                {
+                    CategoryName = dto.CategoryName
+                };
+                Category? category = await _categoryService.AddCategoryAsync(categoryAdded);
+                return category;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
-        }*/
+        }
+    }
 
-       return null;
+    public async Task<Category?> GetCategoryByName(CategoryCreationDto dto)
+    {
+        try
+        {
+            string validation = await ValidateCategory(dto);
+            if (string.IsNullOrEmpty(validation))
+            {
+                throw new Exception(validation);
+            }
+
+            Category? category = await _categoryService.GetCategoryByNameAsync(dto.CategoryName);
+            return category;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<ICollection<Category>?> GetAllCategories()
+    {
+        try
+        {
+            ICollection<Category?> categories = await _categoryService.GetAllCategories();
+            return categories;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<Category?> DeleteCategory(CategoryCreationDto dto)
+    {
+        try
+        {
+            Category? category = await _categoryService.DeleteCategory(dto.CategoryName);
+            return category;
+            Console.WriteLine("Category successfully deleted!");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+
+        return null;
     }
 
     
 
 
-  /*  private async Task<string> ValidateCategory(CategoryCreationDto dto)
+
+    private async Task<string> ValidateCategory(CategoryCreationDto dto)
     {
         string validated = "";
-        Category? category = await _categoryService(dto.CategoryName);
+        Category? category = await _categoryService.GetCategoryByNameAsync(dto.CategoryName);
         if (category != null)
         {
             validated = "A category with this name already exists";
@@ -56,6 +105,6 @@ public class CategoryLogic : ICategoryLogic
         }
 
         return validated;
-    }*/
+    }
     
 }

@@ -53,4 +53,19 @@ public class CategoryHttpClient : ICategoryService
         }
         return new List<string?>();
     }
+    
+    public async Task<string?> DeleteCategory(string categoryName)
+    {
+        HttpResponseMessage response = await _client.DeleteAsync($"/Categories{categoryName}");
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(result);
+        }
+        return null;
+    }
+    
+    
+    
+    
 }

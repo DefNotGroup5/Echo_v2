@@ -11,6 +11,7 @@ service CategoryService {
   rpc AddCategory (AddCategoryRequest) returns (AddCategoryResponse);
   rpc GetCategoryByName (GetCategoryByNameRequest) returns (GetCategoryByNameResponse);
   rpc GetAllCategories (GetAllCategoriesRequest) returns (GetAllCategoriesResponse);
+  rpc DeleteCategory (DeleteCategoryRequest) returns (DeleteCategoryResponse);
 }
 
 message GrpcCategory {
@@ -28,7 +29,7 @@ message AddCategoryResponse {
 }
 
 message GetCategoryByNameRequest{
-  GrpcCategory category = 1;
+  string name = 1;
 }
 
 message GetCategoryByNameResponse{
@@ -42,4 +43,13 @@ message GetAllCategoriesRequest {
 message GetAllCategoriesResponse {
   repeated GrpcCategory categories = 1;
 }
+
+message DeleteCategoryRequest {
+  string name = 1;
+}
+
+message DeleteCategoryResponse {
+
+}
+
 

@@ -15,6 +15,7 @@
         <Protobuf Include="Protos\wishlist.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\messages.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\cart.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\category.proto" GrpcServices="Client" />
     </ItemGroup>
 
     <ItemGroup>

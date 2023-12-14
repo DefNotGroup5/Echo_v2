@@ -8,7 +8,7 @@ public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long categoryId;
+    private int categoryId;
 
     @Column
     private String categoryName;
@@ -16,7 +16,7 @@ public class CategoryEntity {
 
 
 
-    public CategoryEntity(Long categoryId, String categoryName) {
+    public CategoryEntity(int categoryId, String categoryName) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
     }
@@ -26,19 +26,21 @@ public class CategoryEntity {
     }
 
 
-    public Long getCategoryId() {
+    public int getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
 
-    public String getCategoryName() {
+    public String getCategoryByName() {
         return categoryName;
     }
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
+
+
 }

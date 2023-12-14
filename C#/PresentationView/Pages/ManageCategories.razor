@@ -2,65 +2,82 @@
 @using HTTPClients.ClientInterfaces
 @using Domain.Account.Models
 @using Microsoft.VisualBasic
+@using Domain.Account.DTOs
 @inject ICategoryService CategoryService;
 @inject NavigationManager NavigationManager;
 
-<div class="wrapper">
-    <h3>ManageCategories</h3>
-        <!-- First do title, then do search bar (pull from code if statement, display category), then do boxes for each category, see view items for inspo, do not forget buttons -->
-        <div class="wrapper">
-            <div class="search-bar">
-                <input type="text" placeholder="Search">
-              <!--  <button>Search</button>-->
-            </div>
-            <div class="categories">
-                @if (_categories != null && _categories.Any())
+ <div class="wrapper">
+        <NavBar></NavBar>
+        <div class = "ManageCategories">
+        <h1>Manage Categories</h1>
+            <div class="wrapper2">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search" class="search">
+                    <button class="button " @onclick="() => FindCategory(_currentName)">Search</button>
+                </div>
+               
+                    @if (_categories != null && _categories.Any())
                 {
                     @foreach (var category in _categories)
                     {
-                        <h2>@category.CategoryName</h2>
-                        <div class="category">
-                            <button >Edit</button>
-                            <a href="#" class="delete-button">Delete</a>
-
+                        <div class="categories">
+                            <p>Category</p>
+                            <button class="button" @onclick="EditCategoryName">Edit</button>
+                            <button class="button" @onclick="() => DeleteCategory(_currentName)">Delete</button>
                         </div>
                     }
+
+
                 }
                 else
-                {
-                    <p>No categories, try again :/</p>
+                    {
+                        <p>No categories, try again :/</p> 
+                    }
                 }
-            </div>
+               
+                }
+
+           </div>
+    
+            <button class="button-add" @onclick="AddCategory()">Add Category</button>
+    
         </div>
-
+   
+   </div> 
     
-    
-</div>
-
 
 @code {
 
-    private ICollection<Category?>? _categories;
+    private string? _categoryService;
+    private ICollection<string?> _categories;
     private string _currentName = "";
-    private Category? _categorySearchedName;
+    private string? _categorySearchedName;
+    private string? _categoryToBeDeleted;
+    
     
     public EventArgs EventArgs { get; }
 
-   /* protected override async Task OnInitializedAsync()
+   protected override async Task OnInitializedAsync()
     {
         _categories = await CategoryService.GetAllCategories();
         
     }
 
-
-    private async Task<Category?> FindCategory(string name)
+    private async Task<Category?> AddCategory(Category newCategory)
     {
-        _categorySearchedName = await CategoryService.GetCategoryByName(name);
-        return _categorySearchedName;
+        _categoryService = await CategoryService.AddCategoryAsync(new CategoryCreationDto(_currentName));
+        return new Category(_categoryService);
 
-    }*/
+    }
+
+
+    private async Task<string?> FindCategory(string _currentName)
+    {
+        _categorySearchedName = await CategoryService.GetCategoryByName(_currentName);
+        return _categorySearchedName;
+    }
     
-    private async Task<string?> EditCategoryName(object sender, EventArgs e)
+    private async Task<string?> EditCategoryName()
     {
         <!--_categoryName = await CategoryService.GetCategoryByName(name);
         String? editedName = _categoryName.Replace("name", "newName");
@@ -74,7 +91,14 @@
         }
         return _currentName;
 
-    }     
-    
+    }
+
+
+    private async Task<string?> DeleteCategory(string _categoryName)
+    {
+        _categoryToBeDeleted = await _categoryService.DeleteCategory(_categoryName);
+        return null;
+    }
+
 
 }
