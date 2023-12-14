@@ -1,5 +1,6 @@
 ﻿@page "/items/view/{ItemId:int}"
 @using Domain.Shopping.Models
+@inject IWishlistService WishlistService;
 @using HTTPClients.ClientInterfaces
 @using Domain.Shopping.DTOs
 @using PresentationView.ComponentServices.Interfaces
@@ -45,7 +46,10 @@
                             <label>@_item?.Price DKK</label>
                         </div>
                     </div>
-                    <button @onclick="AddToShoppingCart">Add To Cart</button>
+                    <div class="button-span">
+                        <button class="wishlist-button" @onclick="AddToWishlist">Add To Wishlist</button>
+                        <button class="cart-button" @onclick="AddToShoppingCart">Add To Cart</button>
+                    </div>
                 </div>
             </div>
             <h2>Comments and Reviews</h2>
@@ -222,6 +226,22 @@
             await ShoppingCartService.CreateAsync(dto);
             string confirmationTitle = "Item added to shopping cart!";
             string confirmationDescription = "Your item has been added to the shopping cart. You can now purchase it!";
+            ConfirmationService.ShowConfirmation(confirmationTitle, confirmationDescription, HandleConfirmationResult);
+        }
+    }
+
+    private async Task AddToWishlist()
+    {
+        if (_item != null)
+        {
+            WishlistCreationDto dto = new WishlistCreationDto()
+            {
+                ItemId = _item.Id,
+                UserId = _userId,
+            };
+            await WishlistService.CreateAsync(dto);
+            string confirmationTitle = "Item added to your wish list!";
+            string confirmationDescription = "Your item has been added to your wish list. Now you can save it for later!";
             ConfirmationService.ShowConfirmation(confirmationTitle, confirmationDescription, HandleConfirmationResult);
         }
     }

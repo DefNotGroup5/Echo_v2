@@ -152,6 +152,8 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
         userEntity.setCountry(user.getCountry());
         userEntity.setPostalCode(user.getPostalCode());
         userEntity.setPassword(user.getPassword());
+        userEntity.setAdmin(user.getIsAdmin());
+        userEntity.setAuthorizedSeller(user.getIsAuthorizedSeller());
         return userEntity;
     }
 
@@ -159,8 +161,8 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     {
         return GrpcUser.newBuilder().setId(userEntity.getId()).setFirstName(userEntity.getFirstName()).setLastName(userEntity.getLastName())
                 .setAddress(userEntity.getAddress()).setEmail(userEntity.getEmail()).setIsSeller(userEntity.isSeller())
-                .setCity(userEntity.getCity()).setCountry(userEntity.getCountry())
-                .setPostalCode(userEntity.getPostalCode()).setPassword(userEntity.getPassword()).build();
+                .setCity(userEntity.getCity()).setIsAuthorizedSeller(userEntity.isAuthorizedSeller()).setCountry(userEntity.getCountry())
+                .setPostalCode(userEntity.getPostalCode()).setPassword(userEntity.getPassword()).setIsAdmin(userEntity.isAdmin()).build();
     }
     
     

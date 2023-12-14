@@ -1,6 +1,7 @@
 package via.sdj3.grpcserverexample.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,9 +18,10 @@ public interface WishlistRepository extends JpaRepository<WishlistEntity, Intege
   @Query("SELECT wi FROM WishlistEntity wi WHERE wi.id = :id")
   Optional<WishlistEntity> getById(@Param("id") int id);
 
-  @Query("SELECT wi FROM WishlistEntity wi WHERE wi.item = :item")
-  Optional<WishlistEntity> getByItem(@Param("item") ItemEntity item);
+  @Query("SELECT wi FROM WishlistEntity wi WHERE wi.userId = :userId")
+  List<WishlistEntity> getWishlistByUserId(@Param("userId") int userId);
 
-  @Query("SELECT wi FROM WishlistEntity wi WHERE wi.user = :user")
-  List<WishlistEntity> getByUser(@Param("user") UserEntity user);
+  @Modifying
+  @Query("DELETE FROM WishlistEntity wi WHERE wi.id = :id")
+  void deleteById(@Param("id") int id);
 }

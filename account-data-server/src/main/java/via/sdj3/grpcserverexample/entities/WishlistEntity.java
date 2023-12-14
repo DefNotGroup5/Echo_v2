@@ -8,52 +8,39 @@ public class WishlistEntity
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "wishlist_id")
+  @Column
   private int id;
 
-  @ManyToOne
-  @JoinColumn(name = "item_id", nullable = false)
-  private ItemEntity item;
+  @Column
+  private int itemId;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  private UserEntity user;
+
+  @Column
+  private int userId;
 
   public WishlistEntity() {}
-  public WishlistEntity(int id, ItemEntity item, UserEntity user)
-  {
-    this.id = id;
-    this.item = item;
-    this.user = user;
-  }
 
-  public int getId()
-  {
+  public int getId() {
     return id;
   }
 
-  public void setId(int id)
-  {
+  public void setId(int id) {
     this.id = id;
   }
 
-  public ItemEntity getItem()
-  {
-    return item;
+  public int getItemId() {
+    return itemId;
   }
 
-  public void setItem(ItemEntity item)
-  {
-    this.item = item;
+  public void setItemId(int itemId) {
+    this.itemId = itemId;
   }
 
-  public UserEntity getUser()
-  {
-    return user;
+  public int getUserId() {
+    return userId;
   }
 
-  public void setUser(UserEntity user)
-  {
-    this.user = user;
+  public void setUserId(int userId) {
+    this.userId = userId;
   }
 }
