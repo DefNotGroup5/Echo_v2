@@ -7,4 +7,5 @@ public interface IShoppingCartService
 {
     public Task<CartItem?> CreateAsync(CartItemCreationDto dto);
     public Task<ICollection<CartItem>?> GetByCustomerId(int id);
+    public Task ClearCart(int customerId);
 }

@@ -10,6 +10,7 @@ option java_outer_classname = "ShoppingCartProto";
 service ShoppingCartService {
   rpc AddToShoppingCart (AddToShoppingCartRequest) returns (AddToShoppingCartResponse);
   rpc GetAllCartItems (GetAllCartItemsRequest) returns (GetAllCartItemsResponse);
+  rpc ClearCart (ClearCartRequest) returns (ClearCartResponse);
 }
 
 message GrpcCartItem {
@@ -35,6 +36,14 @@ message GetAllCartItemsRequest {
 
 message GetAllCartItemsResponse {
   repeated GrpcCartItem items = 1;
+}
+
+message ClearCartRequest {
+  int32 customer_id = 1;
+}
+
+message ClearCartResponse {
+  string result = 1;
 }
 
 

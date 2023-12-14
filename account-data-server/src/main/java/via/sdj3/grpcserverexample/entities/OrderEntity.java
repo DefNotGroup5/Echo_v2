@@ -4,12 +4,15 @@ import jakarta.persistence.*;
 import com.google.protobuf.Timestamp;
 
 @Entity
-@Table(name = "orders")
+@Table
 public class OrderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int Id;
+
+    @Column
+    private String order_id;
 
     @Column
     private int customer_id;
@@ -76,5 +79,13 @@ public class OrderEntity {
 
     public void setItem_id(int item_id) {
         this.item_id = item_id;
+    }
+
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
     }
 }

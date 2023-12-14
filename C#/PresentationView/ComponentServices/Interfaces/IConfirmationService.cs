@@ -1,4 +1,6 @@
-﻿namespace PresentationView.ComponentServices.Interfaces;
+﻿using System;
+
+namespace PresentationView.ComponentServices.Interfaces;
 
 public interface IConfirmationService
 {

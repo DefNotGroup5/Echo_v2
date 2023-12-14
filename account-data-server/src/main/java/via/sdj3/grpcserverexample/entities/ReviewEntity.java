@@ -19,7 +19,7 @@ public class ReviewEntity {
     @Column
     private int rating;
 
-    @Column(length = 1000)
+    @Column(length = 500)
     private String comment;
 
     public ReviewEntity() {

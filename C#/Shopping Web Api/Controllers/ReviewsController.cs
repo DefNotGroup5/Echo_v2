@@ -10,7 +10,6 @@ namespace Shopping_Web_Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(Policy = "IsCustomer")]
 public class ReviewsController : ControllerBase
 {
     private readonly IReviewLogic _reviewLogic;
@@ -21,29 +20,21 @@ public class ReviewsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddReviewAsync([FromBody] Review review)
+    public async Task<IActionResult> AddReviewAsync([FromBody] ReviewCreationDto dto)
     {
         try
         {
-            var addedReview = await _reviewLogic.AddReviewAsync(review);
-            if (addedReview != null)
-            {
-                return Created($"/Reviews/{addedReview.Id}", addedReview);
-            }
-            return BadRequest("Failed to add review.");
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(e.Message);
+            var addedReview = await _reviewLogic.AddReviewAsync(dto);
+            return Created($"/Reviews/{addedReview.Id}", addedReview);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, e.Message);
         }
     }
     
-    [HttpGet("item/{itemId}")]
+    [HttpGet("by-item/{itemId}")]
     public async Task<ActionResult<IEnumerable<Review>>> GetReviewsByItemAsync(int itemId)
     {
         try
@@ -54,11 +45,11 @@ public class ReviewsController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, e.Message);
         }
     }
 
-    [HttpGet("user/{userId}")]
+    [HttpGet("by-user/{userId}")]
     public async Task<ActionResult<IEnumerable<Review>>> GetReviewsByUserAsync(int userId)
     {
         try
@@ -69,7 +60,7 @@ public class ReviewsController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, e.Message);
         }
     }
     

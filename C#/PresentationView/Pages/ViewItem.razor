@@ -6,43 +6,84 @@
 @inject IShoppingCartService ShoppingCartService;
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject IItemService ItemService;
+@inject IReviewService ReviewService;
 @inject NavigationManager NavigationManager
+@inject IUserService UserService;
 @inject IConfirmationService ConfirmationService;
 <div class="wrapper">
     @if (_item != null)
     {
         <div class="item-container">
-            <div class="image">
-                <img src="@_item.ImageUrl"/>
+            <div class="item-info">
+                <div class="image">
+                    <img src="@_item.ImageUrl"/>
+                </div>
+                <div class="info">
+                    <div class="info-text">
+                        @if (_item.Quantity > 0)
+                        {
+                            <label id="stock">In Stock</label>
+                        }
+                        else
+                        {
+                            <label id="out-stock">Out Of Stock</label>
+                        }
+                        <p id="name">@_item?.Name</p>
+                        <p id="description">@_item?.Description</p>
+                    </div>
+                    <div class="quantity-price">
+                        <div class="quantity">
+                            <h3>Quantity</h3>
+                            <div class="quantity-choice">
+                                <label class="q-choice" id="q-minus" @onclick="() => ChangeQuantity('-')">-</label>
+                                <label class="q-choice" id="q-number">@_quantity</label>
+                                <label class="q-choice" id="q-plus" @onclick="() => ChangeQuantity('+')">+</label>
+                            </div>
+                        </div>
+                        <div class="price">
+                            <h3>Price Per Unit</h3>
+                            <label>@_item?.Price DKK</label>
+                        </div>
+                    </div>
+                    <button @onclick="AddToShoppingCart">Add To Cart</button>
+                </div>
             </div>
-            <div class="info">
-                <div class="info-text">
-                    @if (_item.Quantity > 0)
+            <h2>Comments and Reviews</h2>
+            <div class="comment-section">
+                
+                <div class="add-comment-container">
+                    <div class="submit-review">
+                        <select @bind="_rate" class="insert-review" disabled="@_disableReview">
+                            <option value="" disable selected>Review</option>
+                            <option value="5">5</option>
+                            <option value="4">4</option>
+                            <option value="3">3</option>
+                            <option value="2">2</option>
+                            <option value="1">1</option>
+                        </select>
+                        <button @onclick="Review" class="submit-button" disabled="@_disableReview">Submit</button>
+                    </div>
+                    <textarea maxlength="500" @bind="_comment" disabled="@_disableReview" class="insert-comment" style="resize: none;"></textarea>
+                </div>
+                <div class="comments">
+                    @if (_reviews.Any())
                     {
-                        <label id="stock">In Stock</label>
+                        @foreach (var review in _reviews)
+                        {
+                            <div class="comment-area">
+                                <div class="email-review">
+                                    <label class="email">@(_userEmails.TryGetValue(review.UserId, out var email) ? email : "")</label>
+                                    <label class="review">Review: @review.Rating</label>
+                                </div>
+                                <textarea class="comment" readonly style="resize: none;">@review.Comment</textarea>
+                            </div>
+                        }
                     }
                     else
                     {
-                        <label id="out-stock">Out Of Stock</label>
+                        <p>No reviews :(</p>
                     }
-                    <p id="name">@_item?.Name</p>
-                    <p id="description">@_item?.Description</p>
                 </div>
-                <div class="quantity-price">
-                    <div class="quantity">
-                        <h3>Quantity</h3>
-                        <div class="quantity-choice">
-                            <label class="q-choice" id="q-minus" @onclick="() => ChangeQuantity('-')">-</label>
-                            <label class="q-choice" id="q-number">@_quantity</label>
-                            <label class="q-choice" id="q-plus" @onclick="() => ChangeQuantity('+')">+</label>
-                        </div>
-                    </div>
-                    <div class="price">
-                        <h3>Price Per Unit</h3>
-                        <label>@_item?.Price DKK</label>
-                    </div>
-                </div>
-                <button @onclick="AddToShoppingCart">Add To Cart</button>
             </div>
         </div>
     }
@@ -53,6 +94,13 @@
 </div>
 
 @code {
+    private ICollection<Review> _reviews = new List<Review>();
+
+    private bool _disableReview;
+    private string? _comment;
+    private string _rate = "5";
+    private Dictionary<int, string?> _userEmails = new Dictionary<int, string?>();
+    
     private Item? _item;
     private int _quantity = 1;
     private int _userId;
@@ -64,6 +112,21 @@
         await InitializeUserIdAsync();
         _item = await ItemService.GetById(ItemId);
         _quantity = 1;
+        _reviews = await ReviewService.GetReviewsByItemAsync(ItemId);
+        foreach (var review in await ReviewService.GetReviewsByUserAsync(_userId))
+        {
+            _disableReview = review.ItemId == ItemId;
+        }
+
+        var userEmails = new Dictionary<int, string?>();
+        
+        foreach (var review in _reviews)
+        {
+            var email = await GetEmail(review.UserId);
+            userEmails[review.UserId] = email;
+        }
+        _userEmails = userEmails;
+        
     }
 
     private Task ChangeQuantity(char type)
@@ -88,6 +151,48 @@
             }
         }
         return Task.CompletedTask;
+    }
+
+    public async Task<string?> GetEmail(int id)
+    {
+        User? user = await UserService.GetByIdAsync(id);
+        if(user != null)
+        {
+            return user.Email;
+        }
+        return "";
+    }
+
+    public async Task Review()
+    {
+        int rating = 5;
+        switch (_rate)
+        {
+            case "1":
+                rating = 1;
+                break;
+            case "2":
+                rating = 2;
+                break;
+            case "3":
+                rating = 3;
+                break;
+            case "4":
+                rating = 4;
+                break;
+            case "5":
+                rating = 5;
+                break;
+        }
+
+        await ReviewService.AddReviewAsync(new ReviewCreationDto()
+        {
+            UserId = _userId,
+            ItemId = ItemId,
+            Comment = _comment ?? "",
+            Rating = rating
+        });
+        await OnInitializedAsync();
     }
     
     private async Task InitializeUserIdAsync()

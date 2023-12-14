@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
 using HTTPClients.ClientInterfaces;
 
@@ -19,9 +20,9 @@ public class ReviewHttpClient : IReviewService
         _client = client;
     }
 
-    public async Task<Review> AddReviewAsync(Review review)
+    public async Task<Review> AddReviewAsync(ReviewCreationDto dto)
     {
-        HttpResponseMessage response = await _client.PostAsJsonAsync($"{_baseUrl}/Reviews", review);
+        HttpResponseMessage response = await _client.PostAsJsonAsync($"/Reviews", dto);
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -34,31 +35,31 @@ public class ReviewHttpClient : IReviewService
         })!;
     }
 
-    public async Task<IEnumerable<Review>> GetReviewsByItemAsync(int itemId)
+    public async Task<ICollection<Review>> GetReviewsByItemAsync(int itemId)
     {
-        HttpResponseMessage response = await _client.GetAsync($"{_baseUrl}/Reviews/item/{itemId}");
+        HttpResponseMessage response = await _client.GetAsync($"/Reviews/by-item/{itemId}");
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(result);
         }
 
-        return JsonSerializer.Deserialize<IEnumerable<Review>>(result, new JsonSerializerOptions
+        return JsonSerializer.Deserialize<ICollection<Review>>(result, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         })!;
     }
 
-    public async Task<IEnumerable<Review>> GetReviewsByUserAsync(int userId)
+    public async Task<ICollection<Review>> GetReviewsByUserAsync(int userId)
     {
-        HttpResponseMessage response = await _client.GetAsync($"{_baseUrl}/Reviews/user/{userId}");
+        HttpResponseMessage response = await _client.GetAsync($"Reviews/by-user/{userId}");
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(result);
         }
 
-        return JsonSerializer.Deserialize<IEnumerable<Review>>(result, new JsonSerializerOptions
+        return JsonSerializer.Deserialize<ICollection<Review>>(result, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         })!;

@@ -44,4 +44,14 @@ public class ShoppingCartHttpClient : IShoppingCartService
         })!;
         return items;
     }
+
+    public async Task ClearCart(int customerId)
+    {
+        HttpResponseMessage response = await _client.DeleteAsync($"http://localhost:5111/Cart/clear/{customerId}");
+        if (!response.IsSuccessStatusCode)
+        {
+            string result = await response.Content.ReadAsStringAsync();
+            throw new Exception(result);
+        }
+    }
 }

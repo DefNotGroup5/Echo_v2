@@ -35,7 +35,6 @@ public class UserLogic : IUserLogic
                     City = dto.City,
                     PostalCode = dto.PostalCode,
                     Country = dto.Country,
-                    IsSeller = dto.IsSeller,
                 };
             }
             if (dto.IsAdmin)
@@ -48,11 +47,11 @@ public class UserLogic : IUserLogic
                     Address = dto.Address,
                     City = dto.City,
                     PostalCode = dto.PostalCode,
-                    Country = dto.Country,
+                    Country = dto.Country
                 };
             }
             
-            else
+            else if(dto is { IsAdmin: false, IsSeller: false })
             {
                 userToCreate = new Customer(dto.Email, dto.Password)
                 {
@@ -65,7 +64,6 @@ public class UserLogic : IUserLogic
                     Country = dto.Country,
                 };
             }
-
             await _usersService.AddAsync(userToCreate);
             User? created = await _usersService.GetByEmailAsync(dto.Email);
             return created;

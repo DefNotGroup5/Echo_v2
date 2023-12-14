@@ -1,12 +1,15 @@
 ﻿@page "/listitem"
 @using Microsoft.AspNetCore.Components.Forms
-@using Supabase.Storage
 @using HTTPClients.ClientInterfaces
 @using Domain.Shopping.DTOs
-@using PresentationView.Auth
+@using PresentationView.ComponentServices.Interfaces
+@using FileOptions = Supabase.Storage.FileOptions
+@using System.IO
 @inject Supabase.Client Supabase
 @inject IItemService ItemService
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject IConfirmationService ConfirmationService;
 
 
 <!-- <AuthorizeView>
@@ -17,28 +20,28 @@
                 <div class="inputs-container">
                     <div class="input-box-container">
                         <div class="row">
-                            <input type="text" placeholder="Name" class="input-box input-box1" @bind="_name" @bind:event="oninput" disabled="@(!nameEditable)"/>
-                            <input type="text" placeholder="Price" class="input-box input-box3" @bind="_price" @bind:event="oninput" disabled="@(!priceEditable)"/>
+                            <input type="text" placeholder="Name" class="input-box input-box1" @bind="_name"/>
+                            <input type="text" placeholder="Price" class="input-box input-box3" @bind="_price"/>
                         </div>
                         <div class="row">
-                            <input type="text" placeholder="Quantity" class="input-box input-box2" @bind="_quantity" @bind:event="oninput" disabled="@(!quantityEditable)"/>
-                            <select type="text" placeholder="Availability" class="input-box input-box4" @bind="_availability" disabled="@(!availabilityEditable)">
-                                <option value="available">Available</option>
-                                <option value="not available">Not Available</option>
-                            </select>
+                            <label class="q-label">Quantity: </label>
+                            <input type="number" placeholder="Initial Quantity" class="input-box input-box2" @bind="_quantity"/>
                         </div>
                         <div class="row">
-                            <input type="text" placeholder="Description" class="input-box input-box5" @bind="_description" @bind:event="oninput" disabled="@(!descriptionEditable)"/>
+                            <textarea style="resize: none" placeholder="Description" class="input-box input-box5" @bind="_description"></textarea>
                         </div>
                     </div>
                     <div class="input-box-container">
                         <div class="input-box input-box6">
                             <InputFile OnChange="OnFileSelected"/>
-                            <button @onclick="UploadToSupabase">Upload</button>
                         </div>
                     </div>
                 </div>
-                @if (!confirmPublish)
+                @if (!string.IsNullOrEmpty(_result))
+                {
+                    <label>@_result</label>
+                }
+                @if (!_confirmPublish)
                 {
                     <button class="button" @onclick="ShowConfirmation">Publish</button>
                 }
@@ -63,77 +66,66 @@
     private string _name = "";
     private string _price = "";
     private int _quantity = 0;
-    private bool _isAvailable = false;
-    private string _availability = "not available";
     private string _description = "";
     private IBrowserFile? _file;
-    private bool confirmPublish = false;
-    private bool nameEditable = true;
-    private bool priceEditable = true;
-    private bool quantityEditable = true;
-    private bool availabilityEditable = true;
-    private bool descriptionEditable = true;
-    private string _result = "";
+    private bool _confirmPublish = false;
+    private int _userId;
+    private string _result;
 
     private void ShowConfirmation()
     {
-        confirmPublish = true;
-        nameEditable = false;
-        priceEditable = false;
-        quantityEditable = false;
-        availabilityEditable = false;
-        descriptionEditable = false;
+        _confirmPublish = true;
     }
 
     private void CancelPublish()
     {
-        confirmPublish = false;
-        nameEditable = true;
-        priceEditable = true;
-        quantityEditable = true;
-        availabilityEditable = true;
-        descriptionEditable = true;
+        _confirmPublish = false;
     }
     private async Task PublishItem()
     {
         NavigationManager.NavigateTo("/...");
         try
         {
-            if (_availability.Equals("available"))
-            {
-                _isAvailable = true;
-            }
-            if (_availability.Equals("not available"))
-            {
-                _isAvailable = false;
-            }
-            //var authState = await AuthProvider.GetAuthenticationStateAsync();
-            //var user = authState.User;
-           // var userIdClaim = user.FindFirst("Id");
+            _result = "";
+            await InitializeUserIdAsync();
             string? imageUrl = await UploadToSupabase();
-
-            if (imageUrl != null) await ItemService.CreateAsync(new ItemCreationDto(1, _name, imageUrl, _description, int.Parse(_price), _quantity));
-
+            if (imageUrl != null) await ItemService.CreateAsync(new ItemCreationDto(_userId, _name, imageUrl, _description, double.Parse(_price), _quantity));
+            string confirmationTitle = "Item created!!";
+            string confirmationDescription = "Your item has been added for sale!";
+            ConfirmationService.ShowConfirmation(confirmationTitle, confirmationDescription, HandleConfirmationResult);
+            
             _name = "";
             _price = "";
             _quantity = 0;
-            _isAvailable = false;
-            _availability = "not available";
             _description = "";
-            confirmPublish = false;
-            nameEditable = true;
-            priceEditable = true;
-            quantityEditable = true;
-            availabilityEditable = true;
-            descriptionEditable = true;
-            _result = "Success";
-            Console.WriteLine(_result);
-            
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             _result = e.Message;
+        }
+    }
+    
+    
+    private async Task InitializeUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity is {IsAuthenticated: true })
+        {
+            var userIdClaim = user.FindFirst("Id"); 
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+            {
+                _userId = userId;
+            }
+        }
+    }
+    
+    private void HandleConfirmationResult(bool isConfirmed)
+    {
+        if (isConfirmed)
+        {
+            NavigationManager.NavigateTo("/items");
         }
     }
 
@@ -149,15 +141,15 @@
             if (_file != null)
             {
                 var storage = Supabase.Storage.From("Item_Photos");
-                var fileName = _file.Name;
+                var uniqueFileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{Guid.NewGuid()}_{_userId}.{_file.ContentType}";
                 var fileBytes = await ConvertFileToByteArray(_file);
                 var options = new FileOptions()
                 {
                     ContentType = _file.ContentType
                 };
-                var response = await storage.Upload(fileBytes, fileName, options);
+                var response = await storage.Upload(fileBytes, uniqueFileName, options);
                 Console.WriteLine(response);
-                var publicUrl = await Supabase.Storage.From("Item_Photos").CreateSignedUrl(fileName, 999999999);
+                var publicUrl = await Supabase.Storage.From("Item_Photos").CreateSignedUrl(uniqueFileName, 999999999);
                 Console.WriteLine(publicUrl);
                 return publicUrl;
             }

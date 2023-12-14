@@ -14,7 +14,7 @@ import java.util.List;
 @GrpcService
 public class ReviewServiceImpl extends ReviewServiceGrpc.ReviewServiceImplBase {
 
-    private ReviewRepository reviewRepository;
+   private ReviewRepository reviewRepository;
 
     public ReviewServiceImpl(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
