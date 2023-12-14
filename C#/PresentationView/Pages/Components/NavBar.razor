@@ -12,14 +12,26 @@
         <button class="nav-button" @onclick="Store">Store</button>
         <button class="nav-button" @onclick="Cart">Cart</button>
     </div>
+    
+            <AuthorizeView Policy="IsAdmin">
+                <Authorized>
+                    <button class="nav-button" @onclick="Admin">Admin</button>
+                </Authorized>
+            </AuthorizeView>
+    <AuthorizeView Policy="IsAuthorizedSeller">
+        <Authorized>
+            <button class="nav-button" @onclick="Seller">Seller</button>
+        </Authorized>
+    </AuthorizeView>
     <AuthorizeView>
         <Authorized>
             <button class="login-button" @onclick="Logout">Logout</button>
         </Authorized>
-        <NotAuthorized>
-            <button class="login-button" @onclick="Login">Login</button>
-        </NotAuthorized>
+    <NotAuthorized>
+        <button class="login-button" @onclick="Login">Login</button>
+    </NotAuthorized>
     </AuthorizeView>
+   
     
 </nav>
 
@@ -43,9 +55,17 @@
         NavigationManager.NavigateTo($"/{route}");
     }
     
+    private void Admin()
+    {
+        NavigationManager.NavigateTo("/sellerdash");
+    }
     private void Login()
     {
         NavigationManager.NavigateTo("/Login");
+    }
+    private void Seller()
+    {
+        NavigationManager.NavigateTo("/admindash");
     }
 
     private void Store()

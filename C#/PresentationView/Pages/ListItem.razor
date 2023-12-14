@@ -12,8 +12,8 @@
 @inject IConfirmationService ConfirmationService;
 
 
-<!-- <AuthorizeView>
-    <Authorized> -->
+<AuthorizeView Policy="IsAuthorizedSeller">
+    <Authorized>
         <div class="wrapper">
             <div class="list-items-wrapper">
                 <h1>List an item</h1>
@@ -59,8 +59,8 @@
                 }
             </div>
         </div>
- <!--   </Authorized>
-</AuthorizeView> -->
+    </Authorized>
+</AuthorizeView>
 
 @code {
     private string _name = "";

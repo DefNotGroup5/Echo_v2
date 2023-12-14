@@ -29,8 +29,18 @@ public class UsersController : ControllerBase
     }
     private List<Claim> GenerateClaims(User user)
     {
-        bool isSeller = user.GetType().IsAssignableFrom(typeof(Seller));
-        bool isAdmin = user.GetType().IsAssignableFrom(typeof(Admin));
+        bool isSeller = false;
+        bool isAuthorizedSeller = false;
+        if (user is Seller seller)
+        {
+            isSeller = true;
+            if (seller.IsAuthorized)
+            {
+                isAuthorizedSeller = true;
+            }
+        }
+        bool isAdmin = user is Admin;
+        bool isCustomer = !isAdmin && !isSeller;
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, _config["Jwt:Subject"] ?? string.Empty),
@@ -45,7 +55,9 @@ public class UsersController : ControllerBase
             new Claim(ClaimTypes.Country, user.Country),
             new Claim(ClaimTypes.PostalCode, user.PostalCode.ToString()),
             new Claim("IsSeller", isSeller.ToString()),
-            new Claim("IsAdmin", isAdmin.ToString())
+            new Claim("IsAdmin", isAdmin.ToString()),
+            new Claim("IsAuthorizedSeller", isAuthorizedSeller.ToString()),
+            new Claim("IsCustomer", isCustomer.ToString())
         };
         return claims.ToList();
     }

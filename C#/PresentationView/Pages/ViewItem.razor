@@ -46,29 +46,59 @@
                             <label>@_item?.Price DKK</label>
                         </div>
                     </div>
-                    <div class="button-span">
-                        <button class="wishlist-button" @onclick="AddToWishlist">Add To Wishlist</button>
-                        <button class="cart-button" @onclick="AddToShoppingCart">Add To Cart</button>
-                    </div>
+                    <AuthorizeView>
+                        <Authorized>
+                            <div class="button-span">
+                                <button class="wishlist-button" @onclick="AddToWishlist">Add To Wishlist</button>
+                                <button class="cart-button" @onclick="AddToShoppingCart">Add To Cart</button>
+                            </div>
+                        </Authorized>
+                        <NotAuthorized>
+                            <div class="button-span">
+                                <button disabled="disabled" class="wishlist-button" @onclick="AddToWishlist">Add To Wishlist</button>
+                                <button disabled="disabled" class="cart-button" @onclick="AddToShoppingCart">Add To Cart</button>
+                            </div>
+                        </NotAuthorized>
+                    </AuthorizeView>
                 </div>
             </div>
             <h2>Comments and Reviews</h2>
             <div class="comment-section">
                 
-                <div class="add-comment-container">
-                    <div class="submit-review">
-                        <select @bind="_rate" class="insert-review" disabled="@_disableReview">
-                            <option value="" disable selected>Review</option>
-                            <option value="5">5</option>
-                            <option value="4">4</option>
-                            <option value="3">3</option>
-                            <option value="2">2</option>
-                            <option value="1">1</option>
-                        </select>
-                        <button @onclick="Review" class="submit-button" disabled="@_disableReview">Submit</button>
-                    </div>
-                    <textarea maxlength="500" @bind="_comment" disabled="@_disableReview" class="insert-comment" style="resize: none;"></textarea>
-                </div>
+                <AuthorizeView Policy="IsCustomer">
+                    <Authorized>
+                        <div class="add-comment-container">
+                            <div class="submit-review">
+                                <select @bind="_rate" class="insert-review" disabled="@_disableReview">
+                                    <option value="" disable selected>Review</option>
+                                    <option value="5">5</option>
+                                    <option value="4">4</option>
+                                    <option value="3">3</option>
+                                    <option value="2">2</option>
+                                    <option value="1">1</option>
+                                </select>
+                                <button @onclick="Review" class="submit-button" disabled="@_disableReview">Submit</button>
+                            </div>
+                            <textarea maxlength="500" @bind="_comment" disabled="@_disableReview" class="insert-comment" style="resize: none;"></textarea>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <div class="add-comment-container">
+                            <div class="submit-review">
+                                <select @bind="_rate" class="insert-review" disabled>
+                                    <option value="" disable selected>Review</option>
+                                    <option value="5">5</option>
+                                    <option value="4">4</option>
+                                    <option value="3">3</option>
+                                    <option value="2">2</option>
+                                    <option value="1">1</option>
+                                </select>
+                                <button @onclick="Review" class="submit-button" disabled>Submit</button>
+                            </div>
+                            <textarea maxlength="500" @bind="_comment" disabled class="insert-comment" style="resize: none;"></textarea>
+                        </div>
+                    </NotAuthorized>
+                </AuthorizeView>
                 <div class="comments">
                     @if (_reviews.Any())
                     {

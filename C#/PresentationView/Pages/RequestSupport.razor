@@ -8,6 +8,7 @@
 @inject IConfirmationService ConfirmationService;
 @inject ISupportService SupportService;
 @inject NavigationManager NavigationManager;
+@attribute [Authorize]
 <div class="wrapper">
     <div class="container">
         <h1>Customer Service</h1>
@@ -47,7 +48,7 @@
 @code {
     private int _userId;
     private string? _request;
-    private Message? _latestMessage;
+    private Message? _latestMessage = null;
     private ICollection<Message> _messages = new List<Message>(); 
     private User? _user;
 
@@ -79,9 +80,9 @@
             .ToList();
     }
 
-    private async Task SendRequest(Message latestMessage)
+    private async Task SendRequest(Message? latestMessage)
     {
-        if (!string.IsNullOrEmpty(latestMessage.Response))
+        if (latestMessage == null || !string.IsNullOrEmpty(latestMessage?.Response))
         {
             await SupportService.RequestSupport(new MessageRequestDto()
             {
