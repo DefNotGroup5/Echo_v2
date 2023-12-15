@@ -1,4 +1,4 @@
-﻿@page "/Wishlist"
+﻿@page "/wishlist"
 @using Domain.Shopping.Models
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 @inject IItemService ItemService;
@@ -10,37 +10,40 @@
 @using PresentationView.ComponentServices.Implementations
 @using Domain.Shopping.DTOs
 @using PresentationView.ComponentServices.Interfaces
-
-<AuthorizeView Policy="IsCustomer">
-    <Authorized>
+@attribute [Authorize]
+<AuthorizeView Policy="IsSeller">
+    <NotAuthorized>
         <div class="container">
             <div class="wishlist-container">
-                    <h1>Wishlist</h1>
-                    <input type="text" class="search" placeholder="Search">
-                    <div class="items">
-                        @if (_userId == 0)
-                        {
-                            <p>Please Log in!</p>
-                        }
-                        @foreach (var (wishlistId, item) in _wishlistItems)
-                        {
-                            <div class="item">
-                                <div class="image-name">
-                                    <div class="image">
-                                        <img src="@item.ImageUrl" alt=""/>
-                                    </div>
-                                    <h3>@item.Name</h3>
+                <h1>Wishlist</h1>
+                <input type="text" class="search" placeholder="Search">
+                <div class="items">
+                    @if (_userId == 0)
+                    {
+                        <p>Please Log in!</p>
+                    }
+                    @foreach (var (wishlistId, item) in _wishlistItems)
+                    {
+                        <div class="item">
+                            <div class="image-name">
+                                <div class="image">
+                                    <img src="@item.ImageUrl" alt=""/>
                                 </div>
-                                <div class="price-delete-check">
-                                    <h3>@item.Price DKK</h3>
-                                    <button @onclick="() => RemoveWishlist(wishlistId)" class="delete">Delete</button>
-                                    <button @onclick="(() => AddToCart(item, wishlistId))" class="delete">Add To Cart</button>
-                                </div>
+                                <h3>@item.Name</h3>
                             </div>
-                        }
-                    </div>
+                            <div class="price-delete-check">
+                                <h3>@item.Price DKK</h3>
+                                <button @onclick="() => RemoveWishlist(wishlistId)" class="delete">Delete</button>
+                                <button @onclick="(() => AddToCart(item, wishlistId))" class="delete">Add To Cart</button>
+                            </div>
+                        </div>
+                    }
                 </div>
+            </div>
         </div>
+    </NotAuthorized>
+    <Authorized>
+        <p>Whishlist is available only to customers.</p>
     </Authorized>
 </AuthorizeView>
 

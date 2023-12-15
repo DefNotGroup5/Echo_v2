@@ -7,6 +7,7 @@
 @inject NavigationManager NavigationManager
 @inject IUserService UserService;
 
+@attribute [Authorize]
 <AuthorizeView Policy="IsAdmin">
     <Authorized>
         <div class="wrapper">
