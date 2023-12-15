@@ -100,8 +100,6 @@
     private async Task RemoveWishlist(int id)
     {
         await WishlistService.RemoveWishlist(id);
-        await InitializeWishlistItems();
-        await ConvertToItems();
     }
 
     private async Task AddToCart(Item item, int id)

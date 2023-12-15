@@ -16,16 +16,14 @@ public static class AuthorizationPolicies
                     context.User.HasClaim(c => c is { Type: "IsAdmin", Value: "True" })));
             options.AddPolicy("IsSeller", policy =>
                 policy.RequireAssertion(context =>
-                    context.User.HasClaim(c => c is { Type: "IsSeller", Value: "True" })
-                    && context.User.HasClaim(c => c is { Type: "IsAuthorizedSeller", Value: "False" })));
+                    context.User.HasClaim(c => c is { Type: "IsSeller", Value: "True" })));
             options.AddPolicy("IsAuthorizedSeller", policy =>
                 policy.RequireAssertion(context =>
-                    context.User.HasClaim(c => c is { Type: "IsAuthorizedSeller", Value: "True" })
-                    &&
-                    context.User.HasClaim(c => c is { Type: "IsSeller", Value: "True" })));
+                    context.User.HasClaim(c => c is { Type: "IsAuthorizedSeller", Value: "True" })));
             options.AddPolicy("IsCustomer", policy =>
                 policy.RequireAssertion(context =>
-                    context.User.HasClaim(c => c is { Type: "IsCustomer", Value: "True" })));
+                    context.User.HasClaim(c => c is { Type: "IsCustomer", Value: "True" }) &&
+                    !context.User.HasClaim(c => c is { Type: "IsAuthorizedSeller", Value: "False" })));
 
             
             //options.AddPolicy("isItemNull", policy=>
