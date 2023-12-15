@@ -9,7 +9,7 @@ public interface ICategoryService
     public Task<Category?> GetCategoryByName(string categoryName);
     public Task<ICollection<Category?>> GetAllCategories();
 
-    public Task<Category?> DeleteCategory(string categoryName);
+    public Task DeleteCategory(string categoryName);
     
     
 

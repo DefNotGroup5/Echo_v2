@@ -40,7 +40,11 @@ public class CategoryHttpClient : ICategoryService
         {
             throw new Exception(result);
         }
-        return null;
+        Category category = JsonSerializer.Deserialize<Category>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return category;
     }
 
     public async Task<ICollection<Category?>> GetAllCategories()
@@ -51,10 +55,14 @@ public class CategoryHttpClient : ICategoryService
         {
             throw new Exception(result);
         }
-        return new List<Category?>();
+        ICollection<Category> categories = JsonSerializer.Deserialize<ICollection<Category>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return categories;
     }
     
-    public async Task<Category?> DeleteCategory(string categoryName)
+    public async Task DeleteCategory(string categoryName)
     {
         HttpResponseMessage response = await _client.DeleteAsync($"http://localhost:5105/Category/{categoryName}");
         string result = await response.Content.ReadAsStringAsync();
@@ -62,7 +70,6 @@ public class CategoryHttpClient : ICategoryService
         {
             throw new Exception(result);
         }
-        return null;
     }
     
     

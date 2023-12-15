@@ -20,9 +20,9 @@
                     @foreach (var category in _categories)
                     {
                         <div class="categories">
-                            <p>Category</p>
+                            <p>@category?.CategoryName</p>
                             <button class="button" @onclick="EditCategoryName">Edit</button>
-                            <button class="button" @onclick="() => DeleteCategory(_currentName)">Delete</button>
+                            <button class="button" @onclick="() => DeleteCategory(category?.CategoryName)">Delete</button>
                         </div>
                     }
 
@@ -32,14 +32,13 @@
                     {
                         <p>No categories, try again :/</p> 
                     }
-                }
-               
-                }
-
-           </div>
+                    <div class="add-row">
+                        <input class="add" placeholder="add item name" type="text" @bind="@_currentName"/>
+                        <button class="button-add" @onclick="AddCategory">Add Category</button>
+                    </div>
+            </div>
     
-            <input type="text" @bind="@_currentName"/>
-            <button class="button-add" @onclick="AddCategory">Add Category</button>
+            
     
         </div>
    
@@ -59,12 +58,13 @@
    protected override async Task OnInitializedAsync()
     {
         _categories = await CategoryService.GetAllCategories();
+       Console.WriteLine(_categories.Count());
     }
 
     private async Task AddCategory()
     {
         _categoryService = await CategoryService.AddCategoryAsync(new CategoryCreationDto(_currentName));
-
+        await OnInitializedAsync();
     }
 
 

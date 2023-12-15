@@ -82,7 +82,7 @@ public class CategoryServiceImpl extends CategoryServiceGrpc.CategoryServiceImpl
             String categoryName = request.getName();
             Optional<CategoryEntity> category = categoryRepository.getCategoryByName(categoryName);
             if (category.isPresent()) {
-                categoryRepository.deleteByCategoryName(categoryName);
+                categoryRepository.delete(category.get());
                 DeleteCategoryResponse response = DeleteCategoryResponse.newBuilder().build();
                 responseStreamObserver.onNext(response);
                 responseStreamObserver.onCompleted();
