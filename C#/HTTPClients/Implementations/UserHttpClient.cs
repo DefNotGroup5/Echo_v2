@@ -155,6 +155,7 @@ public class UserHttpClient : IUserService
         {
             Seller seller = new Seller(dto.User.Email, dto.User.Password)
             {
+                Id = dto.User.Id,
                 FirstName = dto.User.FirstName,
                 LastName = dto.User.LastName,
                 Password = dto.User.Password,
@@ -173,6 +174,7 @@ public class UserHttpClient : IUserService
         {
             user = new Admin(dto.User.Email, dto.User.Password)
             {
+                Id = dto.User.Id,
                 FirstName = dto.User.FirstName,
                 LastName = dto.User.LastName,
                 Password = dto.User.Password,
@@ -186,6 +188,7 @@ public class UserHttpClient : IUserService
         {
             user = new Customer(dto.User.Email, dto.User.Password)
             {
+                Id = dto.User.Id,
                 FirstName = dto.User.FirstName,
                 LastName = dto.User.LastName,
                 Password = dto.User.Password,
