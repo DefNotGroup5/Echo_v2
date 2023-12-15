@@ -23,18 +23,15 @@ public class OrderServiceImplTests {
     private OrderRepository orderRepository;
 
     private OrderServiceImpl orderService;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         orderService = new OrderServiceImpl(orderRepository);
     }
-
     @Test
     void contextLoads() {
         // This test ensures that the Spring context loads properly.
     }
-
     @Test
     @Transactional
     void testCreateOrderWithValidData() {
