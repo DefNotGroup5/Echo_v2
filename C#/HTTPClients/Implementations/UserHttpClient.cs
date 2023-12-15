@@ -4,60 +4,50 @@ using System.Security.Claims;
 using System.Text;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
+using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
 using HTTPClients.ClientInterfaces;
+using HTTPClients.Implementations.Converter;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace HTTPClients.Implementations;
 
 public class UserHttpClient : IUserService
 {
     private readonly HttpClient _client;
-    private ShoppingCart? _shoppingCart;
     public static string? Jwt { get; private set; } = "";
-    public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; } = principal => { };
-    public event Action<ShoppingCart?>? OnShoppingCartChanged;
-    public Task<ShoppingCart?> GetShoppingCart()
-    {
-        return Task.FromResult(_shoppingCart);
-    }
 
+    public Action<ClaimsPrincipal> OnAuthStateChanged { get; set; } = principal => { };
     public UserHttpClient(HttpClient client)
     {
         _client = client;
-        _shoppingCart = new ShoppingCart();
     }
-
-    private void NotifyShoppingCartChanged()
-    {
-        OnShoppingCartChanged?.Invoke(_shoppingCart);
-        Console.WriteLine("Shopping cart changed event fired!");
-        Console.WriteLine(_shoppingCart.ItemsInCart.Count);
-    }
+    
     
     
     
     public async Task<User> CreateAsync(UserCreationDto dto)
     {
-        HttpResponseMessage response = await _client.PostAsJsonAsync("/Users", dto);
+        HttpResponseMessage response = await _client.PostAsJsonAsync("http://localhost:5105/Users/Register", dto);
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(result);
         }
 
-        User user = JsonSerializer.Deserialize<User>(result, new JsonSerializerOptions
+        User user = JsonConvert.DeserializeObject<User>(result, new JsonSerializerSettings()
         {
-            PropertyNameCaseInsensitive = true
+            TypeNameHandling = TypeNameHandling.All
         })!;
         return user;
     }
     
     public async Task LoginAsync(UserLoginDto dto)
     {
-        _shoppingCart = new ShoppingCart();
         string userAsJson = JsonSerializer.Serialize(dto);
         StringContent content = new(userAsJson, Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await _client.PatchAsync("/Users/Login", content);
+        HttpResponseMessage response = await _client.PatchAsync("http://localhost:5105/Users/Login", content);
         string responseContent = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -68,27 +58,144 @@ public class UserHttpClient : IUserService
         Jwt = token;
         ClaimsPrincipal principal = CreateClaimsPrincipal();
         OnAuthStateChanged.Invoke(principal);
-        NotifyShoppingCartChanged();
     }
 
     public Task LogoutAsync()
     {
-        _shoppingCart = null;
         Jwt = "";
         ClaimsPrincipal emptyPrincipal = new ClaimsPrincipal();
         OnAuthStateChanged?.Invoke(emptyPrincipal);
         return Task.CompletedTask;
     }
-    
-    public Task AddItemToShoppingCart(Item item, int quantity)
+
+    public async Task<ICollection<User>> GetAllAsync()
     {
-        if (_shoppingCart == null) return Task.CompletedTask;
-        for (int i = 0; i < quantity; i++)
+        HttpResponseMessage response = await _client.GetAsync($"http://localhost:5105/Users");
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
         {
-            _shoppingCart?.ItemsInCart.Add(item);
+            throw new Exception(result);
         }
-        NotifyShoppingCartChanged();
-        return Task.CompletedTask;
+        
+        ICollection<UserTransferDto> dtos = JsonConvert.DeserializeObject<ICollection<UserTransferDto>>(result, new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+        })!;
+        ICollection<User> users = new List<User>();
+        foreach (var dto in dtos)
+        {
+            User user = null;
+            if (dto.IsSeller)
+            {
+                Seller seller = new Seller(dto.User.Email, dto.User.Password)
+                {
+                    Id = dto.User.Id,
+                    FirstName = dto.User.FirstName,
+                    LastName = dto.User.LastName,
+                    Password = dto.User.Password,
+                    Address = dto.User.Address,
+                    City = dto.User.City,
+                    PostalCode = dto.User.PostalCode,
+                    Country = dto.User.Country,
+                };
+                if (dto.IsAuthorized)
+                {
+                    seller.IsAuthorized = true;
+                }
+                user = seller;
+            }
+            if (dto.IsAdmin)
+            {
+                user = new Admin(dto.User.Email, dto.User.Password)
+                {
+                    Id = dto.User.Id,
+                    FirstName = dto.User.FirstName,
+                    LastName = dto.User.LastName,
+                    Password = dto.User.Password,
+                    Address = dto.User.Address,
+                    City = dto.User.City,
+                    PostalCode = dto.User.PostalCode,
+                    Country = dto.User.Country
+                };
+            }
+            if(dto is { IsAdmin: false, IsSeller: false })
+            {
+                user = new Customer(dto.User.Email, dto.User.Password)
+                {
+                    Id = dto.User.Id,
+                    FirstName = dto.User.FirstName,
+                    LastName = dto.User.LastName,
+                    Password = dto.User.Password,
+                    Address = dto.User.Address,
+                    City = dto.User.City,
+                    PostalCode = dto.User.PostalCode,
+                    Country = dto.User.Country,
+                };
+            }
+
+            if (user != null) users.Add(user);
+        }
+        return users;
+    }
+
+    public async Task<User?> GetByIdAsync(int id)
+    {
+        HttpResponseMessage response = await _client.GetAsync($"http://localhost:5105/Users/{id}");
+        string result = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(result);
+        }
+        UserTransferDto dto = JsonConvert.DeserializeObject<UserTransferDto>(result, new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.All
+        })!;
+        User user = null;
+        if (dto.IsSeller)
+        {
+            Seller seller = new Seller(dto.User.Email, dto.User.Password)
+            {
+                FirstName = dto.User.FirstName,
+                LastName = dto.User.LastName,
+                Password = dto.User.Password,
+                Address = dto.User.Address,
+                City = dto.User.City,
+                PostalCode = dto.User.PostalCode,
+                Country = dto.User.Country,
+            };
+            if (dto.IsAuthorized)
+            {
+                seller.IsAuthorized = true;
+            }
+            user = seller;
+        }
+        if (dto.IsAdmin)
+        {
+            user = new Admin(dto.User.Email, dto.User.Password)
+            {
+                FirstName = dto.User.FirstName,
+                LastName = dto.User.LastName,
+                Password = dto.User.Password,
+                Address = dto.User.Address,
+                City = dto.User.City,
+                PostalCode = dto.User.PostalCode,
+                Country = dto.User.Country
+            };
+        }
+        if(dto is { IsAdmin: false, IsSeller: false })
+        {
+            user = new Customer(dto.User.Email, dto.User.Password)
+            {
+                FirstName = dto.User.FirstName,
+                LastName = dto.User.LastName,
+                Password = dto.User.Password,
+                Address = dto.User.Address,
+                City = dto.User.City,
+                PostalCode = dto.User.PostalCode,
+                Country = dto.User.Country,
+            };
+        }
+        return user;
     }
 
 

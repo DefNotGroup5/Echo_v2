@@ -1,9 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Application.Account.LogicInterfaces;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
+using Domain.Shopping.DTOs;
+using Domain.Shopping.Models;
+using GrpcClientServices.Services;
 using Microsoft.AspNetCore.Http.HttpResults;    
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -25,8 +29,18 @@ public class UsersController : ControllerBase
     }
     private List<Claim> GenerateClaims(User user)
     {
-        bool isSeller = user is Seller;
+        bool isSeller = false;
+        bool isAuthorizedSeller = false;
+        if (user is Seller seller)
+        {
+            isSeller = true;
+            if (seller.IsAuthorized)
+            {
+                isAuthorizedSeller = true;
+            }
+        }
         bool isAdmin = user is Admin;
+        bool isCustomer = !isAdmin && !isSeller;
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, _config["Jwt:Subject"] ?? string.Empty),
@@ -41,7 +55,9 @@ public class UsersController : ControllerBase
             new Claim(ClaimTypes.Country, user.Country),
             new Claim(ClaimTypes.PostalCode, user.PostalCode.ToString()),
             new Claim("IsSeller", isSeller.ToString()),
-            new Claim("IsAdmin", isAdmin.ToString())
+            new Claim("IsAdmin", isAdmin.ToString()),
+            new Claim("IsAuthorizedSeller", isAuthorizedSeller.ToString()),
+            new Claim("IsCustomer", isCustomer.ToString())
         };
         return claims.ToList();
     }
@@ -92,6 +108,7 @@ public class UsersController : ControllerBase
     {
         try
         {
+            Console.WriteLine("Reached");
             User? user = await _userLogic.Login(userLoginDto);
             string token = "";
             if (user != null)
@@ -99,6 +116,106 @@ public class UsersController : ControllerBase
                 token = GenerateJwt(user);
             }
             return Ok(token);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<ICollection<UserTransferDto>>> GetAllAsync()
+    {
+        try
+        {
+            ICollection<UserTransferDto> transferredUsers = new List<UserTransferDto>();
+            ICollection<User?> users = await _userLogic.GetAll();
+            foreach (var user in users)
+            {
+                UserTransferDto dto;
+                if (user is Seller seller)
+                {
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = true,
+                        IsAdmin = false,
+                        IsAuthorized = seller.IsAuthorized
+                    };
+                }
+                else if (user is Admin)
+                { 
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = false,
+                        IsAdmin = true,
+                        IsAuthorized = false
+                    };
+                }
+                else
+                { 
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = false,
+                        IsAdmin = false,
+                        IsAuthorized = false
+                    };
+                }
+                transferredUsers.Add(dto);
+            }
+            return Ok(transferredUsers);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<UserTransferDto>> GetById([FromRoute] int id)
+    {
+        try
+        {
+            UserTransferDto dto = null;
+            ICollection<User?> users = await _userLogic.GetAll();
+            foreach (var user in users)
+            {
+                if (user is Seller seller)
+                {
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = true,
+                        IsAdmin = false,
+                        IsAuthorized = seller.IsAuthorized
+                    };
+                }
+                else if (user is Admin)
+                { 
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = false,
+                        IsAdmin = true,
+                        IsAuthorized = false
+                    };
+                }
+                else
+                { 
+                    dto = new UserTransferDto()
+                    {
+                        User = user,
+                        IsSeller = false,
+                        IsAdmin = false,
+                        IsAuthorized = false
+                    };
+                }
+            }
+            return Ok(dto);
         }
         catch (Exception e)
         {

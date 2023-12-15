@@ -1,0 +1,109 @@
+.button{
+    width: 97px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 36px;
+    background-color: #BF98FF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    color: white;
+    border: none;
+}
+
+
+
+h1{
+    color: #000;
+
+    font-family: Inter;
+    font-size: 64px;
+    font-style: italic;
+    font-weight: 100;
+    line-height: normal;
+    padding-bottom: 3rem;
+
+}
+
+p{
+    color: #000;
+
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.search-bar{
+    width: 432px;
+    height: 30px;
+    flex-shrink: 0;
+    text-align: center;
+    justify-content: space-between;
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    gap: 10rem;
+
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ManageCategories{
+    margin-top: 4rem;
+    margin-bottom: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 64.75rem;
+    min-height: 36.5rem;
+    border-radius: 3.625rem;
+    border: 1px solid rgba(255, 255, 255, 0.49);
+    background: rgba(255, 255, 255, 0.17);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10.800000190734863px);
+    padding: 1.19rem;
+}
+
+.wrapper {
+    background-image:url(BackGroundECHO.webp);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin-bottom: 50px;
+}
+
+.categories{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 10%;
+
+}
+
+.button-add{
+    width: 97px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 36px;
+    background-color: #BF98FF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    margin-left: 120%;
+    margin-top: 40%;
+    color: white;
+    border: none;
+
+}
+
+.search{
+    border-radius: 10px;
+    gap: 0.5rem;
+}

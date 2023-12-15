@@ -1,7 +1,7 @@
 ﻿using Application.Shopping.LogicInterfaces;
-using Domain.Account.DTOs;
-using Domain.Account.Models;
+using Domain.Shopping.DTOs;
 using GrpcClientServices.Services;
+using Domain.Shopping.Models;
 
 namespace Application.Shopping.Logic;
 
@@ -22,7 +22,7 @@ public class ItemLogic : IItemLogic
         try
         {
            string validation = await ValidateCreationDto(dto);
-           if (string.IsNullOrEmpty(validation))
+           if (!string.IsNullOrEmpty(validation))
            {
                throw new Exception(validation);
            }

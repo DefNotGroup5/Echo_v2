@@ -1,5 +1,5 @@
-namespace Domain.Account.Models;
-
+namespace Domain.Shopping.Models;
+[Serializable]
 public class User
 {
     public int Id { get; set; }

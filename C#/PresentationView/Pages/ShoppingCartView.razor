@@ -1,0 +1,197 @@
+﻿@page "/cart"
+@using Domain.Shopping.Models
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject IItemService ItemService;
+@inject NavigationManager NavigationManager;
+@inject IShoppingCartService ShoppingCartService;
+@inject IOrderService OrderService;
+@using HTTPClients.ClientInterfaces
+@using System.Collections
+@using Domain.Shopping.DTOs
+
+@attribute [Authorize]
+<div class="container">
+    <div class="cart-container">
+        <div class="top">
+            @if (!_isContinue && !_bought)
+            {
+                <h1>Shopping Cart</h1>
+            }
+            else if (_isContinue && !_bought)
+            {
+                <h1>Confirm Order</h1>
+            }
+            else if (_isContinue && _bought)
+            {
+                <h1>Order #@_orderFinished?.OrderId Purchased</h1>
+            }
+            <input type="text" class="search" placeholder="Search">
+            <div class="items">
+                @if (_userId == 0)
+                {
+                    <p>Please Log in!</p>
+                }
+                @foreach (var item in _items)
+                {
+                    if (item != null)
+                    {
+                        <div class="item">
+                            <div class="image-name">
+                                <div class="image">
+                                    <img src="@item.ImageUrl" alt=""/>
+                                </div>
+                                <h3>@item.Name</h3>
+                            </div>
+                            @if (!_isContinue)
+                            {
+                                <h3 class="qty">Qty: @GetQuantity(item.Id)</h3>
+                                <div class="price-delete-check">
+                                    <h3>@item.Price DKK</h3>
+                                    <button class="delete">Delete</button>
+                                </div>
+                            }
+                            else if (_isContinue)
+                            {
+                                <div class="price-delete-check">
+                                    <h3>@item.Price DKK</h3>
+                                    <h3 class="qty">Qty: @GetQuantity(item.Id)</h3>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        @if(!_isContinue && !_bought)
+        {
+            <div class="button-row">
+                @if (!string.IsNullOrEmpty(_result))
+                {
+                    <label>@_result</label>
+                }
+                <button class="proceed" @onclick="SetContinue">Continue</button>
+            </div>
+        }
+        else if(_isContinue && !_bought)
+        {
+            @if (!string.IsNullOrEmpty(_result))
+            {
+                <label>@_result</label>
+            }
+            <div class="button-row">
+                <button class="cancel" @onclick="SetContinue">Cancel</button>
+                <button class="proceed" @onclick="Buy">Order</button>
+            </div>
+        }
+        else if (_isContinue && _bought)
+        {
+            @if (!string.IsNullOrEmpty(_result))
+            {
+                <label>@_result</label>
+            }
+            <div class="button-row">
+                <button class="proceed" @onclick="Back">Back to Items</button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private bool _isContinue;
+    private string _result;
+    private bool _bought;
+    private int _userId;
+    private Order? _orderFinished;
+    private ICollection<CartItem>? _cartItems = new List<CartItem>();
+    private ICollection<Item?> _items = new List<Item?>();
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeUserIdAsync();
+        await InitializeCartItems();
+        await ConvertToItems();
+    }
+
+    private async Task InitializeCartItems()
+    {
+        _cartItems = await ShoppingCartService.GetByCustomerId(_userId);
+    }
+
+    private async Task ConvertToItems()
+    {
+        if (_cartItems != null)
+            foreach (var cartItem in _cartItems)
+            {
+                _items.Add(await ItemService.GetById(cartItem.ItemId));
+            }
+    }
+
+    private void SetContinue()
+    {
+        _isContinue = !_isContinue;
+    }
+    
+    private async Task Buy()
+    {
+        try
+        {
+            _result = "";
+            ICollection<int> itemIds = new List<int>();
+            foreach (var cartItem in _cartItems)
+            {
+                for (int i = 0; i < cartItem.Quantity; i++)
+                {
+                    itemIds.Add(cartItem.ItemId);
+                }
+            }
+            _orderFinished = await OrderService.CreateOrder(new OrderCreationDto()
+            {
+                ItemIds = itemIds,
+                CustomerId = _userId
+            });
+            _bought = !_bought;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            _result = e.Message;
+        }
+    }
+
+    private async Task Back()
+    {
+        _items = new List<Item?>();
+        _cartItems = new List<CartItem>();
+        await ShoppingCartService.ClearCart(_userId);
+        NavigationManager.NavigateTo("/items");
+    }
+
+
+    private async Task InitializeUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst("Id"); 
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+            {
+                _userId = userId;
+            }
+        }
+    }
+
+    private int GetQuantity(int id)
+    {
+        int quantity = 1;
+        if (_cartItems != null)
+            foreach (var cartItem in _cartItems)
+            {
+                if (cartItem.ItemId == id)
+                {
+                    quantity = cartItem.Quantity;
+                }
+            }
+        return quantity;
+    }
+
+}

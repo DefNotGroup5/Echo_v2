@@ -1,4 +1,4 @@
-using Domain.Account.Models;
+using Domain.Shopping.Models;
 using Grpc.Net.Client;
 
 namespace GrpcClientServices.Services;
@@ -103,7 +103,6 @@ public class ItemService : GrpcClientServices.ItemService.ItemServiceClient
             Description = item.Description,
             Price = item.Price,
             Quantity = item.Quantity,
-
         };
         return generatedGrpcItem;
     }

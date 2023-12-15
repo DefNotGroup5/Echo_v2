@@ -1,47 +1,76 @@
 ﻿@page "/seller/auth"
 @using HTTPClients.ClientInterfaces
+@using Domain.Shopping.Models
 @using Domain.Account.Models
 
 @inject IAdminService AdminService
 @inject NavigationManager NavigationManager
+@inject IUserService UserService;
 
-<div class="wrapper">
-    <div class="auth-wrapper">
-        <h1>Authorize Sellers</h1>
-        <input type="text" placeholder="search"/>
-        <div class="auth-list">
-            @foreach (var seller in _sellers)
-            {
-                <div class="auth-item">
-                    <div class="auth-item__name">@seller.FirstName @seller.LastName</div>
-                    <div class="auth-item__email">@seller.Email</div>
-                    <div class="auth-item__button">
-                        <button class="btn btn-primary" @onclick="() => DeleteSeller(seller.Id)">Delete</button>
-                    </div>
-                    <input type="checkbox" class="auth-item__checkbox" @onselect="() => AuthorizeSeller(seller.Id)"/>              
+<AuthorizeView Policy="IsAdmin">
+    <Authorized>
+        <div class="wrapper">
+            <div class="auth-wrapper">
+                <h1>Authorize Sellers</h1>
+                <input type="text" placeholder="search"/>
+                <div class="auth-list">
+                    @foreach (var seller in _sellers)
+                    {
+                        <div class="auth-item">
+                            <div class="auth-item__name">@seller.FirstName @seller.LastName</div>
+                            <div class="auth-item__email">@seller.Email</div>
+                            @if (seller.IsAuthorized)
+                            {
+                                <input checked="checked" type="checkbox" class="auth-item__checkbox" @onchange="() => ToggleAuthorization(seller.Id)"/> 
+                            }
+                            else
+                            {
+                                <input type="checkbox" class="auth-item__checkbox" @onchange="() => ToggleAuthorization(seller.Id)"/> 
+                            }
+                        </div>
+                    }
                 </div>
-            }
+            </div>
         </div>
-    </div>
-</div>
+    </Authorized>
+</AuthorizeView>
 
 @code {
-    private IEnumerable<User> _sellers = new List<Seller>();
+    private ICollection<Seller> _sellers = new List<Seller>();
 
     protected override async Task OnInitializedAsync()
     {
-        _sellers = await AdminService.ListSellersAsync();
+        _sellers = new List<Seller>();
+        ICollection<User> users = await UserService.GetAllAsync();
+        foreach (var user in users)
+        {
+            if (user is Seller seller)
+            {
+                _sellers.Add(seller);
+            }
+        }
     }
 
-    private async Task AuthorizeSeller(int id)
+    private async Task ToggleAuthorization(int id)
     {
-        await AdminService.AuthorizeSellerAsync(id, true);
-        NavigationManager.NavigateTo("/seller/auth", true);
+        bool isAuthorized = await IsSellerAuthorized(id);
+        await AdminService.AuthorizeSellerAsync(id, !isAuthorized);
+        await OnInitializedAsync();
+        NavigationManager.NavigateTo("/seller/auth");
+    }
+
+    private async Task<bool> IsSellerAuthorized(int id)
+    {
+        Seller seller = (Seller)(await UserService.GetByIdAsync(id))!;
+        if (seller.IsAuthorized)
+        {
+            return true;
+        }
+        return false;
     }
 
     private async Task DeleteSeller(int id)
     {
-        await AdminService.DeleteSellerAsync(id);
         NavigationManager.NavigateTo("/seller/auth", true);
     }
 }

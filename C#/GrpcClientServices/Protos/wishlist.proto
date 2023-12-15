@@ -1,0 +1,41 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "GrpcClientServices";
+
+service WishlistService {
+  rpc AddToWishlist(AddToWishlistRequest) returns (AddToWishlistResponse);
+  rpc GetWishlistByUser(GetWishlistByUserRequest) returns (GetWishlistByUserResponse);
+  rpc RemoveWishlist (RemoveWishlistRequest) returns (RemoveWishlistResponse);
+}
+
+message GrpcWishlistItem {
+  int32 id = 1;
+  int32 itemId = 2;
+  int32 userId = 3;
+}
+
+message AddToWishlistRequest {
+  GrpcWishlistItem wishlistItem = 1;
+}
+
+message AddToWishlistResponse {
+  GrpcWishlistItem wishlistItem = 1;
+}
+
+message GetWishlistByUserRequest {
+  int32 userId = 1;
+}
+
+message GetWishlistByUserResponse {
+  repeated GrpcWishlistItem wishlistItems = 1;
+}
+
+message RemoveWishlistRequest {
+  int32 id = 1;
+}
+
+message RemoveWishlistResponse {
+  string result = 1;
+}

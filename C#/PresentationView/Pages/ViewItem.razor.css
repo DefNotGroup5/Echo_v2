@@ -12,35 +12,42 @@
     margin-bottom: 50px;
 }
 
-.image img {
-    height: 28.5rem;
-    width: auto;
-    overflow: hidden;
+.item-info {
+    display: flex;
+    gap: 2.12rem;
+    margin-bottom: 5rem;
 }
 
 .item-container {
+    margin-top: 4rem;
+    margin-bottom: 5rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     width: 64.75rem;
-    height: 36.5rem;
+    min-height: 36.5rem;
     border-radius: 3.625rem;
     border: 1px solid rgba(255, 255, 255, 0.49);
     background: rgba(255, 255, 255, 0.17);
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(10.800000190734863px);
     padding: 1.19rem;
-    gap: 2.12rem;
 }
 
 .image {
     width: 28.5rem;
-    height: 28.5rem;
+    height: 26.125rem;
     flex-shrink: 0;
-    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
     border-radius: 1.875rem;
     background-color: grey;
     overflow: hidden;
+}
+
+.image img {
+    height: 26.125rem;
+    width: auto;
 }
 
 .info {
@@ -55,7 +62,7 @@
 
 .info #stock {
     color: #50B700;
-    font-family: Inter, serif;
+    font-family: Inter;
     font-size: 1.0625rem;
     font-style: italic;
     font-weight: 300;
@@ -73,7 +80,7 @@
 .info #name {
     width: 31.1875rem;
     color: #000;
-    font-family: Inter, serif;
+    font-family: Inter;
     font-size: 2rem;
     font-style: italic;
     font-weight: 200;
@@ -84,7 +91,7 @@
 .info #description {
     width: 31.1875rem;
     color: #000;
-    font-family: Inter, serif;
+    font-family: Inter;
     font-size: 1.125rem;
     font-style: italic;
     font-weight: 100;
@@ -112,7 +119,7 @@
     width: 4.9375rem;
     color: #000;
     text-align: center;
-    font-family: Inter, serif;
+    font-family: Inter;
     font-size: 1.25rem;
     font-style: italic;
     font-weight: 100;
@@ -128,12 +135,12 @@
     height: 1.8125rem;
     border-radius: 2.25rem;
     background: #BF98FF;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
 .q-choice {
     color: #ffff;
-    font-family: "Inter-ExtraLight Italic", Helvetica, serif;
+    font-family: "Inter-ExtraLight Italic", Helvetica;
     font-size: 1.5rem;
     font-style: italic;
     font-weight: 200;
@@ -161,7 +168,7 @@
     width: 8.0625rem;
     color: #000;
     text-align: center;
-    font-family: Inter, serif;
+    font-family: Inter;
     font-size: 1.25rem;
     font-style: italic;
     font-weight: 100;
@@ -171,21 +178,28 @@
 .price label {
     color: #000000;
     text-align: center;
-    font-family: "Inter-Medium", Helvetica, serif;
+    font-family: "Inter", Helvetica;
     font-size: 1.25rem;
     font-weight: 500;
     line-height: normal;
 }
 
-.info button {
+.button-span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.wishlist-button button {
     width: 11.4375rem;
     height: 1.875rem;
     border-radius: 2.25rem;
     background: #BF98FF;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     border: none;
     color: #FFF;
-    font-family: Inter, serif;
+    font-family: Inter;
     font-size: 1.25rem;
     font-style: normal;
     font-weight: 500;
@@ -193,6 +207,185 @@
     cursor: pointer;
 }
 
-.info button:hover {
+.wishlist-button:hover {
     background-color: #aa81ec;
+}
+
+.cart-button {
+    width: 11.4375rem;
+    height: 1.875rem;
+    border-radius: 2.25rem;
+    background: #BF98FF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: none;
+    color: #FFF;
+    font-family: Inter;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    cursor: pointer;
+}
+
+.cart-button:hover {
+    background-color: #aa81ec;
+}
+
+.wishlist-button {
+    width: 11.4375rem;
+    height: 1.875rem;
+    border-radius: 2.25rem;
+    background: #ffffff;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: none;
+    color: #9d9d9d;
+    font-family: Inter;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    cursor: pointer;
+}
+
+.wishlist-button:hover {
+    background: #d2d2d2;
+    color: #fff;
+}
+
+
+.comment-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 64.75rem;
+}
+
+.add-comment-container{
+    background-color: red;
+    width: 40rem;
+    height: 8rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 1.625rem;
+    border: 1px solid rgba(255, 255, 255, 0.49);
+    background: rgba(255, 255, 255, 0.17);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10.800000190734863px);
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+}
+
+.insert-review {
+    text-align: center;
+    border-radius: 36px;
+    height: 30px;
+    width: 6rem;
+    border: 0;
+    box-shadow: 0 4px 4px #00000040;
+    font-family: "Inter-Medium", Helvetica;
+    font-weight: 500;
+    color: #7b7b7b;
+    font-size: 16px;
+    letter-spacing: 0;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.submit-button {
+    width: 5.4375rem;
+    height: 30px;
+    border-radius: 2.25rem;
+    background: #BF98FF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: none;
+    color: #FFF;
+    font-family: Inter;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #aa81ec;
+}
+
+.submit-review {
+    display: flex;
+    gap: 1rem
+}
+
+.insert-comment {
+    width: 30rem;
+    height: 4.5rem;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.49);
+    box-shadow: 0px 0 4px rgba(0, 0, 0, 0.25);
+    font-family: Inter;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.comments {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.comment-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50rem;
+    height: 8rem;
+    border-radius: 1.625rem;
+    border: 1px solid rgba(255, 255, 255, 0.49);
+    background: rgba(255, 255, 255, 0.17);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10.800000190734863px);
+    gap: 0.5rem
+}
+
+.email-review {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 40rem;
+}
+h2 {
+    font-family: Inter, sans-serif;
+    font-weight: 100;
+    font-style: italic;
+    font-size: 4rem;
+    margin-bottom: 2rem;
+}
+
+.email-review label {
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.comment {
+    width: 40rem;
+    height: 4.5rem;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.49);
+    box-shadow: 0px 0 4px rgba(0, 0, 0, 0.25);
+    font-family: Inter;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: normal;
 }

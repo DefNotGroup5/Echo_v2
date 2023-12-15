@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Domain.Account.Models;
+using Domain.Shopping.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,11 +13,17 @@ public static class AuthorizationPolicies
         {
             options.AddPolicy("IsAdmin", policy =>
                 policy.RequireAssertion(context =>
-                    context.User.HasClaim(c => c.Type == "IsAdmin" && c.Value == "True")));
-            
+                    context.User.HasClaim(c => c is { Type: "IsAdmin", Value: "True" })));
             options.AddPolicy("IsSeller", policy =>
                 policy.RequireAssertion(context =>
-                    context.User.HasClaim(c => c.Type == "IsSeller" && c.Value == "True")));
+                    context.User.HasClaim(c => c is { Type: "IsSeller", Value: "True" })));
+            options.AddPolicy("IsAuthorizedSeller", policy =>
+                policy.RequireAssertion(context =>
+                    context.User.HasClaim(c => c is { Type: "IsAuthorizedSeller", Value: "True" })));
+            options.AddPolicy("IsCustomer", policy =>
+                policy.RequireAssertion(context =>
+                    context.User.HasClaim(c => c is { Type: "IsCustomer", Value: "True" }) &&
+                    !context.User.HasClaim(c => c is { Type: "IsAuthorizedSeller", Value: "False" })));
 
             
             //options.AddPolicy("isItemNull", policy=>

@@ -1,3 +1,65 @@
-﻿@page "/"
+﻿@inject NavigationManager NavigationManager
+@page "/"
 
-<h1>Hello, world!</h1>
+<div class="wrapper">
+    <div class="home-wrapper">
+        <AuthorizeView Policy="IsAdmin">
+            <Authorized>
+                <h1>Welcome to Echo, Admin!</h1>
+                <p>Have a great day administrating the web shop!</p>
+                
+                <button @onclick="AdminDash">Admin</button>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="IsCustomer">
+            <Authorized>
+                <h1>Welcome to Our Store!</h1>
+                <p>Explore our wide range of products and offers.</p>
+                <button @onclick="ViewItems">View Items</button>
+            </Authorized>
+            <NotAuthorized>
+                <h1>Welcome to Our Store!</h1>
+                <p>Explore our wide range of products and offers.</p>
+                <p>Make sure to login!</p>
+                <button @onclick="Login">Login</button>
+            </NotAuthorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="IsAuthorizedSeller">
+            <Authorized>
+                <h1>Welcome to Our Store!</h1>
+                <p>Enjoy selling your items at Echo!</p>
+                <button @onclick="SellerDash">Seller</button>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="IsSeller">
+            <Authorized>
+                <h1>Welcome to Our Store!</h1>
+                <p>Currently, you are not authorized to sell! We are working on your application!</p>
+            </Authorized>
+        </AuthorizeView>
+    </div>
+</div>
+
+@code
+{
+    private void Login()
+    {
+        NavigationManager.NavigateTo("/Login");
+    }
+
+    private void AdminDash()
+    {
+        NavigationManager.NavigateTo("/admindash");
+    }
+
+    private void SellerDash()
+    {
+        NavigationManager.NavigateTo("/sellerdash");
+    }
+
+    private void ViewItems()
+    {
+        NavigationManager.NavigateTo("/items");
+    }
+    
+}

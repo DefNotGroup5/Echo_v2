@@ -1,10 +1,9 @@
-﻿using Domain.Account.Models;
+﻿using Domain.Shopping.Models;
 
-namespace Domain.Account.DTOs;
+namespace Domain.Shopping.DTOs;
 
 public class OrderCreationDto
 {
-    public IEnumerable<Item> ItemsInOrder { get; set; }
-    public double TotalPrice { get; set; }
+    public ICollection<int> ItemIds { get; set; }
     public int CustomerId { get; set; }
 }

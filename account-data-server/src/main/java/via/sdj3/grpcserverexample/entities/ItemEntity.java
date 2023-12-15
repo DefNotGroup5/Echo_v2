@@ -8,7 +8,7 @@ public class ItemEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+    @Column(name = "item_id")
     private int id;
     @Column
     private int sellerId;
@@ -16,7 +16,7 @@ public class ItemEntity {
     @Column
     private String name;
 
-    @Column
+    @Column(length = 2048)
     private String image_url;
 
     @Column
@@ -99,10 +99,6 @@ public class ItemEntity {
 
     public void setSellerId(int sellerId) {
         this.sellerId = sellerId;
-    }
-
-    public String getImage_url() {
-        return image_url;
     }
 
 }

@@ -69,11 +69,21 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     public void getByEmail(GetByEmailRequest request, StreamObserver<GetByEmailResponse> responseObserver) {
         try
         {
-            Optional<UserEntity> existingUser = userRepository.getByEmail(request.getEmail());
-            GetByEmailResponse response = GetByEmailResponse.newBuilder().setUser(generateGrpcUser(existingUser.get())).build();
-           responseObserver.onNext(response);
-           responseObserver.onCompleted();
-            System.out.println("Ya");
+            UserEntity existingUser = null;
+            Optional<UserEntity> user = userRepository.getByEmail(request.getEmail());
+            if(user.isPresent())
+            {
+                existingUser = user.get();
+            }
+            else
+            {
+                Status status = Status.INTERNAL.withDescription("User not found!");
+                responseObserver.onError(new StatusRuntimeException(status));
+            }
+            assert existingUser != null;
+            GetByEmailResponse response = GetByEmailResponse.newBuilder().setUser(generateGrpcUser(existingUser)).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
         }
         catch (Exception e)
         {
@@ -86,7 +96,18 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     public void getById(GetByIdRequest request, StreamObserver<GetByIdResponse> responseObserver) {
         try
         {
-            UserEntity existingUser = userRepository.getReferenceById(request.getId());
+            UserEntity existingUser = null;
+            Optional<UserEntity> user = userRepository.getById(request.getId());
+            if(user.isPresent())
+            {
+                existingUser = user.get();
+            }
+            else
+            {
+                Status status = Status.INTERNAL.withDescription("User not found!");
+                responseObserver.onError(new StatusRuntimeException(status));
+            }
+            assert existingUser != null;
             GetByIdResponse response = GetByIdResponse.newBuilder().setUser(generateGrpcUser(existingUser)).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
@@ -94,6 +115,27 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
         catch (Exception e)
         {
             Status status = Status.INTERNAL.withDescription("Error getting by ID!");
+            responseObserver.onError(new StatusRuntimeException(status));
+        }
+    }
+
+    @Override
+    public void getAll(GetAllUsersRequest request, StreamObserver<GetAllUsersResponse> responseObserver) {
+        try
+        {
+            List<UserEntity> users = userRepository.findAll();
+            GetAllUsersResponse.Builder response = GetAllUsersResponse.newBuilder();
+            for (UserEntity user : users)
+            {
+                response.addUsers(generateGrpcUser(user));
+            }
+            System.out.println("The users were gathered");
+            responseObserver.onNext(response.build());
+            responseObserver.onCompleted();
+        }
+        catch (Exception e)
+        {
+            Status status = Status.INTERNAL.withDescription("Error getting by all!");
             responseObserver.onError(new StatusRuntimeException(status));
         }
     }
@@ -110,6 +152,8 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
         userEntity.setCountry(user.getCountry());
         userEntity.setPostalCode(user.getPostalCode());
         userEntity.setPassword(user.getPassword());
+        userEntity.setAdmin(user.getIsAdmin());
+        userEntity.setAuthorizedSeller(user.getIsAuthorizedSeller());
         return userEntity;
     }
 
@@ -117,8 +161,8 @@ public class UserServiceImpl extends UsersServiceGrpc.UsersServiceImplBase {
     {
         return GrpcUser.newBuilder().setId(userEntity.getId()).setFirstName(userEntity.getFirstName()).setLastName(userEntity.getLastName())
                 .setAddress(userEntity.getAddress()).setEmail(userEntity.getEmail()).setIsSeller(userEntity.isSeller())
-                .setCity(userEntity.getCity()).setCountry(userEntity.getCountry())
-                .setPostalCode(userEntity.getPostalCode()).setPassword(userEntity.getPassword()).build();
+                .setCity(userEntity.getCity()).setIsAuthorizedSeller(userEntity.isAuthorizedSeller()).setCountry(userEntity.getCountry())
+                .setPostalCode(userEntity.getPostalCode()).setPassword(userEntity.getPassword()).setIsAdmin(userEntity.isAdmin()).build();
     }
     
     
