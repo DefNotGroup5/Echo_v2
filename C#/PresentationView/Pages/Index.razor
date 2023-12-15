@@ -1,6 +1,7 @@
 ﻿@inject NavigationManager NavigationManager
 @page "/"
 
+@attribute [Authorize]
 <div class="wrapper">
     <div class="home-wrapper">
         <AuthorizeView Policy="IsAdmin">

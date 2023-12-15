@@ -12,6 +12,7 @@
         {
             <button class="nav-button" @onclick="Store">Store</button>
             <button class="nav-button" @onclick="Cart">Cart</button>
+            <button class="nav-button" @onclick="Wishlist">Wishlist</button>
             <button class="nav-button" @onclick="Support">Support</button>
         }
     </div>
@@ -81,6 +82,10 @@
     {
         NavigationManager.NavigateTo("/cart");
     }
+    private void Wishlist()
+    {
+        NavigationManager.NavigateTo("/wishlist");
+    }
 
     private void Home()
     {
@@ -88,7 +93,7 @@
     }
     private void Support()
     {
-     NavigationManager.NavigateTo("/support");
+     NavigationManager.NavigateTo("/view-support-requests");
     }
 
     private async Task Logout()
