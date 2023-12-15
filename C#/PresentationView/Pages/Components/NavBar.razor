@@ -8,17 +8,20 @@
 <nav class="navbar">
     <button class="nav-button" id="home-button" @onclick="Home">Home</button>
     <div class="central-buttons">
-        <button class="nav-button" @onclick="Store">Store</button>
+        @if (_isAuthenticated)
+        {
+            <button class="nav-button" @onclick="Store">Store</button>
             <button class="nav-button" @onclick="Cart">Cart</button>
             <button class="nav-button" @onclick="Wishlist">Wishlist</button>
             <button class="nav-button" @onclick="Support">Support</button>
+        }
     </div>
     
-    <AuthorizeView Policy="IsAdmin">
-        <Authorized>
-            <button class="nav-button" @onclick="Admin">Admin</button>
-        </Authorized>
-    </AuthorizeView>
+            <AuthorizeView Policy="IsAdmin">
+                <Authorized>
+                    <button class="nav-button" @onclick="Admin">Admin</button>
+                </Authorized>
+            </AuthorizeView>
     <AuthorizeView Policy="IsAuthorizedSeller">
         <Authorized>
             <button class="nav-button" @onclick="Seller">Seller</button>
@@ -28,9 +31,9 @@
         <Authorized>
             <button class="login-button" @onclick="Logout">Logout</button>
         </Authorized>
-        <NotAuthorized>
+    <NotAuthorized>
         <button class="login-button" @onclick="Login">Login</button>
-     </NotAuthorized>
+    </NotAuthorized>
     </AuthorizeView>
    
     
@@ -48,6 +51,7 @@
         var user = authState.User;
 
         _isAuthenticated = user.Identity?.IsAuthenticated ?? false;
+
         StateHasChanged();
     }
 
@@ -89,7 +93,7 @@
     }
     private void Support()
     {
-     NavigationManager.NavigateTo("/request-support");
+     NavigationManager.NavigateTo("/view-support-requests");
     }
 
     private async Task Logout()
