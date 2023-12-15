@@ -1,4 +1,5 @@
-﻿using Domain.Shopping.Models;
+﻿using Domain.Shopping.DTOs;
+using Domain.Shopping.Models;
 using Grpc.Net.Client;
 
 namespace GrpcClientServices.Services;
@@ -12,25 +13,28 @@ public class WishlistService : GrpcClientServices.WishlistService.WishlistServic
         _channel = GrpcChannel.ForAddress("http://localhost:3030");
     }
 
-    public async Task<Wishlist?> AddWishlistItemAsync(Wishlist wishlistItem)
+    public async Task<Wishlist?> AddWishlistItemAsync(WishlistCreationDto dto)
     {
         try
         {
-            GrpcWishlistItem wishlistItemToAdd = GenerateGrpcWishlistItem(wishlistItem);
+            GrpcWishlistItem wishlistItemToAdd = GenerateGrpcWishlistItem(new Wishlist()
+            {
+                ItemId = dto.ItemId,
+                UserId = dto.UserId
+            });
             var client = new GrpcClientServices.WishlistService.WishlistServiceClient(_channel);
             var reply = await client.AddToWishlistAsync(new AddToWishlistRequest()
             {
                 WishlistItem = wishlistItemToAdd
             });
             Wishlist? wishlistItemToReturn = GenerateWishlist(reply.WishlistItem);
-            Console.WriteLine(reply);
             return wishlistItemToReturn;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
+            throw;
         }
-        return null;
     }
 
     public async Task<ICollection<Wishlist?>> GetWishlistByUserIdAsync(int id)
@@ -47,7 +51,6 @@ public class WishlistService : GrpcClientServices.WishlistService.WishlistServic
             {
                 wishlistItems.Add(GenerateWishlist(wishlist));
             }
-
             return wishlistItems;
         }
         catch (Exception e)
@@ -58,25 +61,40 @@ public class WishlistService : GrpcClientServices.WishlistService.WishlistServic
         return new List<Wishlist?>();
     }
 
+    public async Task RemoveWishlist(int id)
+    {
+        try
+        {
+            var grpcClient = new GrpcClientServices.WishlistService.WishlistServiceClient(_channel);
+            await grpcClient.RemoveWishlistAsync(new RemoveWishlistRequest()
+            {
+                Id = id
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     private Wishlist? GenerateWishlist(GrpcWishlistItem wishlistItem)
     {
-        Wishlist? generatedWishlistItem = null;
-        /*generatedWishlistItem = new Wishlist(wishlistItem.ItemId, wishlistItem.UserId)
+        return new Wishlist()
         {
+            ItemId = wishlistItem.ItemId,
             Id = wishlistItem.Id,
-        }; */
-        return generatedWishlistItem;
+            UserId = wishlistItem.UserId
+        };
     }
 
     private GrpcWishlistItem GenerateGrpcWishlistItem(Wishlist wishlistItem)
     {
-        GrpcWishlistItem generatedGrpcWishlistItem = new GrpcWishlistItem()
+        return new GrpcWishlistItem()
         {
-            Id = wishlistItem.Id,
-            ItemId = wishlistItem.ItemId?.Id ?? 0,
-            UserId = wishlistItem.UserId?.Id ?? 0,
+            ItemId = wishlistItem.ItemId,
+            UserId = wishlistItem.UserId
         };
-        return generatedGrpcWishlistItem;
     }
 
 }

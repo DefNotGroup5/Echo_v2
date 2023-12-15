@@ -1,4 +1,5 @@
-﻿using Domain.Shopping.DTOs;
+﻿using Domain.Account.Models;
+using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
 using GrpcClientServices.Services;
 
@@ -35,7 +36,6 @@ public class UserLogic : IUserLogic
                     City = dto.City,
                     PostalCode = dto.PostalCode,
                     Country = dto.Country,
-                    IsSeller = dto.IsSeller,
                 };
             }
             if (dto.IsAdmin)
@@ -48,11 +48,10 @@ public class UserLogic : IUserLogic
                     Address = dto.Address,
                     City = dto.City,
                     PostalCode = dto.PostalCode,
-                    Country = dto.Country,
+                    Country = dto.Country
                 };
             }
-            
-            else
+            if(dto is { IsAdmin: false, IsSeller: false })
             {
                 userToCreate = new Customer(dto.Email, dto.Password)
                 {
@@ -65,7 +64,6 @@ public class UserLogic : IUserLogic
                     Country = dto.Country,
                 };
             }
-
             await _usersService.AddAsync(userToCreate);
             User? created = await _usersService.GetByEmailAsync(dto.Email);
             return created;
@@ -88,6 +86,44 @@ public class UserLogic : IUserLogic
             }
             User? user = await _usersService.GetByEmailAsync(dto.Email);
             return user;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<ICollection<User?>> GetAll()
+    {
+        try
+        {
+            ICollection<User?> users = await _usersService.GetAllUsersAsync();
+            foreach (var user in users)
+            {
+                if (user is Seller)
+                {
+                    Console.WriteLine("true");
+                }
+                else
+                {
+                    Console.WriteLine("false");
+                }
+            }
+            return users;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<User?> GetById(int id)
+    {
+        try
+        {
+            return await _usersService.GetByIdAsync(id);
         }
         catch (Exception e)
         {

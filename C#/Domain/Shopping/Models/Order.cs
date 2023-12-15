@@ -1,16 +1,19 @@
-﻿namespace Domain.Shopping.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Domain.Shopping.Models;
 
 public class Order
 {
-    public ICollection<Item> ItemsInOrder { get; set; }
+    public ICollection<int> ItemIds { get; set; }
     public double TotalPrice { get; set; }
-    public int Id { get; set; }
+    public string? OrderId { get; set; }
+    public string? Status { get; set; }
+    public DateTime OrderDate { get; set; }
     public int CustomerId { get; set; }
     
-    public Order(int customerId)
+    public Order()
     {
-        ItemsInOrder = new List<Item>();
-        TotalPrice = 0;
-        CustomerId = customerId;
+        ItemIds = new List<int>();
     }
+    
 }

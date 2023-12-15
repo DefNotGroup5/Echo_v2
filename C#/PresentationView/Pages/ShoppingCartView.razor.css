@@ -13,7 +13,7 @@
 
 .cart-container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     flex-direction: column;
     width: 64.75rem;
@@ -25,6 +25,86 @@
     background: rgba(255, 255, 255, 0.17);
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(10.800000190734863px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.top {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 64.75rem;
+}
+
+.button-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 64.75rem;
+}
+
+.proceed {
+    margin-right: 3rem;
+    margin-bottom: 2rem;
+    width: 7.0625rem;
+    height: 1.625rem;
+    border-radius: 2.25rem;
+    background: #BF98FF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: 0;
+    color: #FFF;
+    font-family: Inter;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.proceed:hover {
+    background: #a67ee5;;
+}
+
+.cancel {
+    margin-right: 3rem;
+    margin-bottom: 2rem;
+    width: 7.0625rem;
+    height: 1.625rem;
+    border-radius: 2.25rem;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: 0;
+    color: #9d9d9d;
+    font-family: Inter;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.cancel:hover {
+    background: #d2d2d2;
+    color: #fff;
+}
+
+
+
+.cart-container::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+}
+
+.cart-container::-webkit-scrollbar-thumb {
+    background-color: #ffffff; /* Color of the thumb */
+    border-radius: 4px; /* Rounded corners of the thumb */
+}
+
+.cart-container::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0); /* Color of the track */
+    border-radius: 4px; /* Rounded corners of the track */
+}
+
+/* Optional: Add these styles to customize the scrollbar on Firefox */
+.cart-container {
+    scrollbar-color: #ffffff rgba(255, 255, 255, 0);
+    scrollbar-width: thin;
 }
 
 .cart-container h1 {
@@ -62,7 +142,7 @@
 
 .item {
     width: 55.25rem;
-    height: 2.75rem;
+    min-height: 2.75rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -76,9 +156,11 @@
 }
 
 .image-name {
+    width: 23rem;
     display: flex;
     align-items: center;
     gap: 1rem;
+    overflow: hidden;
 }
 
 .image img {
@@ -88,9 +170,10 @@
 
 .price-delete-check {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     gap: 1.31rem;
+    width: 28rem;
 }
 
 h3 {
@@ -99,6 +182,13 @@ h3 {
     font-size: 1.25rem;
     font-weight: 500;
 }
+
+.qty {
+    width: 4rem;
+    overflow: hidden;
+}
+
+
 
 .delete {
     width: 6.0625rem;
@@ -109,7 +199,7 @@ h3 {
     border: 0;
     color: #FFF;
     font-family: Inter;
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
 }

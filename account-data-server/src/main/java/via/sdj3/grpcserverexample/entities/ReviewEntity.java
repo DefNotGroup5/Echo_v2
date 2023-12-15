@@ -3,36 +3,26 @@ package via.sdj3.grpcserverexample.entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "reviews", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"customer_id", "item_id"}) // for
-})
+@Table
 public class ReviewEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
-    private UserEntity customer;
+    @Column
+    private int customer_id;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id", nullable = false)
-    private ItemEntity item;
+    @Column
+    private int item_id;
 
-    @Column(nullable = false)
-    private int rating; // 1-5
+    @Column
+    private int rating;
 
-    @Column(length = 1000)
+    @Column(length = 500)
     private String comment;
 
-    public ReviewEntity() {}
-
-    public ReviewEntity(UserEntity customer, ItemEntity item, int rating, String comment) {
-        this.customer = customer;
-        this.item = item;
-        this.rating = rating;
-        this.comment = comment;
+    public ReviewEntity() {
     }
 
     public int getId() {
@@ -43,20 +33,20 @@ public class ReviewEntity {
         this.id = id;
     }
 
-    public UserEntity getCustomer() {
-        return customer;
+    public int getCustomer_id() {
+        return customer_id;
     }
 
-    public void setCustomer(UserEntity customer) {
-        this.customer = customer;
+    public void setCustomer_id(int customer_id) {
+        this.customer_id = customer_id;
     }
 
-    public ItemEntity getItem() {
-        return item;
+    public int getItem_id() {
+        return item_id;
     }
 
-    public void setItem(ItemEntity item) {
-        this.item = item;
+    public void setItem_id(int item_id) {
+        this.item_id = item_id;
     }
 
     public int getRating() {

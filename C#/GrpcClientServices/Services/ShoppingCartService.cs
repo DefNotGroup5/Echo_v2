@@ -43,6 +43,24 @@ public class ShoppingCartService : GrpcClientServices.ShoppingCartService.Shoppi
         return null;
     }
 
+    public async Task ClearCart(int customerId)
+    {
+        try
+        {
+            var client = new GrpcClientServices.ShoppingCartService.ShoppingCartServiceClient(_channel);
+            var reply = await client.ClearCartAsync(new ClearCartRequest()
+            {
+                CustomerId = customerId
+            });
+            Console.WriteLine(reply);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     public async Task<ICollection<CartItem>?> GetAllCartItemsAsync()
     {
         try

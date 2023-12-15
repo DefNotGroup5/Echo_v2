@@ -1,4 +1,6 @@
+using System.Collections;
 using Application.Shopping.LogicInterfaces;
+using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
 using GrpcClientServices;
 using ReviewService = GrpcClientServices.Services.ReviewService;
@@ -14,34 +16,45 @@ public class ReviewLogic : IReviewLogic
         _reviewService = reviewService;
     }
 
-    public async Task<Review> AddReviewAsync(Review review)
+    public async Task<Review> AddReviewAsync(ReviewCreationDto dto)
     {
-        
-        if (review.Rating < 1 || review.Rating > 5)
+        ICollection<Review> reviews = await GetReviewsByUserAsync(dto.UserId);
+        foreach (var review in reviews)
+        {
+            if (review.Id == dto.ItemId)
+            {
+                throw new Exception("User cannot review twice an item.");
+            }
+        }
+        if (dto.Rating < 1 || dto.Rating > 5)
             throw new ArgumentException("Rating must be between 1 and 5.");
-
-        
-        return await _reviewService.AddReviewAsync(review);
+        return await _reviewService.AddReviewAsync(dto);
     }
     
-    public async Task<IEnumerable<Review>> GetReviewsByItemAsync(int itemId)
+    public async Task<ICollection<Review>> GetReviewsByItemAsync(int itemId)
     {
-        var response = await _reviewService.GetReviewsByItemAsync(new GetReviewsByItemRequest { ItemId = itemId });
-        var reviews = new List<Review>();
-        foreach (var grpcReview in response.Reviews)
+        ICollection<Review> initialReviews = await _reviewService.GetAllAsync();
+        ICollection<Review> reviews = new List<Review>();
+        foreach (var review in initialReviews)
         {
-            reviews.Add(new Review(grpcReview.Id, grpcReview.UserId, grpcReview.ItemId, grpcReview.Rating, grpcReview.Comment));
+            if (review.ItemId == itemId)
+            {
+                reviews.Add(review);
+            }
         }
         return reviews;
     }
 
-    public async Task<IEnumerable<Review>> GetReviewsByUserAsync(int userId)
+    public async Task<ICollection<Review>> GetReviewsByUserAsync(int userId)
     {
-        var response = await _reviewService.GetReviewsByUserAsync(new GetReviewsByUserRequest { UserId = userId });
-        var reviews = new List<Review>();
-        foreach (var grpcReview in response.Reviews)
+        ICollection<Review> initialReviews = await _reviewService.GetAllAsync();
+        ICollection<Review> reviews = new List<Review>();
+        foreach (var review in initialReviews)
         {
-            reviews.Add(new Review(grpcReview.Id, grpcReview.UserId, grpcReview.ItemId, grpcReview.Rating, grpcReview.Comment));
+            if (review.UserId == userId)
+            {
+                reviews.Add(review);
+            }
         }
         return reviews;
     }

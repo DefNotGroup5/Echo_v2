@@ -13,13 +13,22 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<UsersService>();
+
 builder.Services.AddScoped<ItemService>();
+builder.Services.AddScoped<IItemLogic, ItemLogic>();
+
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<IOrderLogic, OrderLogic>();
+
 builder.Services.AddScoped<ShoppingCartService>();
 builder.Services.AddScoped<IShoppingCartLogic, ShoppingCartLogic>();
-builder.Services.AddScoped<IItemLogic, ItemLogic>();
-builder.Services.AddScoped<IOrderLogic, OrderLogic>();
+
+
 builder.Services.AddScoped<ReviewService>();
 builder.Services.AddScoped<IReviewLogic, ReviewLogic>();
+
+builder.Services.AddScoped<WishlistService>();
+builder.Services.AddScoped<IWishlistLogic, WishlistLogic>();
 AuthorizationPolicies.AddPolicies(builder.Services);
 
 
@@ -34,6 +43,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthorization();
 app.UseAuthorization();
 
 app.MapControllers();

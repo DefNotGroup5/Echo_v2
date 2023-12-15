@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections;
+using System.Data;
 using Application.Shopping.LogicInterfaces;
 using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
@@ -10,25 +11,26 @@ public class OrderLogic : IOrderLogic
 {
     private readonly UsersService _usersService;
     private readonly ItemService _itemsService;
+    private readonly OrderService _orderService;
 
-    public OrderLogic(UsersService usersService, ItemService itemsService)
+    public OrderLogic(UsersService usersService, ItemService itemsService, OrderService orderService)
     {
+        _orderService = orderService;
         _usersService = usersService;
         _itemsService = itemsService;
     }
 
-    public Task<Order> CreateOrder(OrderCreationDto dto)
+    public async Task<Order?> CreateOrder(OrderCreationDto dto)
     {
         try
         {
-            var order = new Order(customerId: dto.CustomerId);
-            foreach (var item in dto.ItemsInOrder)
+            string validation = await ValidateCreationDto(dto);
+            if (!string.IsNullOrEmpty(validation))
             {
-                order.ItemsInOrder.Add(item);
-                order.TotalPrice += item.Price;
+                throw new Exception(validation);
             }
 
-            return Task.FromResult(order);
+            return await _orderService.CreateOrderAsync(dto);
         }
         catch (Exception e)
         {
@@ -37,12 +39,18 @@ public class OrderLogic : IOrderLogic
         }
     }
 
-    public Task<Order> GetOrderById(int id)
+    public async Task<Order?> GetOrderById(String orderId)
     {
         try
         {
-            var order = new Order(customerId: 1); // wait for service :*
-            return Task.FromResult(order);
+            ICollection<Order> orders = await _orderService.GetAllAsync();
+            foreach (var order in orders)
+            {
+                if (order.OrderId == orderId)
+                    return order;
+            }
+
+            return null;
         }
         catch (Exception e)
         {
@@ -51,50 +59,85 @@ public class OrderLogic : IOrderLogic
         }
     }
 
-    public Task<List<Order?>> GetOrders()
+    public async Task<ICollection<Order?>> GetOrdersBySeller(int sellerId)
     {
-        try{
-            var orders = new List<Order?>();
-            return Task.FromResult(orders);
+        ICollection<Order> orders = await _orderService.GetAllAsync();
+        ICollection<Order> ordersBySeller = new List<Order>();
+        foreach (var order in orders)
+        {
+            ICollection<int> itemIds = new List<int>();
+            double totalPrice = 0;
+            foreach (var itemId in order.ItemIds)
+            {
+                Item? item = await _itemsService.GetItemByIdAsync(itemId);
+                if (item?.SellerId == sellerId)
+                {
+                    totalPrice += item.Price;
+                    itemIds.Add(itemId);
+                }
+            }
+
+            Order newOrder = new Order()
+            {
+                CustomerId = order.CustomerId,
+                TotalPrice = totalPrice,
+                Status = order.Status,
+                ItemIds = itemIds,
+                OrderDate = order.OrderDate,
+                OrderId = order.OrderId
+            };
+            ordersBySeller.Add(newOrder);
+        }
+        return ordersBySeller!;
+    }
+
+    public async Task<ICollection<Order?>> GetOrders()
+    {
+        try
+        {
+            ICollection<Order?> orders = (await _orderService.GetAllAsync())!;
+            return orders;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
+        
     }
     
     //Add Validation
     private async Task<string> ValidateCreationDto(OrderCreationDto orderCreationDto)
     {
-        string validation = "";
         User? user = await _usersService.GetByIdAsync(orderCreationDto.CustomerId);
         if (user == null)
         {
-            validation += "User with id: " + orderCreationDto.CustomerId + " does not exist!";
+            return "User with id: " + orderCreationDto.CustomerId + " does not exist!";
         }
-        if (orderCreationDto.ItemsInOrder.Count == 0)
+        if (orderCreationDto.ItemIds.Count == 0)
         {
-            validation += "Order must contain at least one item!";
+            return "Order must contain at least one item!";
         }
-        else
+        Dictionary<int, int> itemQuantityMap = new Dictionary<int, int>();
+        foreach (var itemId in orderCreationDto.ItemIds)
         {
-            foreach (var item in orderCreationDto.ItemsInOrder)
-            {
-                Item? itemFromDb = await _itemsService.GetItemByIdAsync(item.Id);
+                Item? itemFromDb = await _itemsService.GetItemByIdAsync(itemId);
                 if (itemFromDb == null)
                 {
-                    validation += "Item with id: " + item.Id + " does not exist!";
+                    return "Item with id: " + itemId + " does not exist!";
                 }
-                else
-                {
-                    if (itemFromDb.Quantity < item.Quantity)
-                    {
-                        validation += "Item with id: " + item.Id + " does not have enough quantity!";
-                    }
-                }
-            }
+                itemQuantityMap[itemId] = itemQuantityMap.TryGetValue(itemId, out var existingQuantity)
+                        ? existingQuantity + 1
+                        : 1;
         }
-        return validation;
+        foreach (var (itemId, quantity) in itemQuantityMap)
+        {
+                Item? itemFromDb = await _itemsService.GetItemByIdAsync(itemId);
+                if (quantity > itemFromDb?.Quantity)
+                {
+                    return $"Item with id: {itemId} has exceeded the allowed quantity!";
+                }
+        }
+        return "";
     }
 }

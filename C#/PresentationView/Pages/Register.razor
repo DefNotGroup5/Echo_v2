@@ -58,9 +58,16 @@
 
         try
         {
+            if (_type.Equals("customer", StringComparison.OrdinalIgnoreCase))
+            {
+                _isSeller = false;
+            }
+            if (_type.Equals("seller", StringComparison.OrdinalIgnoreCase))
+            {
+                _isSeller = true;
+            }
           
             await UserService.CreateAsync(new UserCreationDto(_email, _firstName, _lastName, _password, _address, _city, _postcode, _country, _isSeller, false));
-    // await IServiceProviderIsService.Create(new AccountCreationDto(name, password, email, address));
             _firstName = "";
             _lastName = "";
             _password = "";
@@ -72,24 +79,13 @@
             _isSeller = false;
             _result = "Success!";
             _type = "customer";
-            
-            if (_type.Equals("customer", StringComparison.OrdinalIgnoreCase))
-            {
-                _isSeller = false;
-            }
-            if (_type.Equals("seller", StringComparison.OrdinalIgnoreCase))
-            {
-                _isSeller = true;
-            }
+            _isSeller = false;
             
             Console.WriteLine(_result);
             NavigationManager.NavigateTo("/login");
-            
-            
         }
         catch (Exception e)
         {
-            await Console.Error.WriteAsync("Something went wrong");
             Console.WriteLine(e);
             _result = e.Message;
         }

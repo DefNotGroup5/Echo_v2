@@ -1,4 +1,5 @@
-﻿using Application.Shopping.LogicInterfaces;
+﻿using System.Collections;
+using Application.Shopping.LogicInterfaces;
 using Domain.Shopping.DTOs;
 using Domain.Shopping.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,6 @@ namespace Shopping_Web_Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(Policy = "IsCustomer")]
 public class OrderController : ControllerBase
 {
     private readonly IOrderLogic _orderLogic;
@@ -24,7 +24,10 @@ public class OrderController : ControllerBase
         try
         {
             Order? order = await _orderLogic.CreateOrder(dto);
-            if (order != null) return Created($"/Order/{order.Id}", order);
+            if (order != null)
+            {
+                return Created($"Order/{order.OrderId}",order);
+            }
             return StatusCode(500, "ERROR! Order was null!");
         }
         catch (Exception e)
@@ -34,8 +37,8 @@ public class OrderController : ControllerBase
         }
     }
     
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<Order>> GetByIdAsync([FromRoute] int id)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Order>> GetByIdAsync([FromRoute] string id)
     {
         try
         {
@@ -49,18 +52,33 @@ public class OrderController : ControllerBase
         }
     }
     
-[HttpGet]
-public async Task<ActionResult<List<Order>>> GetAsync()
-{
-    try
+    [HttpGet]
+    public async Task<ActionResult<ICollection<Order>>> GetAsync()
     {
-        List<Order?> orders = await _orderLogic.GetOrders();
-        return Ok(orders);
+        try
+        {
+            ICollection<Order?> orders = await _orderLogic.GetOrders();
+            return Ok(orders);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
     }
-    catch (Exception e)
+
+    [HttpGet("by-seller/{sellerId:int}")]
+    public async Task<ActionResult<ICollection<Order>>> GetBySellerIdAsync([FromRoute] int sellerId)
     {
-        Console.WriteLine(e);
-        return StatusCode(500, e.Message);
+        try
+        {
+            ICollection<Order?> orders = await _orderLogic.GetOrdersBySeller(sellerId);
+            return Ok(orders);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
     }
-}
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Shopping.Models;
+﻿using Domain.Account.Models;
+using Domain.Shopping.Models;
 
 namespace GrpcClientServices.Services;
 using Grpc.Net.Client;
@@ -85,6 +86,40 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
         return null;
     }
 
+    public async Task<ICollection<User?>> GetAllUsersAsync()
+    {
+        try
+        {
+            var grpcClient = new GrpcClientServices.UsersService.UsersServiceClient(_channel);
+            var reply = await grpcClient.GetAllAsync(new GetAllUsersRequest());
+            ICollection<User?> users = new List<User?>();
+            foreach (var user in reply.Users)
+            {
+                users.Add(GenerateUser(user));
+            }
+
+            foreach (var user in users)
+            {
+                if (user is Seller)
+                {
+                    Console.WriteLine("true");
+                }
+                else
+                {
+                    Console.WriteLine("false");
+                }
+            }
+
+            return users;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
+        return new List<User?>();
+    }
+
     public static User? GenerateUser(GrpcUser user)
     {
         User? generatedUser = null;
@@ -98,7 +133,8 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
                 Country = user.Country,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                PostalCode = user.PostalCode
+                PostalCode = user.PostalCode,
+                IsAuthorized = user.IsAuthorizedSeller
             };
         }
         if (user.IsAdmin)
@@ -114,7 +150,7 @@ public class UsersService : GrpcClientServices.UsersService.UsersServiceClient
                 PostalCode = user.PostalCode,
             };
         }
-        else
+        else if (user is { IsAdmin: false, IsSeller: false })
         {
             generatedUser = new Customer(user.Email, user.Password)
             {

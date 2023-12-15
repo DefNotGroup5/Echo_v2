@@ -4,7 +4,6 @@ namespace Domain.Shopping.DTOs;
 
 public class OrderCreationDto
 {
-    public ICollection<Item> ItemsInOrder { get; set; }
-    public double TotalPrice { get; set; }
+    public ICollection<int> ItemIds { get; set; }
     public int CustomerId { get; set; }
 }

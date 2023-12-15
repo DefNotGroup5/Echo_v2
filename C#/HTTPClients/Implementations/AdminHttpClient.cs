@@ -17,25 +17,25 @@ public class AdminHttpClient : IAdminService
         _client = client;
     }
     
-    public async Task<IEnumerable<User>> ListSellersAsync()
+    public async Task<ICollection<User>> ListSellersAsync()
     {
-        HttpResponseMessage response = await _client.GetAsync("http://localhost:5105/api/admin/sellers");
+        HttpResponseMessage response = await _client.GetAsync("http://localhost:5105/Admin/sellers");
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception("Failed to retrieve sellers");
         }
-
         string result = await response.Content.ReadAsStringAsync();
-        var sellers = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<User>>(result, new System.Text.Json.JsonSerializerOptions
+        var sellers = System.Text.Json.JsonSerializer.Deserialize<ICollection<User>>(result, new System.Text.Json.JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
-        return sellers ?? Enumerable.Empty<User>();
+        if (sellers != null) return sellers;
+        return new List<User>();
     }
     
     public async Task AuthorizeSellerAsync(int userId, bool isAuthorized)
     {
-        HttpResponseMessage response = await _client.PostAsJsonAsync($"http://localhost:5105/api/admin/authorize-seller/{userId}", isAuthorized);
+        HttpResponseMessage response = await _client.PatchAsJsonAsync($"http://localhost:5105/Admin/authorize-seller/{userId}", isAuthorized);
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception("Failed to authorize seller");

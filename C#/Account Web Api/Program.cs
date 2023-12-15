@@ -15,10 +15,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<UsersService>();
-builder.Services.AddScoped<AdminService>();
-builder.Services.AddScoped<SupportService>();
 builder.Services.AddScoped<IUserLogic, UserLogic>();
+
+builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<IAdminLogic, AdminLogic>();
+
+builder.Services.AddScoped<SupportService>();
 builder.Services.AddScoped<ISupportLogic, SupportLogic>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

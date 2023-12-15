@@ -9,4 +9,5 @@ public interface IShoppingCartLogic
     Task<CartItem?> AddAsync(CartItemCreationDto dto);
     Task<ICollection<CartItem>?> GetAllAsync();
     Task<ICollection<CartItem>?> GetAllByCustomerId(int id);
+    Task ClearCart(int customerId);
 }

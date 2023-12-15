@@ -1,0 +1,125 @@
+﻿@page "/Wishlist"
+@using Domain.Shopping.Models
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject IItemService ItemService;
+@inject IWishlistService WishlistService;
+@inject IShoppingCartService ShoppingCartService;
+@inject IConfirmationService ConfirmationService;
+@using HTTPClients.ClientInterfaces
+@inject NavigationManager NavigationManager;
+@using PresentationView.ComponentServices.Implementations
+@using Domain.Shopping.DTOs
+@using PresentationView.ComponentServices.Interfaces
+
+<AuthorizeView Policy="IsCustomer">
+    <Authorized>
+        <div class="container">
+            <div class="wishlist-container">
+                    <h1>Wishlist</h1>
+                    <input type="text" class="search" placeholder="Search">
+                    <div class="items">
+                        @if (_userId == 0)
+                        {
+                            <p>Please Log in!</p>
+                        }
+                        @foreach (var (wishlistId, item) in _wishlistItems)
+                        {
+                            <div class="item">
+                                <div class="image-name">
+                                    <div class="image">
+                                        <img src="@item.ImageUrl" alt=""/>
+                                    </div>
+                                    <h3>@item.Name</h3>
+                                </div>
+                                <div class="price-delete-check">
+                                    <h3>@item.Price DKK</h3>
+                                    <button @onclick="() => RemoveWishlist(wishlistId)" class="delete">Delete</button>
+                                    <button @onclick="(() => AddToCart(item, wishlistId))" class="delete">Add To Cart</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    private int _userId;
+    private ICollection<Wishlist?>? _wishlists = new List<Wishlist>()!;
+    private IDictionary<int, Item> _wishlistItems = new Dictionary<int, Item>();
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeUserIdAsync();
+        await InitializeWishlistItems();
+        await ConvertToItems();
+    }
+
+    private async Task InitializeWishlistItems()
+    {
+        _wishlists = await WishlistService.GetByUserIdAsync(_userId);
+    }
+
+    private async Task ConvertToItems()
+    {
+        if (_wishlists != null)
+        {
+            foreach (var wishlistItem in _wishlists)
+            {
+                if (wishlistItem != null)
+                {
+                    var item = await ItemService.GetById(wishlistItem.ItemId);
+                    if (item != null)
+                    {
+                        _wishlistItems.Add(wishlistItem.Id, item);
+                    }
+                }
+            }
+        }
+    }
+
+
+    private async Task InitializeUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst("Id"); 
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+            {
+                _userId = userId;
+            }
+        }
+    }
+
+    private async Task RemoveWishlist(int id)
+    {
+        await WishlistService.RemoveWishlist(id);
+    }
+
+    private async Task AddToCart(Item item, int id)
+    {
+        CartItemCreationDto dto = new CartItemCreationDto()
+        {
+            ItemId = item.Id,
+            CustomerId = _userId,
+            Quantity = 1
+        };
+        await ShoppingCartService.CreateAsync(dto);
+        await WishlistService.RemoveWishlist(id);
+        string confirmationTitle = "Item added to shopping cart!";
+        string confirmationDescription = "Your item has been added to the shopping cart. You can now purchase it!";
+        ConfirmationService.ShowConfirmation(confirmationTitle, confirmationDescription, HandleConfirmationResult);
+    }
+
+    private void HandleConfirmationResult(bool isConfirmed)
+    {
+        if (isConfirmed)
+        {
+            NavigationManager.NavigateTo("/items");
+        }
+    }
+    
+}

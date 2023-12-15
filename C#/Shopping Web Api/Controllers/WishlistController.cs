@@ -32,13 +32,28 @@ public class WishlistController : ControllerBase
         }
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<ICollection<Wishlist>>> GetByUserIdAsync([FromRoute] int id)
+    [HttpGet("by-user/{userId:int}")]
+    public async Task<ActionResult<ICollection<Wishlist>>> GetByUserIdAsync([FromRoute] int userId)
     {
         try
         {
-            ICollection<Wishlist?> wishlist = await _wishlistLogic.GetWishlistByUserAsync(id);
+            ICollection<Wishlist?> wishlist = await _wishlistLogic.GetWishlistByUserAsync(userId);
             return Ok(wishlist);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> RemoveWishlist([FromRoute] int id)
+    {
+        try
+        {
+            await _wishlistLogic.RemoveWishlist(id);
+            return Ok();
         }
         catch (Exception e)
         {

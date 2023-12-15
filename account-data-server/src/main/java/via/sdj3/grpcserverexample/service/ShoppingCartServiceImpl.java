@@ -50,6 +50,22 @@ public class ShoppingCartServiceImpl extends ShoppingCartServiceGrpc.ShoppingCar
     }
 
     @Override
+    public void clearCart(ClearCartRequest request, StreamObserver<ClearCartResponse> responseObserver) {
+        try
+        {
+            shoppingCartRepository.deleteByCustomerId(request.getCustomerId());
+            responseObserver.onNext(ClearCartResponse.newBuilder().setResult("Cart cleared").build());
+            System.out.println("Shopping Cart Cleared");
+            responseObserver.onCompleted();
+        }
+        catch (Exception e)
+        {
+            Status status = Status.INTERNAL.withDescription("Error clearing cart"); //message in case on error
+            responseObserver.onError(new StatusRuntimeException(status)); //sends it to the client
+        }
+    }
+
+    @Override
     public void getAllCartItems(GetAllCartItemsRequest request, StreamObserver<GetAllCartItemsResponse> responseObserver) {
         try
         {
