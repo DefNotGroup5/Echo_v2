@@ -1,4 +1,4 @@
-using Domain.Account.Models;
+﻿using Domain.Account.Models;
 using Grpc.Net.Client;
 
 namespace GrpcClientServices.Services;
@@ -78,7 +78,7 @@ public class CategoryService
        return null;
    }
 
-   public async Task<Category?> DeleteCategory(string name)
+   public async Task DeleteCategory(string name)
    {
        try
        {
@@ -93,8 +93,6 @@ public class CategoryService
        {
            Console.WriteLine(e.Message);
        }
-
-       return null;
    }
 
    private Category? GenerateCategory(GrpcCategory category)
@@ -104,7 +102,8 @@ public class CategoryService
        if (category != null)
            generatedCategory = new Category(category.Name)
            {
-               CategoryName = category.Name,
+               
+               Id = category.Id
            };
 
        return generatedCategory;

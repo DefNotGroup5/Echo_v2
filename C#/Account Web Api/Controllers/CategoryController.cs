@@ -13,21 +13,19 @@ namespace Account_Web_Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class CategoryController
+public class CategoryController : ControllerBase
 {
     
     private readonly ICategoryLogic _categoryLogic;
-    private readonly IConfiguration _config;
-    
-    
-    public CategoryController(IConfiguration config, ICategoryLogic categoryLogic)
+
+
+    public CategoryController(ICategoryLogic categoryLogic)
     {
-        _config = config;
         _categoryLogic = categoryLogic;
     }
     
 
-    [HttpPost("Add")]
+    [HttpPost]
     public async Task<ActionResult<Category>> AddCategory(CategoryCreationDto categoryCreationDto)
     {
         try
@@ -46,29 +44,12 @@ public class CategoryController
     
 
     [HttpGet]
-    public async Task<ActionResult<ICollection<CategoryCreationDto>>> GetAllCategoriesA()
+    public async Task<ActionResult<ICollection<Category>>> GetAllCategoriesAsync()
     {
         try
         {
-            ICollection<CategoryCreationDto> passingCategories = new List<CategoryCreationDto>();
-            ICollection<Category?> categories = await _categoryLogic.GetAllCategories();
-            foreach (var category in categories)
-            {
-                CategoryCreationDto dto;
-
-                if (category is not null)
-                {
-                    dto = new CategoryCreationDto(category.CategoryName)
-                    {
-                        CategoryName = category.CategoryName
-                    };
-
-
-                    passingCategories.Add(dto);
-                }
-            }
-
-            return Ok(passingCategories);
+            Console.WriteLine("reached!");
+            return Ok(await _categoryLogic.GetAllCategories());
         }
         catch (Exception e)
         {
@@ -78,24 +59,26 @@ public class CategoryController
     }
 
     [HttpGet("{name}")]
-    public async Task<ActionResult<CategoryCreationDto>> GetCategoryByName([FromRoute] string name)
+    public async Task<ActionResult<Category>> GetCategoryByName([FromRoute] string name)
     {
         try
         {
-            CategoryCreationDto dto = null;
-            ICollection<Category?> categories = await _categoryLogic.GetAllCategories();
-            foreach (var category in categories)
-            {
-                if (category is not null)
-                {
-                    dto = new CategoryCreationDto(category.CategoryName)
-                    {
-                        CategoryName = category.CategoryName
-                    };
-                }
-               
-            }
-            return Ok(dto);
+            return Ok(await _categoryLogic.GetCategoryByName(name));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpDelete("{name}")]
+    public async Task<ActionResult> DeleteAsync([FromRoute] string name)
+    {
+        try
+        {
+            await _categoryLogic.DeleteCategory(name);
+            return Ok();
         }
         catch (Exception e)
         {

@@ -7,10 +7,10 @@ public interface ICategoryLogic
 {
     Task<Category?> AddCategory(CategoryCreationDto dto);
 
-    Task<Category?> GetCategoryByName(CategoryCreationDto dto);
+    Task<Category?> GetCategoryByName(string name);
 
-    Task<ICollection<Category>?> GetAllCategories();
+    Task<ICollection<Category?>> GetAllCategories();
 
-    Task<Category?> DeleteCategory(CategoryCreationDto dto);
+    Task<Category?> DeleteCategory(string name);
 
 }

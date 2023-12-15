@@ -194,9 +194,9 @@ public class UserLogic : IUserLogic
         string validated = "";
         User? user = await _usersService.GetByEmailAsync(dto.Email);
         if(user == null)
-            validated = "Username or password is incorrect!";
+            validated = "Email or password is incorrect!";
         if(user != null && !user.Password.Equals(dto.Password))
-            validated = "Username or Password is incorrect!";
+            validated = "Email or Password is incorrect!";
         return validated;
     }
 }

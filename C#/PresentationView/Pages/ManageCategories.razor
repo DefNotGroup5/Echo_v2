@@ -1,4 +1,4 @@
-@page "/ManageCategories"
+﻿@page "/ManageCategories"
 @using HTTPClients.ClientInterfaces
 @using Domain.Account.Models
 @using Microsoft.VisualBasic
@@ -12,7 +12,7 @@
             <div class="wrapper2">
                 <div class="search-bar">
                     <input type="text" placeholder="Search" class="search">
-                    <button class="button " @onclick="() => FindCategory(_currentName)">Search</button>
+                    <button class="button">Search</button>
                 </div>
                
                     @if (_categories != null && _categories.Any())
@@ -20,9 +20,9 @@
                     @foreach (var category in _categories)
                     {
                         <div class="categories">
-                            <p>Category</p>
+                            <p>@category?.CategoryName</p>
                             <button class="button" @onclick="EditCategoryName">Edit</button>
-                            <button class="button" @onclick="() => DeleteCategory(_currentName)">Delete</button>
+                            <button class="button" @onclick="() => DeleteCategory(category?.CategoryName)">Delete</button>
                         </div>
                     }
 
@@ -32,13 +32,13 @@
                     {
                         <p>No categories, try again :/</p> 
                     }
-                }
-               
-                }
-
-           </div>
+                    <div class="add-row">
+                        <input class="add" placeholder="add item name" type="text" @bind="@_currentName"/>
+                        <button class="button-add" @onclick="AddCategory">Add Category</button>
+                    </div>
+            </div>
     
-            <button class="button-add" @onclick="() => AddCategory(new Category(_currentName))">Add Category</button>
+            
     
         </div>
    
@@ -47,10 +47,9 @@
 
 @code {
 
-    private string? _categoryService;
-    private ICollection<string?> _categories;
+    private Category? _categoryService;
+    private ICollection<Category?> _categories = new List<Category?>();
     private string _currentName = "";
-    private string? _categorySearchedName;
     private string? _categoryToBeDeleted;
     
     
@@ -59,22 +58,21 @@
    protected override async Task OnInitializedAsync()
     {
         _categories = await CategoryService.GetAllCategories();
-        
+       Console.WriteLine(_categories.Count());
     }
 
-    private async Task<Category?> AddCategory(Category newCategory)
+    private async Task AddCategory()
     {
         _categoryService = await CategoryService.AddCategoryAsync(new CategoryCreationDto(_currentName));
-        return new Category(_categoryService);
-
+        await OnInitializedAsync();
     }
 
 
-    private async Task<string?> FindCategory(string _currentName)
-    {
-        _categorySearchedName = await CategoryService.GetCategoryByName(_currentName);
-        return _categorySearchedName;
-    }
+    // private async Task<string?> FindCategory(string _currentName)
+    // {
+    //     _categorySearchedName = await CategoryService.GetCategoryByName(_currentName);
+    //     return _categorySearchedName;
+    // }
     
     private async Task<string?> EditCategoryName()
     {
@@ -93,10 +91,10 @@
     }
 
 
-    private async Task<string?> DeleteCategory(string _categoryName)
+    private async Task DeleteCategory(string _categoryName)
     {
-        _categoryToBeDeleted = await CategoryService.DeleteCategory(_categoryName);
-        return null;
+        await CategoryService.DeleteCategory(_categoryName);
+        await OnInitializedAsync();
     }
 
 

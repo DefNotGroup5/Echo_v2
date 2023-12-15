@@ -1,4 +1,4 @@
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
 using Domain.Account.DTOs;
 using Domain.Account.Models;
@@ -16,9 +16,9 @@ public class CategoryHttpClient : ICategoryService
         _client = client;
     }
 
-    public async Task<string?> AddCategoryAsync(CategoryCreationDto categoryCreationDto)
+    public async Task<Category?> AddCategoryAsync(CategoryCreationDto categoryCreationDto)
     {
-        HttpResponseMessage response = await _client.PostAsJsonAsync("/Categories", categoryCreationDto);
+        HttpResponseMessage response = await _client.PostAsJsonAsync($"http://localhost:5105/Category", categoryCreationDto);
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -29,40 +29,47 @@ public class CategoryHttpClient : ICategoryService
         {
             PropertyNameCaseInsensitive = true
         })!;
-        return null;
+        return category;
     }
 
-    public async Task<string?> GetCategoryByName(string categoryName)
+    public async Task<Category?> GetCategoryByName(string categoryName)
     {
-        HttpResponseMessage response = await _client.GetAsync($"/Categories/{categoryName}");
+        HttpResponseMessage response = await _client.GetAsync($"http://localhost:5105/Category/{categoryName}");
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(result);
         }
-        return null;
+        Category category = JsonSerializer.Deserialize<Category>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return category;
     }
 
-    public async Task<ICollection<string?>> GetAllCategories()
+    public async Task<ICollection<Category?>> GetAllCategories()
     {
-        HttpResponseMessage response = await _client.GetAsync($"/Categories");
+        HttpResponseMessage response = await _client.GetAsync("http://localhost:5105/Category");
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(result);
         }
-        return new List<string?>();
+        ICollection<Category> categories = JsonSerializer.Deserialize<ICollection<Category>>(result, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return categories;
     }
     
-    public async Task<string?> DeleteCategory(string categoryName)
+    public async Task DeleteCategory(string categoryName)
     {
-        HttpResponseMessage response = await _client.DeleteAsync($"/Categories{categoryName}");
+        HttpResponseMessage response = await _client.DeleteAsync($"http://localhost:5105/Category/{categoryName}");
         string result = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(result);
         }
-        return null;
     }
     
     

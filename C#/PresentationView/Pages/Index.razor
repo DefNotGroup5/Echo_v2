@@ -3,14 +3,14 @@
 
 <div class="wrapper">
     <div class="home-wrapper">
-        <AuthorizeView>
+        <AuthorizeView Policy="IsAdmin">
             <Authorized>
-                <h1>Welcome to Our Store!</h1>
-                <p>Enjoy your purchasing/selling experience at at Echo!.</p>
+               <h1>Welcome to Our Store!</h1>
+                <p>Explore our wide range of products and offers.</p>
             </Authorized>
             <NotAuthorized>
                 <h1>Welcome to Our Store!</h1>
-                <p>Enjoy your purchasing/selling experience at at Echo!.</p>
+                <p>Explore our wide range of products and offers.</p>
                 <p>Make sure to login!</p>
                 <button @onclick="Login">Login</button>
             </NotAuthorized>
@@ -24,4 +24,20 @@
     {
         NavigationManager.NavigateTo("/Login");
     }
+
+    private void AdminDash()
+    {
+        NavigationManager.NavigateTo("/admindash");
+    }
+
+    private void SellerDash()
+    {
+        NavigationManager.NavigateTo("/sellerdash");
+    }
+
+    private void ViewItems()
+    {
+        NavigationManager.NavigateTo("/items");
+    }
+    
 }

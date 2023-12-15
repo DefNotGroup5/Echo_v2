@@ -1,4 +1,4 @@
-namespace Domain.Account.Models;
+﻿namespace Domain.Account.Models;
 
 public class Category
 {

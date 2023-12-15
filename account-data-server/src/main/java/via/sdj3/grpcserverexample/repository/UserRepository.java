@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository //Important
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
+    //Weird queries. Kinda ew
     @Query("SELECT u FROM UserEntity u WHERE u.id = :id")
     Optional<UserEntity> getById(int id);
     @Query("SELECT u FROM UserEntity u WHERE u.email = :email")
