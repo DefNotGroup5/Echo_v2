@@ -22,9 +22,9 @@ public class ReviewServiceImpl {
         int itemId = review.getItem().getId();
 
         // Corrected the method call here
-        if(reviewRepository.findByUserIdAndItemId(userId, itemId).isPresent()) {
-            throw new IllegalArgumentException("User has already reviewed this item.");
-        }
+       // if(reviewRepository.findByUserIdAndItemId(userId, itemId).isPresent()) {
+//            throw new IllegalArgumentException("User has already reviewed this item.");
+//        }
 
         return reviewRepository.save(review);
     }
