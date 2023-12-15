@@ -8,12 +8,11 @@ public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private int categoryId;
 
     @Column
     private String categoryName;
-
-
 
 
     public CategoryEntity(int categoryId, String categoryName) {

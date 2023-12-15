@@ -15,7 +15,7 @@ public class CategoryLogic : ICategoryLogic
         try
         {
             string validation = await ValidateCategory(dto);
-            if (string.IsNullOrEmpty(validation))
+            if (!string.IsNullOrEmpty(validation))
             {
                 throw new Exception(validation);
             }
@@ -34,17 +34,11 @@ public class CategoryLogic : ICategoryLogic
         }
     }
 
-    public async Task<Category?> GetCategoryByName(CategoryCreationDto dto)
+    public async Task<Category?> GetCategoryByName(string name)
     {
         try
         {
-            string validation = await ValidateCategory(dto);
-            if (string.IsNullOrEmpty(validation))
-            {
-                throw new Exception(validation);
-            }
-
-            Category? category = await _categoryService.GetCategoryByNameAsync(dto.CategoryName);
+            Category? category = await _categoryService.GetCategoryByNameAsync(name);
             return category;
         }
         catch (Exception e)
@@ -54,7 +48,7 @@ public class CategoryLogic : ICategoryLogic
         }
     }
 
-    public async Task<ICollection<Category>?> GetAllCategories()
+    public async Task<ICollection<Category?>> GetAllCategories()
     {
         try
         {
@@ -68,12 +62,11 @@ public class CategoryLogic : ICategoryLogic
         }
     }
 
-    public async Task<Category?> DeleteCategory(CategoryCreationDto dto)
+    public async Task<Category?> DeleteCategory(string name)
     {
         try
         {
-            Category? category = await _categoryService.DeleteCategory(dto.CategoryName);
-            return category;
+            await _categoryService.DeleteCategory(name);
             Console.WriteLine("Category successfully deleted!");
         }
         catch (Exception e)
