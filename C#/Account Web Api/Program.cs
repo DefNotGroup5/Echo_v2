@@ -22,7 +22,10 @@ builder.Services.AddScoped<IAdminLogic, AdminLogic>();
 
 builder.Services.AddScoped<SupportService>();
 builder.Services.AddScoped<ISupportLogic, SupportLogic>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+
+builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ICategoryLogic, CategoryLogic>();
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;

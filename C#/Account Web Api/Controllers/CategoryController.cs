@@ -25,7 +25,7 @@ public class CategoryController : ControllerBase
     }
     
 
-    [HttpPost("Add")]
+    [HttpPost]
     public async Task<ActionResult<Category>> AddCategory(CategoryCreationDto categoryCreationDto)
     {
         try
@@ -44,10 +44,11 @@ public class CategoryController : ControllerBase
     
 
     [HttpGet]
-    public async Task<ActionResult<ICollection<Category>>> GetAllCategoriesA()
+    public async Task<ActionResult<ICollection<Category>>> GetAllCategoriesAsync()
     {
         try
         {
+            Console.WriteLine("reached!");
             return Ok(await _categoryLogic.GetAllCategories());
         }
         catch (Exception e)

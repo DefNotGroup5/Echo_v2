@@ -9,7 +9,12 @@ namespace Application.Account.Logic;
 public class CategoryLogic : ICategoryLogic
 {
     private readonly CategoryService _categoryService;
-    
+
+    public CategoryLogic(CategoryService categoryService)
+    {
+        _categoryService = categoryService;
+    }
+
     public async Task<Category?> AddCategory(CategoryCreationDto dto)
     {
         try
@@ -96,7 +101,6 @@ public class CategoryLogic : ICategoryLogic
             validated = "Please name this category!";
             return validated;
         }
-
         return validated;
     }
     

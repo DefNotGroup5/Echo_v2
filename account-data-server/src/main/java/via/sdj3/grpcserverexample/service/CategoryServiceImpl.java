@@ -3,12 +3,14 @@ package via.sdj3.grpcserverexample.service;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
+import net.devh.boot.grpc.server.service.GrpcService;
 import via.sdj3.grpcserverexample.entities.CategoryEntity;
 import via.sdj3.grpcserverexample.repository.CategoryRepository;
 import via.sdj3.protobuf.category.*;
 
 import java.util.List;
 import java.util.Optional;
+@GrpcService
 
 public class CategoryServiceImpl extends CategoryServiceGrpc.CategoryServiceImplBase {
 
@@ -97,12 +99,11 @@ public class CategoryServiceImpl extends CategoryServiceGrpc.CategoryServiceImpl
 
 
     private CategoryEntity generateCategoryEntity(GrpcCategory category)
-        {
-            CategoryEntity categoryEntity = new CategoryEntity();
-            categoryEntity.setCategoryId(categoryEntity.getCategoryId());
-            categoryEntity.setCategoryName(categoryEntity.getCategoryByName());
-            return categoryEntity;
-        }
+    {
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setCategoryName(category.getName());
+        return categoryEntity;
+    }
 
 
     private GrpcCategory generateGrpcCategory(CategoryEntity categoryEntity)
