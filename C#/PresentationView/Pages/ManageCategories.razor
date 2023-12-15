@@ -39,7 +39,7 @@
 
            </div>
     
-            <button class="button-add" @onclick="AddCategory()">Add Category</button>
+            <button class="button-add" @onclick="() => AddCategory(new Category(_currentName))">Add Category</button>
     
         </div>
    
@@ -96,7 +96,7 @@
 
     private async Task<string?> DeleteCategory(string _categoryName)
     {
-        _categoryToBeDeleted = await _categoryService.DeleteCategory(_categoryName);
+        _categoryToBeDeleted = await CategoryService.DeleteCategory(_categoryName);
         return null;
     }
 
