@@ -181,10 +181,8 @@ public class UsersController : ControllerBase
         try
         {
             UserTransferDto dto = null;
-            ICollection<User?> users = await _userLogic.GetAll();
-            foreach (var user in users)
-            {
-                if (user is Seller seller)
+            User user = await _userLogic.GetById(id);
+            if (user is Seller seller)
                 {
                     dto = new UserTransferDto()
                     {
@@ -214,7 +212,6 @@ public class UsersController : ControllerBase
                         IsAuthorized = false
                     };
                 }
-            }
             return Ok(dto);
         }
         catch (Exception e)

@@ -11,89 +11,96 @@
 
 @attribute [Authorize]
 <div class="container">
-    <div class="cart-container">
-        <div class="top">
-            @if (!_isContinue && !_bought)
-            {
-                <h1>Shopping Cart</h1>
-            }
-            else if (_isContinue && !_bought)
-            {
-                <h1>Confirm Order</h1>
-            }
-            else if (_isContinue && _bought)
-            {
-                <h1>Order #@_orderFinished?.OrderId Purchased</h1>
-            }
-            <input type="text" class="search" placeholder="Search">
-            <div class="items">
-                @if (_userId == 0)
-                {
-                    <p>Please Log in!</p>
-                }
-                @foreach (var item in _items)
-                {
-                    if (item != null)
+    <AuthorizeView Policy="IsSeller">
+        <NotAuthorized>
+            <div class="cart-container">
+                <div class="top">
+                    @if (!_isContinue && !_bought)
                     {
-                        <div class="item">
-                            <div class="image-name">
-                                <div class="image">
-                                    <img src="@item.ImageUrl" alt=""/>
-                                </div>
-                                <h3>@item.Name</h3>
-                            </div>
-                            @if (!_isContinue)
-                            {
-                                <h3 class="qty">Qty: @GetQuantity(item.Id)</h3>
-                                <div class="price-delete-check">
-                                    <h3>@item.Price DKK</h3>
-                                    <button class="delete">Delete</button>
-                                </div>
-                            }
-                            else if (_isContinue)
-                            {
-                                <div class="price-delete-check">
-                                    <h3>@item.Price DKK</h3>
-                                    <h3 class="qty">Qty: @GetQuantity(item.Id)</h3>
-                                </div>
-                            }
-                        </div>
+                        <h1>Shopping Cart</h1>
                     }
-                }
-            </div>
-        </div>
-        @if(!_isContinue && !_bought)
-        {
-            <div class="button-row">
-                @if (!string.IsNullOrEmpty(_result))
+                    else if (_isContinue && !_bought)
+                    {
+                        <h1>Confirm Order</h1>
+                    }
+                    else if (_isContinue && _bought)
+                    {
+                        <h1>Order #@_orderFinished?.OrderId Purchased</h1>
+                    }
+                    <input type="text" class="search" placeholder="Search">
+                    <div class="items">
+                        @if (_userId == 0)
+                        {
+                            <p>Please Log in!</p>
+                        }
+                        @foreach (var item in _items)
+                        {
+                            if (item != null)
+                            {
+                                <div class="item">
+                                    <div class="image-name">
+                                        <div class="image">
+                                            <img src="@item.ImageUrl" alt=""/>
+                                        </div>
+                                        <h3>@item.Name</h3>
+                                    </div>
+                                    @if (!_isContinue)
+                                    {
+                                        <h3 class="qty">Qty: @GetQuantity(item.Id)</h3>
+                                        <div class="price-delete-check">
+                                            <h3>@item.Price DKK</h3>
+                                            <button class="delete">Delete</button>
+                                        </div>
+                                    }
+                                    else if (_isContinue)
+                                    {
+                                        <div class="price-delete-check">
+                                            <h3>@item.Price DKK</h3>
+                                            <h3 class="qty">Qty: @GetQuantity(item.Id)</h3>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                @if (!_isContinue && !_bought)
                 {
-                    <label>@_result</label>
+                    <div class="button-row">
+                        @if (!string.IsNullOrEmpty(_result))
+                        {
+                            <label>@_result</label>
+                        }
+                        <button class="proceed" @onclick="SetContinue">Continue</button>
+                    </div>
                 }
-                <button class="proceed" @onclick="SetContinue">Continue</button>
+                else if (_isContinue && !_bought)
+                {
+                    @if (!string.IsNullOrEmpty(_result))
+                    {
+                        <label>@_result</label>
+                    }
+                    <div class="button-row">
+                        <button class="cancel" @onclick="SetContinue">Cancel</button>
+                        <button class="proceed" @onclick="Buy">Order</button>
+                    </div>
+                }
+                else if (_isContinue && _bought)
+                {
+                    @if (!string.IsNullOrEmpty(_result))
+                    {
+                        <label>@_result</label>
+                    }
+                    <div class="button-row">
+                        <button class="proceed" @onclick="Back">Back to Items</button>
+                    </div>
+                }
             </div>
-        }
-        else if(_isContinue && !_bought)
-        {
-            @if (!string.IsNullOrEmpty(_result))
-            {
-                <label>@_result</label>
-            }
-            <div class="button-row">
-                <button class="cancel" @onclick="SetContinue">Cancel</button>
-                <button class="proceed" @onclick="Buy">Order</button>
-            </div>
-        }
-        else if (_isContinue && _bought)
-        {
-            @if (!string.IsNullOrEmpty(_result))
-            {
-                <label>@_result</label>
-            }
-            <div class="button-row">
-                <button class="proceed" @onclick="Back">Back to Items</button>
-            </div>
-        }
-    </div>
+        </NotAuthorized>
+        <Authorized>
+            <p>Shopping Cart is available only to customers.</p>
+        </Authorized>
+    </AuthorizeView>
 </div>
 
 @code {
