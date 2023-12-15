@@ -15,6 +15,4 @@ public class CategoryCreationDto
         CategoryName = categoryName;
     }
     
-    
-    
 }
