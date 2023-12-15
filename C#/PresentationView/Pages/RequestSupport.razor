@@ -10,25 +10,33 @@
 @inject NavigationManager NavigationManager;
 @attribute [Authorize]
 <div class="wrapper">
-    <AuthorizeView Policy="IsSeller">
-            <NotAuthorized>
+    <AuthorizeView>
+        <Authorized>
             <div class="container">
                 <h1>Customer Service</h1>
                 <h2>How can we help you?</h2>
                 <div class="messages-container">
                     <div class="chat">
-                        @foreach (var message in _messages.OrderBy(m => m.Id))
+                        @if (_messages.Count == 0)
                         {
-                            if (!string.IsNullOrEmpty(message.Response))
+                            _latestMessage = null;
+                        }
+                        else
+                        {
+                            foreach (var message in _messages.OrderBy(m => m.Id))
                             {
-                                <p>@_user?.Email: @message.Request</p>
-                                <p>Admin: @message.Response</p>
-                                _latestMessage = message;
-                            }
-                            else
-                            {
-                                <p>@_user?.Email: @message.Request</p>
-                                _latestMessage = message;
+
+                                if (!string.IsNullOrEmpty(message.Response))
+                                {
+                                    <p>@_user?.Email: @message.Request</p>
+                                    <p>Admin: @message.Response</p>
+                                    _latestMessage = message;
+                                }
+                                else
+                                {
+                                    <p>@_user?.Email: @message.Request</p>
+                                    _latestMessage = message;
+                                }
                             }
                         }
                     </div>
@@ -45,10 +53,10 @@
                     }
                 </div>
             </div>
-            </NotAuthorized>
-                    <Authorized>
-                        <p>Requesting support is available only to customers.</p>
-                    </Authorized>
+            </Authorized>
+                    <NotAuthorized>
+                         <p>Requesting support is available only to customers and authorized sellers!.</p>
+                    </NotAuthorized>
                 </AuthorizeView>
 </div>
 

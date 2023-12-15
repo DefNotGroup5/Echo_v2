@@ -8,13 +8,10 @@
 <nav class="navbar">
     <button class="nav-button" id="home-button" @onclick="Home">Home</button>
     <div class="central-buttons">
-        @if (_isAuthenticated)
-        {
-            <button class="nav-button" @onclick="Store">Store</button>
+        <button class="nav-button" @onclick="Store">Store</button>
             <button class="nav-button" @onclick="Cart">Cart</button>
             <button class="nav-button" @onclick="Wishlist">Wishlist</button>
             <button class="nav-button" @onclick="Support">Support</button>
-        }
     </div>
     
             <AuthorizeView Policy="IsAdmin">
@@ -93,7 +90,7 @@
     }
     private void Support()
     {
-     NavigationManager.NavigateTo("/view-support-requests");
+     NavigationManager.NavigateTo("/request-support");
     }
 
     private async Task Logout()

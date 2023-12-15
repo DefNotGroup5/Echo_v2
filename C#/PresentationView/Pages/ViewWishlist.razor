@@ -11,8 +11,8 @@
 @using Domain.Shopping.DTOs
 @using PresentationView.ComponentServices.Interfaces
 @attribute [Authorize]
-<AuthorizeView Policy="IsSeller">
-    <NotAuthorized>
+<AuthorizeView Policy="IsCustomer">
+    <Authorized>
         <div class="container">
             <div class="wishlist-container">
                 <h1>Wishlist</h1>
@@ -41,10 +41,10 @@
                 </div>
             </div>
         </div>
-    </NotAuthorized>
-    <Authorized>
-        <p>Whishlist is available only to customers.</p>
     </Authorized>
+    <NotAuthorized>
+        <p>Whishlist is available only to customers.</p>
+    </NotAuthorized>
 </AuthorizeView>
 
 

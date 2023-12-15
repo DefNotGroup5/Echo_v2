@@ -83,7 +83,7 @@
     }
     private async Task PublishItem()
     {
-        NavigationManager.NavigateTo("/sellerdash");
+        
         try
         {
             _result = "";
@@ -93,11 +93,11 @@
             string confirmationTitle = "Item created!!";
             string confirmationDescription = "Your item has been added for sale!";
             ConfirmationService.ShowConfirmation(confirmationTitle, confirmationDescription, HandleConfirmationResult);
-            
             _name = "";
             _price = "";
             _quantity = 0;
             _description = "";
+            NavigationManager.NavigateTo("/sellerdash");
         }
         catch (Exception e)
         {

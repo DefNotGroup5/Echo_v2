@@ -12,7 +12,7 @@
 @attribute [Authorize]
 <div class="container">
     <AuthorizeView>
-        <NotAuthorized>
+        <Authorized>
             <div class="cart-container">
                 <div class="top">
                     @if (!_isContinue && !_bought)
@@ -96,10 +96,10 @@
                     </div>
                 }
             </div>
-        </NotAuthorized>
-        <Authorized>
-            <p>Shopping Cart is available only to customers.</p>
         </Authorized>
+        <NotAuthorized>
+            <p>Shopping Cart is available only to customers.</p>
+        </NotAuthorized>
     </AuthorizeView>
 </div>
 
