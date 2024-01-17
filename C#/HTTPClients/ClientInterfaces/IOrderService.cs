@@ -10,3 +10,4 @@ public interface IOrderService
     Task<ICollection<Order?>> GetOrdersBySeller(int sellerId);
     Task<ICollection<Order?>> GetOrders();
 }
+

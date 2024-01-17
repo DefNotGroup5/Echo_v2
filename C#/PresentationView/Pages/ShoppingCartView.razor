@@ -117,6 +117,20 @@
         await InitializeCartItems();
         await ConvertToItems();
     }
+    
+    private async Task InitializeUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst("Id"); 
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+            {
+                _userId = userId;
+            }
+        }
+    }
 
     private async Task InitializeCartItems()
     {
@@ -173,19 +187,7 @@
     }
 
 
-    private async Task InitializeUserIdAsync()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        if (user.Identity != null && user.Identity.IsAuthenticated)
-        {
-            var userIdClaim = user.FindFirst("Id"); 
-            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
-            {
-                _userId = userId;
-            }
-        }
-    }
+    
 
     private int GetQuantity(int id)
     {
